@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="teacher_attendance.LocationPicker" owl="1">
+        <div class="o_location_picker_container w-100 mt-2">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <div>
+                    <span class="badge bg-info me-2">Lat: <t t-esc="state.lat.toFixed(5)"/></span>
+                    <span class="badge bg-info">Lng: <t t-esc="state.lng.toFixed(5)"/></span>
+                </div>
+                <button class="btn btn-secondary btn-sm" t-on-click="getCurrentLocation">
+                    <i class="fa fa-crosshairs me-1"/> Get Current Location
+                </button>
+            </div>
+            <div t-ref="mapContainer" style="height: 300px;" class="border rounded shadow-sm bg-light">
+                <!-- Map will be rendered here -->
+            </div>
+            <p class="text-muted small mt-1">
+                <i class="fa fa-info-circle me-1"/> Click on the map or drag the marker to set the location.
+            </p>
+        </div>
+    </t>
+</templates>

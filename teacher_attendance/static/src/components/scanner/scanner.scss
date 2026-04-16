@@ -1,0 +1,43 @@
+.o_attendance_scanner {
+    background: #f8f9fa;
+    border-radius: 12px;
+}
+
+.scanner-placeholder {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.scanner-placeholder:hover {
+    background-color: #e9ecef !important;
+    transform: scale(1.02);
+}
+
+.status-overlay {
+    z-index: 100;
+    transition: opacity 0.5s ease;
+}
+
+.bg-success-opacity { background-color: rgba(40, 167, 69, 0.8) !important; }
+.bg-danger-opacity { background-color: rgba(220, 53, 69, 0.8) !important; }
+.bg-light-opacity { background-color: rgba(255, 255, 255, 0.8) !important; }
+
+.check-animation {
+    animation: bounceIn 0.8s ease;
+}
+
+.error-animation {
+    animation: shake 0.5s ease;
+}
+
+@keyframes bounceIn {
+    0% { transform: scale(0); opacity: 0; }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+}

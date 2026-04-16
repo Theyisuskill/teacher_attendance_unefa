@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_teacher_attendance_root"
+              name="Attendance"
+              sequence="10"/>
+
+    <menuitem id="menu_attendance_classroom"
+              name="Classrooms"
+              parent="menu_teacher_attendance_root"
+              action="action_attendance_classroom"
+              sequence="10"/>
+
+    <menuitem id="menu_attendance_log"
+              name="Attendance Logs"
+              parent="menu_teacher_attendance_root"
+              action="action_attendance_log"
+              sequence="20"/>
+
+    <menuitem id="menu_attendance_log_my"
+              name="My History"
+              parent="menu_teacher_attendance_root"
+              action="action_attendance_log_my"
+              sequence="30"/>
+
+    <menuitem id="menu_attendance_analysis"
+              name="Analysis"
+              parent="menu_teacher_attendance_root"
+              action="action_attendance_analysis"
+              sequence="40"/>
+</odoo>

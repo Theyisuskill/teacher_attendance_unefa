@@ -1,0 +1,10 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_classroom_coordinator,attendance.classroom.coordinator,model_attendance_classroom,group_coordinator,1,1,1,1
+access_classroom_teacher,attendance.classroom.teacher,model_attendance_classroom,group_teacher,1,0,0,0
+access_classroom_admin,attendance.classroom.admin,model_attendance_classroom,base.group_system,1,1,1,1
+access_log_coordinator,attendance.log.coordinator,model_attendance_log,group_coordinator,1,1,1,1
+access_log_teacher,attendance.log.teacher,model_attendance_log,group_teacher,1,0,1,0
+access_log_admin,attendance.log.admin,model_attendance_log,base.group_system,1,1,1,1
+access_schedule_coordinator,attendance.schedule.coordinator,model_attendance_schedule,group_coordinator,1,1,1,1
+access_schedule_teacher,attendance.schedule.teacher,model_attendance_schedule,group_teacher,1,0,0,0
+access_schedule_admin,attendance.schedule.admin,model_attendance_schedule,base.group_system,1,1,1,1

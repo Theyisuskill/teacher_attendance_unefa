@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="teacher_attendance.AttendanceHistory">
+        <div class="o_attendance_history mt-5 w-100 px-3">
+            <h4 class="text-start mb-3">Recent Activity</h4>
+            <div class="list-group shadow-sm">
+                <t t-foreach="state.logs" t-as="log" t-key="log.id">
+                    <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        <div class="text-start">
+                            <h6 class="mb-0"><t t-esc="log.classroom_id[1]"/></h6>
+                            <small class="text-muted"><t t-esc="log.check_in"/></small>
+                        </div>
+                        <span t-att-class="{'badge bg-success': log.status === 'valid', 'badge bg-danger': log.status === 'outside'}" class="rounded-pill">
+                            <t t-esc="log.status"/>
+                        </span>
+                    </div>
+                </t>
+                <t t-if="state.logs.length === 0">
+                    <div class="list-group-item text-center text-muted">No recent activity.</div>
+                </t>
+            </div>
+        </div>
+    </t>
+</templates>

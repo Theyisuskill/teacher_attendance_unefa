@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_attendance_log_tree" model="ir.ui.view">
+        <field name="name">attendance.log.tree</field>
+        <field name="model">attendance.log</field>
+        <field name="arch" type="xml">
+            <list create="false">
+                <field name="teacher_id"/>
+                <field name="classroom_id"/>
+                <field name="check_in"/>
+                <field name="check_out"/>
+                <field name="duration" widget="float_time" sum="Total Hours"/>
+                <field name="distance" string="Dist (m)"/>
+                <field name="status" widget="badge"
+                       decoration-success="status == 'valid'"
+                       decoration-info="status == 'manual'"
+                       decoration-danger="status == 'outside'"
+                       decoration-warning="status == 'late'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_attendance_log_calendar" model="ir.ui.view">
+        <field name="name">attendance.log.calendar</field>
+        <field name="model">attendance.log</field>
+        <field name="arch" type="xml">
+            <calendar string="Attendance Calendar" date_start="check_in" date_stop="check_out" color="teacher_id" mode="month">
+                <field name="teacher_id" avatar_field="image_128"/>
+                <field name="classroom_id"/>
+                <field name="status"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record id="view_attendance_log_form" model="ir.ui.view">
+        <field name="name">attendance.log.form</field>
+        <field name="model">attendance.log</field>
+        <field name="arch" type="xml">
+            <form create="false">
+                <header>
+                    <button name="action_validate_manually" string="Validate Manually" type="object" 
+                            class="btn-primary" invisible="status == 'valid' or status == 'manual'"/>
+                    <field name="status" widget="statusbar" statusbar_visible="valid,outside,late"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="teacher_id" string="Teacher"/>
+                        <h1>
+                            <field name="teacher_id" readonly="1" options="{'no_open': True}"/>
+                        </h1>
+                        <label for="classroom_id" string="Classroom"/>
+                        <h3>
+                            <field name="classroom_id" readonly="1"/>
+                        </h3>
+                    </div>
+                    <group>
+                        <group string="Check-in/Out Details">
+                            <field name="check_in" readonly="1"/>
+                            <field name="check_out" readonly="1"/>
+                            <field name="duration" widget="float_time" readonly="1"/>
+                            <field name="distance" readonly="1"/>
+                        </group>
+                        <group string="Verification">
+                            <field name="signature" widget="image" options="{'size': [200, 100]}" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Justification" name="justification">
+                            <group>
+                                <field name="justification" placeholder="Reason for late/outside attendance..."/>
+                            </group>
+                        </page>
+                        <page string="Evidence" name="evidence">
+                            <group>
+                                <field name="evidence" widget="image" options="{'size': [400, 400]}" nolabel="1"/>
+                            </group>
+                        </page>
+                        <page string="GPS Data" name="technical">
+                            <group>
+                                <field name="latitude" readonly="1"/>
+                                <field name="longitude" readonly="1"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_attendance_log_graph" model="ir.ui.view">
+        <field name="name">attendance.log.graph</field>
+        <field name="model">attendance.log</field>
+        <field name="arch" type="xml">
+            <graph string="Attendance Analysis" type="bar">
+                <field name="classroom_id"/>
+                <field name="status"/>
+                <field name="duration" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_attendance_log_pivot" model="ir.ui.view">
+        <field name="name">attendance.log.pivot</field>
+        <field name="model">attendance.log</field>
+        <field name="arch" type="xml">
+            <pivot string="Attendance Analysis">
+                <field name="check_in" type="row" interval="day"/>
+                <field name="classroom_id" type="row"/>
+                <field name="teacher_id" type="col"/>
+                <field name="duration" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="action_attendance_log" model="ir.actions.act_window">
+        <field name="name">Attendance Logs</field>
+        <field name="res_model">attendance.log</field>
+        <field name="view_mode">list,calendar,form</field>
+    </record>
+
+    <record id="action_attendance_analysis" model="ir.actions.act_window">
+        <field name="name">Attendance Analysis</field>
+        <field name="res_model">attendance.log</field>
+        <field name="view_mode">graph,pivot,list</field>
+    </record>
+
+    <record id="action_attendance_log_my" model="ir.actions.act_window">
+        <field name="name">My History</field>
+        <field name="res_model">attendance.log</field>
+        <field name="view_mode">list,calendar,form</field>
+        <field name="domain">[('teacher_id', '=', uid)]</field>
+    </record>
+</odoo>

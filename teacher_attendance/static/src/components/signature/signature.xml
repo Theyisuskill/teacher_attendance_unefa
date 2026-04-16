@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="teacher_attendance.SignaturePad" owl="1">
+        <div class="o_signature_pad p-3 bg-white rounded shadow-sm border mt-3" style="max-width: 400px; margin: 0 auto;">
+            <h5 class="mb-3 text-primary">Please Sign Below</h5>
+            <canvas t-ref="signatureCanvas" 
+                    width="350" height="150" 
+                    class="border rounded bg-light mb-3"
+                    t-on-mousedown="startDrawing"
+                    t-on-mousemove="draw"
+                    t-on-mouseup="stopDrawing"
+                    t-on-mouseleave="stopDrawing"
+                    t-on-touchstart="startDrawing"
+                    t-on-touchmove="draw"
+                    t-on-touchend="stopDrawing"
+                    style="touch-action: none; cursor: crosshair;"/>
+            
+            <div class="d-flex justify-content-between">
+                <button class="btn btn-outline-secondary" t-on-click="clear">Clear</button>
+                <div>
+                    <button class="btn btn-outline-danger me-2" t-on-click="props.onCancel">Cancel</button>
+                    <button class="btn btn-success" t-on-click="save">Confirm &amp; Save</button>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_classroom_form" model="ir.ui.view">
+        <field name="name">attendance.classroom.form</field>
+        <field name="model">attendance.classroom</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_download_qr" type="object" string="Download QR" icon="fa-download" class="btn-primary"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="e.g. Science Lab"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="secret_key"/>
+                        </group>
+                        <group>
+                            <label for="latitude" string="Location Selection"/>
+                            <div class="o_address_format">
+                                <field name="latitude" widget="location_picker" nolabel="1"/>
+                                <field name="longitude" invisible="1"/>
+                            </div>
+                            <field name="radius"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="QR Code" name="qr_code">
+                            <field name="qr_code" widget="image" class="oe_avatar" options="{'size': [256, 256]}"/>
+                        </page>
+                        <page string="Schedule" name="schedule">
+                            <group>
+                                <group>
+                                    <field name="check_schedule"/>
+                                    <field name="tolerance_margin" invisible="not check_schedule"/>
+                                </group>
+                            </group>
+                            <field name="schedule_ids" invisible="not check_schedule">
+                                <list editable="bottom">
+                                    <field name="day_of_week"/>
+                                    <field name="start_hour" widget="float_time"/>
+                                    <field name="end_hour" widget="float_time"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_classroom_tree" model="ir.ui.view">
+        <field name="name">attendance.classroom.tree</field>
+        <field name="model">attendance.classroom</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="latitude"/>
+                <field name="longitude"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_attendance_classroom" model="ir.actions.act_window">
+        <field name="name">Classrooms</field>
+        <field name="res_model">attendance.classroom</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

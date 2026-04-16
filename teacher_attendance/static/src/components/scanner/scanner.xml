@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="teacher_attendance.AttendanceScanner">
+        <div class="o_attendance_scanner text-center p-4 h-100 d-flex flex-column align-items-center overflow-auto bg-light">
+            
+            <!-- KPI Cards -->
+            <div class="kpi-container d-flex justify-content-center gap-3 w-100 mb-4 flex-wrap">
+                <div class="kpi-card bg-white p-3 rounded shadow-sm border-start border-primary border-4" style="min-width: 150px;">
+                    <div class="text-muted small uppercase fw-bold">Today</div>
+                    <div class="h3 mb-0" t-out="state.kpis.todayCount"/>
+                </div>
+                <div class="kpi-card bg-white p-3 rounded shadow-sm border-start border-success border-4" style="min-width: 150px;">
+                    <div class="text-muted small uppercase fw-bold">Active Aulas</div>
+                    <div class="h3 mb-0" t-out="state.kpis.activeAulas"/>
+                </div>
+                <div class="kpi-card bg-white p-3 rounded shadow-sm border-start border-warning border-4" style="min-width: 150px;">
+                    <div class="text-muted small uppercase fw-bold">Late/Unscheduled</div>
+                    <div class="h3 mb-0 text-warning" t-out="state.kpis.lateCount"/>
+                </div>
+                <div class="kpi-card bg-white p-3 rounded shadow-sm border-start border-info border-4" style="min-width: 150px;">
+                    <div class="text-muted small uppercase fw-bold">Worked Hours (Month)</div>
+                    <div class="h3 mb-0" t-out="state.kpis.totalHours"/>
+                </div>
+                <div class="kpi-card bg-white p-3 rounded shadow-sm border-start border-dark border-4" style="min-width: 150px;">
+                    <div class="text-muted small uppercase fw-bold">Punctuality %</div>
+                    <div class="h3 mb-0" t-att-class="state.kpis.punctuality &lt; 80 ? 'text-danger' : 'text-success'">
+                        <t t-out="state.kpis.punctuality"/>%
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="mb-4 text-dark fw-light">Classroom Attendance</h2>
+            
+            <div class="scanner-container mb-4 position-relative" style="width: 320px; min-height: 320px;">
+                <t t-if="state.isScanning">
+                    <BarcodeVideoScanner 
+                        facingMode="'environment'"
+                        onResult.bind="onResult"
+                        onError.bind="onError"
+                        cssClass="'w-100 h-100 border rounded shadow'"/>
+                </t>
+                <t t-else="">
+                    <div class="scanner-placeholder d-flex align-items-center justify-content-center bg-white border rounded shadow-sm w-100 h-100" 
+                         t-on-click="toggleScanner" style="min-height: 320px; cursor: pointer;">
+                        <i class="fa fa-qrcode fa-5x text-primary opacity-25"/>
+                    </div>
+                </t>
+                
+                <!-- Feedback Overlay -->
+                <div t-if="['success', 'error', 'loading'].includes(state.status)" 
+                     class="status-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center rounded"
+                     t-att-class="{'bg-success-opacity': state.status === 'success', 'bg-danger-opacity': state.status === 'error', 'bg-light-opacity': state.status === 'loading'}">
+                    <t t-if="state.status === 'success'">
+                        <i class="fa fa-check-circle fa-5x text-white check-animation"/>
+                    </t>
+                    <t t-if="state.status === 'error'">
+                        <i class="fa fa-times-circle fa-5x text-white error-animation"/>
+                    </t>
+                    <t t-if="state.status === 'loading'">
+                        <i class="fa fa-spinner fa-spin fa-5x text-primary"/>
+                    </t>
+                </div>
+            </div>
+
+            <!-- Signature Area -->
+            <t t-if="state.status === 'signing'">
+                <div class="signature-modal-backdrop position-fixed top-0 start-0 w-100 h-100 bg-dark opacity-50 z-1000"/>
+                <div class="signature-modal-content position-fixed top-50 start-50 translate-middle z-2000 w-100 px-3">
+                    <SignaturePad onSave.bind="onSignatureSave" onCancel.bind="onSignatureCancel"/>
+                </div>
+            </t>
+            
+            <button class="btn btn-primary btn-lg px-5 shadow mb-5" t-on-click="toggleScanner" t-att-disabled="state.status === 'signing'">
+                <t t-if="state.isScanning">Stop Scanner</t>
+                <t t-else="">Start Scanner</t>
+            </button>
+            
+            <AttendanceHistory onRegister="(comp) => this.historyComponent = comp"/>
+            
+            <div class="mt-4 text-muted pb-5">
+                <p>Ensure you are inside the classroom and scan the QR code posted in the room.</p>
+            </div>
+        </div>
+    </t>
+</templates>

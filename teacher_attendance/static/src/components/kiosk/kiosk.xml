@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="teacher_attendance.AttendanceKiosk" owl="1">
+        <style>
+            .o_kiosk_bg {
+                background: linear-gradient(135deg, #714B67 0%, #017e84 100%);
+                height: 100vh;
+                width: 100vw;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                font-family: 'Inter', sans-serif;
+            }
+            .kiosk_card {
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(10px);
+                border-radius: 30px;
+                box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+                width: 100%;
+                max-width: 480px;
+                padding: 40px;
+                text-align: center;
+            }
+            .pin_dot {
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                border: 2px solid #714B67;
+                transition: all 0.2s ease;
+            }
+            .pin_dot.filled {
+                background: #714B67;
+                transform: scale(1.2);
+            }
+            .num_btn {
+                width: 80px;
+                height: 80px;
+                border-radius: 50% !important;
+                font-size: 1.8rem !important;
+                font-weight: 600 !important;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 10px auto;
+                border: 2px solid #f0f0f0 !important;
+                background: white !important;
+                color: #444 !important;
+                transition: all 0.1s ease !important;
+            }
+            .num_btn:active {
+                background: #714B67 !important;
+                color: white !important;
+                transform: scale(0.9);
+            }
+            .num_btn.action {
+                background: #f8f9fa !important;
+                border: none !important;
+            }
+            .kiosk_select {
+                border: 2px solid #eee;
+                border-radius: 15px;
+                padding: 15px;
+                font-size: 1.2rem;
+                margin-bottom: 30px;
+                background-color: white;
+            }
+            .success_overlay {
+                background: #00A09D;
+                color: white;
+                border-radius: 30px;
+                position: absolute;
+                top: 0; left: 0; right: 0; bottom: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                z-index: 10;
+                animation: fadeIn 0.3s ease;
+            }
+            @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        </style>
+
+        <div class="o_kiosk_bg">
+            <div class="text-center text-white mb-4">
+                <div class="bg-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3 shadow" style="width: 100px; height: 100px;">
+                    <i class="fa fa-university fa-3x text-primary"/>
+                </div>
+                <h1 class="display-5 fw-bold">Campus Attendance</h1>
+                <p class="opacity-75 fs-5">Identify yourself to register</p>
+            </div>
+
+            <div class="kiosk_card position-relative">
+                <t t-if="state.status === 'success'">
+                    <div class="success_overlay">
+                        <i class="fa fa-check-circle fa-5x mb-3"/>
+                        <h2>Success!</h2>
+                        <p class="fs-5">Have a great class</p>
+                    </div>
+                </t>
+
+                <!-- Classroom Select -->
+                <div class="mb-4">
+                    <label class="text-muted small fw-bold text-uppercase mb-2 d-block">Current Classroom</label>
+                    <select class="form-select kiosk_select shadow-sm" t-model="state.selectedClassroom">
+                        <option value="null">-- Tap to choose room --</option>
+                        <t t-foreach="state.classrooms" t-as="aula" t-key="aula.id">
+                            <option t-att-value="aula.id"><t t-esc="aula.name"/></option>
+                        </t>
+                    </select>
+                </div>
+
+                <!-- PIN Visual -->
+                <div class="d-flex justify-content-center gap-4 mb-5">
+                    <t t-foreach="[0,1,2,3]" t-as="i" t-key="i">
+                        <div class="pin_dot" t-att-class="{'filled': state.pin.length > i}"/>
+                    </t>
+                </div>
+
+                <!-- Keypad -->
+                <div class="row g-0">
+                    <t t-foreach="[1,2,3,4,5,6,7,8,9]" t-as="n" t-key="n">
+                        <div class="col-4">
+                            <button class="btn num_btn shadow-sm" t-on-click="() => this.onNumberClick(n)">
+                                <t t-esc="n"/>
+                            </button>
+                        </div>
+                    </t>
+                    <div class="col-4">
+                        <button class="btn num_btn action text-danger shadow-sm" t-on-click="clearPin">
+                            <i class="fa fa-times"/>
+                        </button>
+                    </div>
+                    <div class="col-4">
+                        <button class="btn num_btn shadow-sm" t-on-click="() => this.onNumberClick(0)">0</button>
+                    </div>
+                    <div class="col-4 d-flex align-items-center justify-content-center">
+                        <t t-if="state.status === 'loading'">
+                            <i class="fa fa-circle-o-notch fa-spin fa-2x text-primary"/>
+                        </t>
+                        <t t-else="">
+                            <i class="fa fa-lock fa-2x text-muted opacity-25"/>
+                        </t>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-5 text-white-50">
+                Powered by Odoo 19 | Attendance System
+            </div>
+        </div>
+    </t>
+</templates>

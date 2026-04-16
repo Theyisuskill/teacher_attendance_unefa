@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="teacher_attendance.OccupancyMap" owl="1">
+        <div class="o_occupancy_map h-100 d-flex flex-column bg-light p-3">
+            <div class="mb-3 d-flex justify-content-between align-items-center">
+                <h2>Real-Time Occupancy Map</h2>
+                <div class="d-flex gap-3">
+                    <span class="badge bg-success rounded-pill px-3 py-2">● Occupied</span>
+                    <span class="badge bg-secondary rounded-pill px-3 py-2">● Empty</span>
+                </div>
+            </div>
+            <div t-ref="mapContainer" class="flex-grow-1 border rounded shadow-sm bg-white"/>
+            <div class="mt-2 text-muted small">
+                <i class="fa fa-info-circle me-1"/> Map shows classrooms with valid check-ins today in green.
+            </div>
+        </div>
+    </t>
+</templates>

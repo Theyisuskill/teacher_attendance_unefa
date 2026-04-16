@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_attendance_dashboard" model="ir.actions.client">
+        <field name="name">Attendance Dashboard</field>
+        <field name="tag">attendance_scanner_action</field>
+    </record>
+
+    <record id="action_occupancy_map" model="ir.actions.client">
+        <field name="name">Occupancy Map</field>
+        <field name="tag">attendance_occupancy_map</field>
+    </record>
+
+    <record id="action_attendance_kiosk" model="ir.actions.client">
+        <field name="name">Kiosk Mode</field>
+        <field name="tag">attendance_kiosk_action</field>
+        <field name="target">fullscreen</field>
+    </record>
+
+    <menuitem id="menu_attendance_dashboard"
+              name="Scan QR"
+              parent="menu_teacher_attendance_root"
+              action="action_attendance_dashboard"
+              sequence="5"/>
+
+    <menuitem id="menu_attendance_kiosk"
+              name="Kiosk Mode"
+              parent="menu_teacher_attendance_root"
+              action="action_attendance_kiosk"
+              sequence="7"/>
+
+    <menuitem id="menu_occupancy_map"
+              name="Occupancy Map"
+              parent="menu_teacher_attendance_root"
+              action="action_occupancy_map"
+              sequence="8"/>
+</odoo>
