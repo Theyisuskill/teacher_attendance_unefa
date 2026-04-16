@@ -11,6 +11,9 @@ class AttendanceLog(models.Model):
 
     teacher_id = fields.Many2one('res.users', string='Teacher', required=True, default=lambda self: self.env.user, tracking=True)
     classroom_id = fields.Many2one('attendance.classroom', string='Classroom', required=True, tracking=True)
+    subject_id = fields.Many2one('attendance.subject', string='Subject', tracking=True)
+    is_substitution = fields.Boolean(string='Is Substitution', default=False)
+    
     check_in = fields.Datetime(string='Check-in Time', default=fields.Datetime.now, readonly=True, tracking=True)
     check_out = fields.Datetime(string='Check-out Time', readonly=True, tracking=True)
     duration = fields.Float(string='Duration (Hours)', compute='_compute_duration', store=True)
@@ -54,23 +57,47 @@ class AttendanceLog(models.Model):
             else:
                 log.distance = 0.0
 
-    @api.depends('distance', 'classroom_id', 'check_in')
+    @api.depends('distance', 'classroom_id', 'check_in', 'teacher_id')
     def _compute_status(self):
         for log in self:
             if log.status == 'manual': continue
             if log.distance > log.classroom_id.radius:
                 log.status = 'outside'
                 continue
+            
+            # Find current schedule/subject
+            local_time = fields.Datetime.context_timestamp(log, log.check_in)
+            current_day = str(local_time.weekday())
+            current_hour = local_time.hour + (local_time.minute / 60.0)
+            tolerance = log.classroom_id.tolerance_margin / 60.0
+            
+            # Check for authorizad substitution first
+            sub = self.env['attendance.substitution'].search([
+                ('classroom_id', '=', log.classroom_id.id),
+                ('substitute_teacher_id', '=', log.teacher_id.id),
+                ('date', '=', local_time.date()),
+                ('state', '=', 'active')
+            ], limit=1)
+            
+            if sub:
+                log.subject_id = sub.subject_id
+                log.is_substitution = True
+                log.status = 'valid'
+                continue
+
+            # Regular schedule check
+            schedules = log.classroom_id.schedule_ids.filtered(
+                lambda s: s.day_of_week == current_day and 
+                s.start_hour <= current_hour <= (s.end_hour + tolerance)
+            )
+            
             if log.classroom_id.check_schedule:
-                local_time = fields.Datetime.context_timestamp(log, log.check_in)
-                current_day = str(local_time.weekday())
-                current_hour = local_time.hour + (local_time.minute / 60.0)
-                tolerance = log.classroom_id.tolerance_margin / 60.0
-                schedules = log.classroom_id.schedule_ids.filtered(lambda s: s.day_of_week == current_day)
-                is_on_time = any(s.start_hour <= current_hour <= (s.end_hour + tolerance) for s in schedules)
-                if not is_on_time:
+                valid_schedule = schedules.filtered(lambda s: s.teacher_id == log.teacher_id)
+                if not valid_schedule:
                     log.status = 'late'
                     continue
+                log.subject_id = valid_schedule[0].subject_id
+            
             log.status = 'valid'
 
     @api.model
@@ -79,7 +106,6 @@ class AttendanceLog(models.Model):
         if not classroom:
             return {'status': 'invalid', 'message': _('Invalid QR Code.')}
         
-        # Check-out logic: Find active log within last 12h
         active_log = self.search([
             ('teacher_id', '=', self.env.uid),
             ('classroom_id', '=', classroom.id),
@@ -102,20 +128,12 @@ class AttendanceLog(models.Model):
     def get_teacher_stats(self):
         today = fields.Date.today()
         first_day = today.replace(day=1)
-        logs = self.search([
-            ('teacher_id', '=', self.env.uid),
-            ('check_in', '>=', first_day)
-        ])
+        logs = self.search([('teacher_id', '=', self.env.uid), ('check_in', '>=', first_day)])
         total_hours = sum(logs.mapped('duration'))
         valid_count = len(logs.filtered(lambda l: l.status in ['valid', 'manual']))
         total_count = len(logs)
         punctuality = (valid_count / total_count * 100) if total_count > 0 else 100
-        
-        return {
-            'total_hours': round(total_hours, 2),
-            'punctuality': round(punctuality, 1),
-            'total_logs': total_count
-        }
+        return {'total_hours': round(total_hours, 2), 'punctuality': round(punctuality, 1), 'total_logs': total_count}
 
     def action_validate_manually(self):
         self.write({'status': 'manual'})

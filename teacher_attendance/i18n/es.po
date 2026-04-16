@@ -1,0 +1,962 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* teacher_attendance
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0-20260409\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-16 20:50+0000\n"
+"PO-Revision-Date: 2026-04-16 20:50+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: teacher_attendance
+#: model:ir.actions.report,print_report_name:teacher_attendance.action_report_attendance_log
+msgid "'Attendance_%s' % (object.teacher_id.name)"
+msgstr "'Asistencia_%s' % (object.teacher_id.name)"
+
+#. module: teacher_attendance
+#. odoo-javascript
+#: code:addons/teacher_attendance/static/src/components/kiosk/kiosk.xml:0
+msgid "-- Tap to choose room --"
+msgstr "-- Toque para elegir aula --"
+
+#. module: teacher_attendance
+#: model_terms:ir.ui.view,arch_db:teacher_attendance.view_users_form_inherit_attendance
+msgid "4-digit PIN"
+msgstr "PIN de 4 dígitos"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,help:teacher_attendance.field_res_users__attendance_pin
+msgid "4-digit PIN for kiosk mode."
+msgstr "PIN de 4 dígitos para el modo quiosco."
+
+#. module: teacher_attendance
+#: model_terms:ir.ui.view,arch_db:teacher_attendance.report_attendance_log_template
+msgid "<strong>Check-in:</strong>"
+msgstr "<strong>Entrada:</strong>"
+
+#. module: teacher_attendance
+#: model_terms:ir.ui.view,arch_db:teacher_attendance.report_attendance_log_template
+msgid "<strong>Classroom:</strong>"
+msgstr "<strong>Aula:</strong>"
+
+#. module: teacher_attendance
+#: model_terms:ir.ui.view,arch_db:teacher_attendance.report_attendance_log_template
+msgid "<strong>Teacher:</strong>"
+msgstr "<strong>Profesor:</strong>"
+
+#. module: teacher_attendance
+#: model:ir.model,name:teacher_attendance.model_attendance_subject
+msgid "Academic Subject"
+msgstr "Materia Académica"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_log__message_needaction
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_substitution__message_needaction
+msgid "Action Needed"
+msgstr "Acción requerida"
+
+#. module: teacher_attendance
+#: model_terms:ir.ui.view,arch_db:teacher_attendance.view_substitution_form
+msgid "Activate"
+msgstr "Activar"
+
+#. module: teacher_attendance
+#: model:ir.model.fields.selection,name:teacher_attendance.selection__attendance_substitution__state__active
+msgid "Active"
+msgstr "Activo"
+
+#. module: teacher_attendance
+#. odoo-javascript
+#: code:addons/teacher_attendance/static/src/components/scanner/scanner.xml:0
+msgid "Active Aulas"
+msgstr "Aulas Activas"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_log__activity_ids
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_substitution__activity_ids
+msgid "Activities"
+msgstr "Actividades"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_log__activity_exception_decoration
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_substitution__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr "Decoración de Actividad de Excepción"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_log__activity_state
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_substitution__activity_state
+msgid "Activity State"
+msgstr "Estado de la actividad"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_log__activity_type_icon
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_substitution__activity_type_icon
+msgid "Activity Type Icon"
+msgstr "Icono de tipo de actividad"
+
+#. module: teacher_attendance
+#: model:ir.ui.menu,name:teacher_attendance.menu_attendance_analysis
+msgid "Analysis"
+msgstr "Análisis"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_log__message_attachment_count
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_substitution__message_attachment_count
+msgid "Attachment Count"
+msgstr "Conteo de archivos adjuntos"
+
+#. module: teacher_attendance
+#: model:ir.ui.menu,name:teacher_attendance.menu_teacher_attendance_root
+#: model_terms:ir.ui.view,arch_db:teacher_attendance.view_users_form_inherit_attendance
+msgid "Attendance"
+msgstr "Asistencia"
+
+#. module: teacher_attendance
+#: model:ir.actions.act_window,name:teacher_attendance.action_attendance_analysis
+#: model_terms:ir.ui.view,arch_db:teacher_attendance.view_attendance_log_graph
+#: model_terms:ir.ui.view,arch_db:teacher_attendance.view_attendance_log_pivot
+msgid "Attendance Analysis"
+msgstr "Análisis de Asistencia"
+
+#. module: teacher_attendance
+#: model_terms:ir.ui.view,arch_db:teacher_attendance.view_attendance_log_calendar
+msgid "Attendance Calendar"
+msgstr "Calendario de Asistencia"
+
+#. module: teacher_attendance
+#: model_terms:ir.ui.view,arch_db:teacher_attendance.report_attendance_log_template
+msgid "Attendance Certificate"
+msgstr "Certificado de Asistencia"
+
+#. module: teacher_attendance
+#: model:ir.actions.client,name:teacher_attendance.action_attendance_dashboard
+msgid "Attendance Dashboard"
+msgstr "Tablero de Asistencia"
+
+#. module: teacher_attendance
+#: model:ir.model,name:teacher_attendance.model_attendance_log
+msgid "Attendance Log"
+msgstr "Registro de Asistencia"
+
+#. module: teacher_attendance
+#: model:ir.actions.act_window,name:teacher_attendance.action_attendance_log
+#: model:ir.ui.menu,name:teacher_attendance.menu_attendance_log
+msgid "Attendance Logs"
+msgstr "Registros de Asistencia"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_res_users__attendance_pin
+msgid "Attendance PIN"
+msgstr "PIN de Asistencia"
+
+#. module: teacher_attendance
+#: model:ir.actions.report,name:teacher_attendance.action_report_attendance_log
+msgid "Attendance Report"
+msgstr "Reporte de Asistencia"
+
+#. module: teacher_attendance
+#. odoo-python
+#: code:addons/teacher_attendance/models/attendance_log.py:0
+msgid "Attendance validated manually by %s"
+msgstr "Asistencia validada manualmente por %s"
+
+#. module: teacher_attendance
+#: model_terms:ir.ui.view,arch_db:teacher_attendance.report_attendance_log_template
+msgid "Authorized Signature"
+msgstr "Firma Autorizada"
+
+#. module: teacher_attendance
+#. odoo-javascript
+#: code:addons/teacher_attendance/static/src/components/kiosk/kiosk.xml:0
+msgid "Campus Attendance"
+msgstr "Asistencia del Campus"
+
+#. module: teacher_attendance
+#. odoo-javascript
+#: code:addons/teacher_attendance/static/src/components/signature/signature.xml:0
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: teacher_attendance
+#: model:ir.model.fields.selection,name:teacher_attendance.selection__attendance_substitution__state__cancelled
+msgid "Cancelled"
+msgstr "Cancelado"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_log__check_in
+msgid "Check-in Time"
+msgstr "Hora de Entrada"
+
+#. module: teacher_attendance
+#. odoo-python
+#: code:addons/teacher_attendance/models/attendance_log.py:0
+msgid "Check-in outside of parameters."
+msgstr "Entrada fuera de parámetros."
+
+#. module: teacher_attendance
+#. odoo-python
+#: code:addons/teacher_attendance/models/attendance_log.py:0
+msgid "Check-in successful!"
+msgstr "¡Entrada registrada con éxito!"
+
+#. module: teacher_attendance
+#: model_terms:ir.ui.view,arch_db:teacher_attendance.view_attendance_log_form
+msgid "Check-in/Out Details"
+msgstr "Detalles de Entrada/Salida"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_log__check_out
+msgid "Check-out Time"
+msgstr "Hora de Salida"
+
+#. module: teacher_attendance
+#. odoo-python
+#: code:addons/teacher_attendance/models/attendance_log.py:0
+msgid "Check-out successful!"
+msgstr "¡Salida registrada con éxito!"
+
+#. module: teacher_attendance
+#: model:ir.model,name:teacher_attendance.model_attendance_classroom
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_log__classroom_id
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_schedule__classroom_id
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_substitution__classroom_id
+#: model_terms:ir.ui.view,arch_db:teacher_attendance.view_attendance_log_form
+msgid "Classroom"
+msgstr "Aula"
+
+#. module: teacher_attendance
+#. odoo-javascript
+#: code:addons/teacher_attendance/static/src/components/scanner/scanner.xml:0
+msgid "Classroom Attendance"
+msgstr "Asistencia de Aula"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_classroom__name
+msgid "Classroom Name"
+msgstr "Nombre del Aula"
+
+#. module: teacher_attendance
+#: model:ir.model,name:teacher_attendance.model_attendance_schedule
+msgid "Classroom Schedule"
+msgstr "Horario del Aula"
+
+#. module: teacher_attendance
+#: model:ir.actions.act_window,name:teacher_attendance.action_attendance_classroom
+#: model:ir.ui.menu,name:teacher_attendance.menu_attendance_classroom
+msgid "Classrooms"
+msgstr "Aulas"
+
+#. module: teacher_attendance
+#. odoo-javascript
+#: code:addons/teacher_attendance/static/src/components/signature/signature.xml:0
+msgid "Clear"
+msgstr "Limpiar"
+
+#. module: teacher_attendance
+#. odoo-javascript
+#: code:addons/teacher_attendance/static/src/widgets/location_picker/location_picker.xml:0
+msgid "Click on the map or drag the marker to set the location."
+msgstr "Haga clic en el mapa o arrastre el marcador para establecer la ubicación."
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_classroom__code
+msgid "Code"
+msgstr "Código"
+
+#. module: teacher_attendance
+#. odoo-javascript
+#: code:addons/teacher_attendance/static/src/components/signature/signature.xml:0
+msgid "Confirm & Save"
+msgstr "Confirmar y Guardar"
+
+#. module: teacher_attendance
+#: model:res.groups,name:teacher_attendance.group_coordinator
+msgid "Coordinator"
+msgstr "Coordinador"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_classroom__create_uid
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_log__create_uid
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_schedule__create_uid
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_subject__create_uid
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_substitution__create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_classroom__create_date
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_log__create_date
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_schedule__create_date
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_subject__create_date
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_substitution__create_date
+msgid "Created on"
+msgstr "Creado el"
+
+#. module: teacher_attendance
+#. odoo-javascript
+#: code:addons/teacher_attendance/static/src/components/kiosk/kiosk.xml:0
+msgid "Current Classroom"
+msgstr "Aula Actual"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_schedule__day_of_week
+msgid "Day of Week"
+msgstr "Día de la semana"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_classroom__display_name
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_log__display_name
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_schedule__display_name
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_subject__display_name
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_substitution__display_name
+#: model:ir.model.fields,field_description:teacher_attendance.field_res_users__display_name
+msgid "Display Name"
+msgstr "Nombre para mostrar"
+
+#. module: teacher_attendance
+#: model_terms:ir.ui.view,arch_db:teacher_attendance.view_attendance_log_tree
+msgid "Dist (m)"
+msgstr "Dist (m)"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_log__distance
+msgid "Distance (m)"
+msgstr "Distancia (m)"
+
+#. module: teacher_attendance
+#: model:ir.model.fields.selection,name:teacher_attendance.selection__attendance_substitution__state__done
+msgid "Done"
+msgstr "Finalizado"
+
+#. module: teacher_attendance
+#: model_terms:ir.ui.view,arch_db:teacher_attendance.view_classroom_form
+msgid "Download QR"
+msgstr "Descargar QR"
+
+#. module: teacher_attendance
+#: model:ir.model.fields.selection,name:teacher_attendance.selection__attendance_substitution__state__draft
+msgid "Draft"
+msgstr "Borrador"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_log__duration
+msgid "Duration (Hours)"
+msgstr "Duración (Horas)"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_schedule__end_hour
+msgid "End Hour"
+msgstr "Hora de Fin"
+
+#. module: teacher_attendance
+#. odoo-javascript
+#: code:addons/teacher_attendance/static/src/components/scanner/scanner.xml:0
+msgid ""
+"Ensure you are inside the classroom and scan the QR code posted in the room."
+msgstr ""
+"Asegúrese de estar dentro del aula y escanee el código QR pegado en la sala."
+
+#. module: teacher_attendance
+#: model_terms:ir.ui.view,arch_db:teacher_attendance.view_attendance_log_form
+msgid "Evidence"
+msgstr "Evidencia"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_log__evidence
+msgid "Evidence Attachment"
+msgstr "Adjunto de Evidencia"
+
+#. module: teacher_attendance
+#: model_terms:ir.ui.view,arch_db:teacher_attendance.report_attendance_log_template
+msgid "Field"
+msgstr "Campo"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_log__message_follower_ids
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_substitution__message_follower_ids
+msgid "Followers"
+msgstr "Seguidores"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_log__message_partner_ids
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_substitution__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "Seguidores (Contactos)"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,help:teacher_attendance.field_attendance_log__activity_type_icon
+#: model:ir.model.fields,help:teacher_attendance.field_attendance_substitution__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr "Icono de Font Awesome, ej. fa-tasks"
+
+#. module: teacher_attendance
+#: model:ir.model.fields.selection,name:teacher_attendance.selection__attendance_schedule__day_of_week__4
+msgid "Friday"
+msgstr "Viernes"
+
+#. module: teacher_attendance
+#: model_terms:ir.ui.view,arch_db:teacher_attendance.view_attendance_log_form
+msgid "GPS Data"
+msgstr "Datos GPS"
+
+#. module: teacher_attendance
+#: model_terms:ir.ui.view,arch_db:teacher_attendance.report_attendance_log_template
+msgid "GPS Distance"
+msgstr "Distancia GPS"
+
+#. module: teacher_attendance
+#. odoo-javascript
+#: code:addons/teacher_attendance/static/src/widgets/location_picker/location_picker.xml:0
+msgid "Get Current Location"
+msgstr "Obtener Ubicación Actual"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_log__has_message
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_substitution__has_message
+msgid "Has Message"
+msgstr "Tiene mensaje"
+
+#. module: teacher_attendance
+#. odoo-javascript
+#: code:addons/teacher_attendance/static/src/components/kiosk/kiosk.xml:0
+msgid "Have a great class"
+msgstr "Que tenga una buena clase"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_classroom__id
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_log__id
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_schedule__id
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_subject__id
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_substitution__id
+#: model:ir.model.fields,field_description:teacher_attendance.field_res_users__id
+msgid "ID"
+msgstr "ID"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_log__activity_exception_icon
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_substitution__activity_exception_icon
+msgid "Icon"
+msgstr "Icono"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,help:teacher_attendance.field_attendance_log__activity_exception_icon
+#: model:ir.model.fields,help:teacher_attendance.field_attendance_substitution__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr "Icono para indicar una actividad de excepción."
+
+#. module: teacher_attendance
+#. odoo-javascript
+#: code:addons/teacher_attendance/static/src/components/kiosk/kiosk.xml:0
+msgid "Identify yourself to register"
+msgstr "Identifíquese para registrarse"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,help:teacher_attendance.field_attendance_log__message_needaction
+#: model:ir.model.fields,help:teacher_attendance.field_attendance_substitution__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "Si está marcado, hay nuevos mensajes que requieren su atención."
+
+#. module: teacher_attendance
+#: model:ir.model.fields,help:teacher_attendance.field_attendance_log__message_has_error
+#: model:ir.model.fields,help:teacher_attendance.field_attendance_substitution__message_has_error
+msgid "If checked, some messages have a delivery error."
+msgstr "Si está marcado, algunos mensajes tienen un error de entrega."
+
+#. module: teacher_attendance
+#: model:ir.model.fields.selection,name:teacher_attendance.selection__attendance_log__status__invalid
+msgid "Invalid"
+msgstr "Inválido"
+
+#. module: teacher_attendance
+#. odoo-python
+#: code:addons/teacher_attendance/models/attendance_log.py:0
+msgid "Invalid QR Code."
+msgstr "Código QR Inválido."
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_log__message_is_follower
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_substitution__message_is_follower
+msgid "Is Follower"
+msgstr "Es seguidor"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_log__is_substitution
+msgid "Is Substitution"
+msgstr "Es Suplencia"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_log__justification
+#: model_terms:ir.ui.view,arch_db:teacher_attendance.view_attendance_log_form
+msgid "Justification"
+msgstr "Justificación"
+
+#. module: teacher_attendance
+#: model:ir.actions.client,name:teacher_attendance.action_attendance_kiosk
+#: model:ir.ui.menu,name:teacher_attendance.menu_attendance_kiosk
+#: model_terms:ir.ui.view,arch_db:teacher_attendance.view_users_form_inherit_attendance
+msgid "Kiosk Mode"
+msgstr "Modo Quiosco"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_classroom__write_uid
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_log__write_uid
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_schedule__write_uid
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_subject__write_uid
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_substitution__write_uid
+msgid "Last Updated by"
+msgstr "Última actualización por"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_classroom__write_date
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_log__write_date
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_schedule__write_date
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_subject__write_date
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_substitution__write_date
+msgid "Last Updated on"
+msgstr "Última actualización el"
+
+#. module: teacher_attendance
+#. odoo-javascript
+#: code:addons/teacher_attendance/static/src/widgets/location_picker/location_picker.xml:0
+msgid "Lat:"
+msgstr "Lat:"
+
+#. module: teacher_attendance
+#. odoo-javascript
+#: code:addons/teacher_attendance/static/src/components/scanner/scanner.xml:0
+msgid "Late/Unscheduled"
+msgstr "Tardanza/Fuera de Horario"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_classroom__latitude
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_log__latitude
+msgid "Latitude"
+msgstr "Latitud"
+
+#. module: teacher_attendance
+#. odoo-javascript
+#: code:addons/teacher_attendance/static/src/widgets/location_picker/location_picker.xml:0
+msgid "Lng:"
+msgstr "Lng:"
+
+#. module: teacher_attendance
+#: model_terms:ir.ui.view,arch_db:teacher_attendance.view_classroom_form
+msgid "Location Selection"
+msgstr "Selección de Ubicación"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_classroom__longitude
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_log__longitude
+msgid "Longitude"
+msgstr "Longitud"
+
+#. module: teacher_attendance
+#: model:ir.model.fields.selection,name:teacher_attendance.selection__attendance_log__status__manual
+msgid "Manually Validated"
+msgstr "Validado Manualmente"
+
+#. module: teacher_attendance
+#. odoo-javascript
+#: code:addons/teacher_attendance/static/src/components/occupancy_map/occupancy_map.xml:0
+msgid "Map shows classrooms with valid check-ins today in green."
+msgstr "El mapa muestra en verde las aulas con entradas válidas hoy."
+
+#. module: teacher_attendance
+#: model_terms:ir.ui.view,arch_db:teacher_attendance.view_substitution_form
+msgid "Mark Done"
+msgstr "Marcar como Finalizado"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_log__message_has_error
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_substitution__message_has_error
+msgid "Message Delivery error"
+msgstr "Error de entrega de mensaje"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_log__message_ids
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_substitution__message_ids
+msgid "Messages"
+msgstr "Mensajes"
+
+#. module: teacher_attendance
+#: model:ir.model.fields.selection,name:teacher_attendance.selection__attendance_schedule__day_of_week__0
+msgid "Monday"
+msgstr "Lunes"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_log__my_activity_date_deadline
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_substitution__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr "Fecha límite de mi actividad"
+
+#. module: teacher_attendance
+#: model:ir.actions.act_window,name:teacher_attendance.action_attendance_log_my
+#: model:ir.ui.menu,name:teacher_attendance.menu_attendance_log_my
+msgid "My History"
+msgstr "Mi Historial"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_log__activity_date_deadline
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_substitution__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr "Fecha límite de la siguiente actividad"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_log__activity_summary
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_substitution__activity_summary
+msgid "Next Activity Summary"
+msgstr "Resumen de la siguiente actividad"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_log__activity_type_id
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_substitution__activity_type_id
+msgid "Next Activity Type"
+msgstr "Tipo de la siguiente actividad"
+
+#. module: teacher_attendance
+#: model_terms:ir.actions.act_window,help:teacher_attendance.action_attendance_analysis
+msgid "No data to analyze yet."
+msgstr "No hay datos para analizar aún."
+
+#. module: teacher_attendance
+#. odoo-javascript
+#: code:addons/teacher_attendance/static/src/components/history/history.xml:0
+msgid "No recent activity."
+msgstr "Sin actividad reciente."
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_log__message_needaction_counter
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_substitution__message_needaction_counter
+msgid "Number of Actions"
+msgstr "Número de acciones"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_log__message_has_error_counter
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_substitution__message_has_error_counter
+msgid "Number of errors"
+msgstr "Número de errores"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,help:teacher_attendance.field_attendance_log__message_needaction_counter
+#: model:ir.model.fields,help:teacher_attendance.field_attendance_substitution__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "Número de mensajes que requieren acción"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,help:teacher_attendance.field_attendance_log__message_has_error_counter
+#: model:ir.model.fields,help:teacher_attendance.field_attendance_substitution__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "Número de mensajes con error de entrega"
+
+#. module: teacher_attendance
+#: model:ir.actions.client,name:teacher_attendance.action_occupancy_map
+#: model:ir.ui.menu,name:teacher_attendance.menu_occupancy_map
+msgid "Occupancy Map"
+msgstr "Mapa de Ocupación"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_substitution__original_teacher_id
+msgid "Original Teacher"
+msgstr "Profesor Original"
+
+#. module: teacher_attendance
+#: model:ir.model.fields.selection,name:teacher_attendance.selection__attendance_log__status__late
+msgid "Out of Schedule"
+msgstr "Fuera de Horario"
+
+#. module: teacher_attendance
+#: model:ir.model.fields.selection,name:teacher_attendance.selection__attendance_log__status__outside
+msgid "Outside"
+msgstr "Fuera de Rango"
+
+#. module: teacher_attendance
+#. odoo-javascript
+#: code:addons/teacher_attendance/static/src/components/signature/signature.xml:0
+msgid "Please Sign Below"
+msgstr "Por favor, firme abajo"
+
+#. module: teacher_attendance
+#. odoo-javascript
+#: code:addons/teacher_attendance/static/src/components/kiosk/kiosk.xml:0
+msgid "Powered by Odoo 19 | Attendance System"
+msgstr "Desarrollado por Odoo 19 | Sistema de Asistencia"
+
+#. module: teacher_attendance
+#. odoo-javascript
+#: code:addons/teacher_attendance/static/src/components/scanner/scanner.xml:0
+msgid "Punctuality %"
+msgstr "% Puntualidad"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_classroom__qr_code
+#: model_terms:ir.ui.view,arch_db:teacher_attendance.view_classroom_form
+msgid "QR Code"
+msgstr "Código QR"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_classroom__radius
+msgid "Radius (m)"
+msgstr "Radio (m)"
+
+#. module: teacher_attendance
+#. odoo-javascript
+#: code:addons/teacher_attendance/static/src/components/occupancy_map/occupancy_map.xml:0
+msgid "Real-Time Occupancy Map"
+msgstr "Mapa de Ocupación en Tiempo Real"
+
+#. module: teacher_attendance
+#: model_terms:ir.ui.view,arch_db:teacher_attendance.view_attendance_log_form
+msgid "Reason for late/outside attendance..."
+msgstr "Motivo de la tardanza o asistencia fuera de rango..."
+
+#. module: teacher_attendance
+#. odoo-javascript
+#: code:addons/teacher_attendance/static/src/components/history/history.xml:0
+msgid "Recent Activity"
+msgstr "Actividad Reciente"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_log__activity_user_id
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_substitution__activity_user_id
+msgid "Responsible User"
+msgstr "Usuario Responsable"
+
+#. module: teacher_attendance
+#: model:ir.model.fields.selection,name:teacher_attendance.selection__attendance_schedule__day_of_week__5
+msgid "Saturday"
+msgstr "Sábado"
+
+#. module: teacher_attendance
+#: model:ir.ui.menu,name:teacher_attendance.menu_attendance_dashboard
+msgid "Scan QR"
+msgstr "Escanear QR"
+
+#. module: teacher_attendance
+#: model_terms:ir.ui.view,arch_db:teacher_attendance.view_classroom_form
+msgid "Schedule"
+msgstr "Horario"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_classroom__schedule_ids
+msgid "Schedules"
+msgstr "Horarios"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_classroom__secret_key
+msgid "Secret Key"
+msgstr "Clave Secreta"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_log__signature
+msgid "Signature"
+msgstr "Firma"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_schedule__start_hour
+msgid "Start Hour"
+msgstr "Hora de Inicio"
+
+#. module: teacher_attendance
+#. odoo-javascript
+#: code:addons/teacher_attendance/static/src/components/scanner/scanner.xml:0
+msgid "Start Scanner"
+msgstr "Iniciar Escáner"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_log__status
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_substitution__state
+#: model_terms:ir.ui.view,arch_db:teacher_attendance.report_attendance_log_template
+msgid "Status"
+msgstr "Estado"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,help:teacher_attendance.field_attendance_log__activity_state
+#: model:ir.model.fields,help:teacher_attendance.field_attendance_substitution__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+"Estado basado en actividades\n"
+"Vencida: La fecha límite ya ha pasado\n"
+"Hoy: La fecha de la actividad es hoy\n"
+"Planificada: Actividades futuras."
+
+#. module: teacher_attendance
+#. odoo-javascript
+#: code:addons/teacher_attendance/static/src/components/scanner/scanner.xml:0
+msgid "Stop Scanner"
+msgstr "Detener Escáner"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_log__subject_id
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_schedule__subject_id
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_substitution__subject_id
+#: model_terms:ir.ui.view,arch_db:teacher_attendance.view_attendance_log_form
+msgid "Subject"
+msgstr "Asignatura"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_subject__code
+msgid "Subject Code"
+msgstr "Código de Asignatura"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_subject__name
+msgid "Subject Name"
+msgstr "Nombre de Asignatura"
+
+#. module: teacher_attendance
+#: model:ir.actions.act_window,name:teacher_attendance.action_attendance_subject
+#: model:ir.ui.menu,name:teacher_attendance.menu_attendance_subject
+msgid "Subjects"
+msgstr "Asignaturas"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_substitution__substitute_teacher_id
+msgid "Substitute Teacher"
+msgstr "Profesor Suplente"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_substitution__date
+msgid "Substitution Date"
+msgstr "Fecha de Suplencia"
+
+#. module: teacher_attendance
+#: model:ir.actions.act_window,name:teacher_attendance.action_attendance_substitution
+#: model:ir.ui.menu,name:teacher_attendance.menu_attendance_substitution
+msgid "Substitutions"
+msgstr "Suplencias"
+
+#. module: teacher_attendance
+#. odoo-javascript
+#: code:addons/teacher_attendance/static/src/components/kiosk/kiosk.xml:0
+msgid "Success!"
+msgstr "¡Éxito!"
+
+#. module: teacher_attendance
+#: model:ir.model.fields.selection,name:teacher_attendance.selection__attendance_schedule__day_of_week__6
+msgid "Sunday"
+msgstr "Domingo"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_log__teacher_id
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_schedule__teacher_id
+#: model:res.groups,name:teacher_attendance.group_teacher
+#: model_terms:ir.ui.view,arch_db:teacher_attendance.view_attendance_log_form
+msgid "Teacher"
+msgstr "Profesor"
+
+#. module: teacher_attendance
+#: model:res.groups.privilege,name:teacher_attendance.res_groups_privilege_teacher_attendance
+msgid "Teacher Attendance"
+msgstr "Asistencia de Profesores"
+
+#. module: teacher_attendance
+#: model:ir.model,name:teacher_attendance.model_attendance_substitution
+msgid "Teacher Substitution"
+msgstr "Suplencia de Profesor"
+
+#. module: teacher_attendance
+#: model:ir.model.fields.selection,name:teacher_attendance.selection__attendance_schedule__day_of_week__3
+msgid "Thursday"
+msgstr "Jueves"
+
+#. module: teacher_attendance
+#. odoo-javascript
+#: code:addons/teacher_attendance/static/src/components/scanner/scanner.xml:0
+msgid "Today"
+msgstr "Hoy"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_classroom__tolerance_margin
+msgid "Tolerance (min)"
+msgstr "Tolerancia (min)"
+
+#. module: teacher_attendance
+#: model_terms:ir.ui.view,arch_db:teacher_attendance.view_attendance_log_tree
+msgid "Total Hours"
+msgstr "Horas Totales"
+
+#. module: teacher_attendance
+#: model:ir.model.fields.selection,name:teacher_attendance.selection__attendance_schedule__day_of_week__1
+msgid "Tuesday"
+msgstr "Martes"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,help:teacher_attendance.field_attendance_log__activity_exception_decoration
+#: model:ir.model.fields,help:teacher_attendance.field_attendance_substitution__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr "Tipo de actividad de excepción registrada."
+
+#. module: teacher_attendance
+#: model:ir.model,name:teacher_attendance.model_res_users
+msgid "User"
+msgstr "Usuario"
+
+#. module: teacher_attendance
+#: model:ir.model.fields.selection,name:teacher_attendance.selection__attendance_log__status__valid
+msgid "Valid"
+msgstr "Válido"
+
+#. module: teacher_attendance
+#: model_terms:ir.ui.view,arch_db:teacher_attendance.view_attendance_log_form
+msgid "Validate Manually"
+msgstr "Validar Manualmente"
+
+#. module: teacher_attendance
+#: model:ir.model.fields,field_description:teacher_attendance.field_attendance_classroom__check_schedule
+msgid "Validate Schedule"
+msgstr "Validar Horario"
+
+#. module: teacher_attendance
+#: model_terms:ir.ui.view,arch_db:teacher_attendance.report_attendance_log_template
+msgid "Value"
+msgstr "Valor"
+
+#. module: teacher_attendance
+#: model_terms:ir.ui.view,arch_db:teacher_attendance.view_attendance_log_form
+msgid "Verification"
+msgstr "Verificación"
+
+#. module: teacher_attendance
+#: model:ir.model.fields.selection,name:teacher_attendance.selection__attendance_schedule__day_of_week__2
+msgid "Wednesday"
+msgstr "Miércoles"
+
+#. module: teacher_attendance
+#. odoo-javascript
+#: code:addons/teacher_attendance/static/src/components/scanner/scanner.xml:0
+msgid "Worked Hours (Month)"
+msgstr "Horas Trabajadas (Mes)"
+
+#. module: teacher_attendance
+#: model_terms:ir.ui.view,arch_db:teacher_attendance.view_classroom_form
+msgid "e.g. Science Lab"
+msgstr "ej. Laboratorio de Ciencias"
+
+#. module: teacher_attendance
+#: model_terms:ir.ui.view,arch_db:teacher_attendance.report_attendance_log_template
+msgid "meters"
+msgstr "metros"
+
+#. module: teacher_attendance
+#. odoo-javascript
+#: code:addons/teacher_attendance/static/src/components/occupancy_map/occupancy_map.xml:0
+msgid "● Empty"
+msgstr "● Vacío"
+
+#. module: teacher_attendance
+#. odoo-javascript
+#: code:addons/teacher_attendance/static/src/components/occupancy_map/occupancy_map.xml:0
+msgid "● Occupied"
+msgstr "● Ocupado"

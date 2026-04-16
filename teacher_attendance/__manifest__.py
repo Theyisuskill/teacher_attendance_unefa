@@ -11,6 +11,7 @@
         'security/security_groups.xml',
         'security/ir.model.access.csv',
         'report/attendance_report_templates.xml',
+        'views/academic_views.xml',
         'views/classroom_views.xml',
         'views/attendance_log_views.xml',
         'views/menu_views.xml',

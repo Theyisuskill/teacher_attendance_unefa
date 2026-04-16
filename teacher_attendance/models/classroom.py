@@ -5,6 +5,13 @@ import qrcode
 import uuid
 from odoo import models, fields, api
 
+class AttendanceSubject(models.Model):
+    _name = 'attendance.subject'
+    _description = 'Academic Subject'
+
+    name = fields.Char(string='Subject Name', required=True)
+    code = fields.Char(string='Subject Code')
+
 class AttendanceClassroom(models.Model):
     _name = 'attendance.classroom'
     _description = 'Classroom'
@@ -18,7 +25,7 @@ class AttendanceClassroom(models.Model):
     secret_key = fields.Char(string='Secret Key', readonly=True, default=lambda self: str(uuid.uuid4()))
     
     check_schedule = fields.Boolean(string='Validate Schedule', default=False)
-    tolerance_margin = fields.Integer(string='Tolerance (min)', default=15, help="Minutes allowed after the start hour.")
+    tolerance_margin = fields.Integer(string='Tolerance (min)', default=15)
     schedule_ids = fields.One2many('attendance.schedule', 'classroom_id', string='Schedules')
 
     _sql_constraints = [
@@ -29,16 +36,10 @@ class AttendanceClassroom(models.Model):
     def _compute_qr_code(self):
         for record in self:
             if record.secret_key:
-                qr = qrcode.QRCode(
-                    version=1,
-                    error_correction=qrcode.constants.ERROR_CORRECT_L,
-                    box_size=10,
-                    border=4,
-                )
+                qr = qrcode.QRCode(version=1, box_size=10, border=4)
                 qr.add_data(record.secret_key)
                 qr.make(fit=True)
                 img = qr.make_image(fill_color="black", back_color="white")
-                
                 temp = io.BytesIO()
                 img.save(temp, format="PNG")
                 record.qr_code = base64.b64encode(temp.getvalue())
@@ -59,14 +60,11 @@ class AttendanceSchedule(models.Model):
     _order = 'day_of_week, start_hour'
 
     classroom_id = fields.Many2one('attendance.classroom', string='Classroom', ondelete='cascade')
+    subject_id = fields.Many2one('attendance.subject', string='Subject', required=True)
+    teacher_id = fields.Many2one('res.users', string='Teacher', required=True)
     day_of_week = fields.Selection([
-        ('0', 'Monday'),
-        ('1', 'Tuesday'),
-        ('2', 'Wednesday'),
-        ('3', 'Thursday'),
-        ('4', 'Friday'),
-        ('5', 'Saturday'),
-        ('6', 'Sunday'),
+        ('0', 'Monday'), ('1', 'Tuesday'), ('2', 'Wednesday'),
+        ('3', 'Thursday'), ('4', 'Friday'), ('5', 'Saturday'), ('6', 'Sunday'),
     ], string='Day of Week', required=True)
     start_hour = fields.Float(string='Start Hour', required=True)
     end_hour = fields.Float(string='End Hour', required=True)

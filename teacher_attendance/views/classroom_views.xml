@@ -42,6 +42,8 @@
                             <field name="schedule_ids" invisible="not check_schedule">
                                 <list editable="bottom">
                                     <field name="day_of_week"/>
+                                    <field name="teacher_id" options="{'no_create': True}"/>
+                                    <field name="subject_id" options="{'no_create': True}"/>
                                     <field name="start_hour" widget="float_time"/>
                                     <field name="end_hour" widget="float_time"/>
                                 </list>

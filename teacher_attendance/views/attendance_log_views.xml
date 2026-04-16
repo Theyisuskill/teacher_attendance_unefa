@@ -7,6 +7,8 @@
             <list create="false">
                 <field name="teacher_id"/>
                 <field name="classroom_id"/>
+                <field name="subject_id"/>
+                <field name="is_substitution" optional="show"/>
                 <field name="check_in"/>
                 <field name="check_out"/>
                 <field name="duration" widget="float_time" sum="Total Hours"/>
@@ -26,6 +28,7 @@
         <field name="arch" type="xml">
             <calendar string="Attendance Calendar" date_start="check_in" date_stop="check_out" color="teacher_id" mode="month">
                 <field name="teacher_id" avatar_field="image_128"/>
+                <field name="subject_id"/>
                 <field name="classroom_id"/>
                 <field name="status"/>
             </calendar>
@@ -48,6 +51,10 @@
                         <h1>
                             <field name="teacher_id" readonly="1" options="{'no_open': True}"/>
                         </h1>
+                        <label for="subject_id" string="Subject"/>
+                        <h2>
+                            <field name="subject_id" readonly="1"/>
+                        </h2>
                         <label for="classroom_id" string="Classroom"/>
                         <h3>
                             <field name="classroom_id" readonly="1"/>
@@ -59,6 +66,7 @@
                             <field name="check_out" readonly="1"/>
                             <field name="duration" widget="float_time" readonly="1"/>
                             <field name="distance" readonly="1"/>
+                            <field name="is_substitution" readonly="1"/>
                         </group>
                         <group string="Verification">
                             <field name="signature" widget="image" options="{'size': [200, 100]}" readonly="1"/>
@@ -93,7 +101,7 @@
         <field name="model">attendance.log</field>
         <field name="arch" type="xml">
             <graph string="Attendance Analysis" type="bar">
-                <field name="classroom_id"/>
+                <field name="subject_id"/>
                 <field name="status"/>
                 <field name="duration" type="measure"/>
             </graph>
@@ -106,7 +114,7 @@
         <field name="arch" type="xml">
             <pivot string="Attendance Analysis">
                 <field name="check_in" type="row" interval="day"/>
-                <field name="classroom_id" type="row"/>
+                <field name="subject_id" type="row"/>
                 <field name="teacher_id" type="col"/>
                 <field name="duration" type="measure"/>
             </pivot>

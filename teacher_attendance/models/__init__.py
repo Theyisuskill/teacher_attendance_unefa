@@ -2,3 +2,4 @@
 from . import classroom
 from . import attendance_log
 from . import res_users
+from . import substitution

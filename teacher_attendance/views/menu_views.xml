@@ -8,7 +8,19 @@
               name="Classrooms"
               parent="menu_teacher_attendance_root"
               action="action_attendance_classroom"
-              sequence="10"/>
+              sequence="20"/>
+
+    <menuitem id="menu_attendance_subject"
+              name="Subjects"
+              parent="menu_teacher_attendance_root"
+              action="action_attendance_subject"
+              sequence="25"/>
+
+    <menuitem id="menu_attendance_substitution"
+              name="Substitutions"
+              parent="menu_teacher_attendance_root"
+              action="action_attendance_substitution"
+              sequence="28"/>
 
     <menuitem id="menu_attendance_log"
               name="Attendance Logs"
