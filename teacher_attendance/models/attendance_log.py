@@ -135,6 +135,73 @@ class AttendanceLog(models.Model):
         punctuality = (valid_count / total_count * 100) if total_count > 0 else 100
         return {'total_hours': round(total_hours, 2), 'punctuality': round(punctuality, 1), 'total_logs': total_count}
 
+    @api.model
+    def action_log_attendance_by_cedula(self, cedula, latitude=0, longitude=0):
+        cedula_clean = cedula.strip().replace('-', '').replace('.', '')
+        partner = self.env['res.partner'].search([
+            ('vat', 'ilike', cedula_clean)
+        ], limit=1)
+        if not partner:
+            return {'status': 'invalid', 'message': _('Cedula %s no encontrada en el sistema.') % cedula}
+
+        teacher = self.env['res.users'].search([('partner_id', '=', partner.id)], limit=1)
+        if not teacher:
+            return {'status': 'invalid', 'message': _('Usuario no encontrado para la cedula %s.') % cedula}
+
+        local_time = fields.Datetime.context_timestamp(self, fields.Datetime.now())
+        current_day = str(local_time.weekday())
+        current_hour = local_time.hour + (local_time.minute / 60.0)
+
+        schedule = self.env['attendance.schedule'].search([
+            ('teacher_id', '=', teacher.id),
+            ('day_of_week', '=', current_day),
+            ('start_hour', '<=', current_hour),
+            ('end_hour', '>=', current_hour),
+        ], limit=1)
+
+        classroom = False
+        if schedule:
+            classroom = schedule.classroom_id
+        else:
+            classrooms = self.env['attendance.classroom'].search([])
+            best_distance = float('inf')
+            for cr in classrooms:
+                if latitude and longitude and cr.latitude and cr.longitude:
+                    R = 6371e3
+                    phi1 = math.radians(latitude)
+                    phi2 = math.radians(cr.latitude)
+                    delta_phi = math.radians(cr.latitude - latitude)
+                    delta_lambda = math.radians(cr.longitude - longitude)
+                    a = math.sin(delta_phi / 2)**2 + math.cos(phi1) * math.cos(phi2) * math.sin(delta_lambda / 2)**2
+                    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+                    dist = R * c
+                    if dist < best_distance:
+                        best_distance = dist
+                        classroom = cr
+
+        if not classroom:
+            return {'status': 'invalid', 'message': _('No se pudo determinar el aula. Acérquese a un aula registrada.')}
+
+        active_log = self.search([
+            ('teacher_id', '=', teacher.id),
+            ('classroom_id', '=', classroom.id),
+            ('check_out', '=', False),
+            ('check_in', '>', fields.Datetime.now() - datetime.timedelta(hours=12))
+        ], limit=1)
+
+        if active_log:
+            active_log.write({'check_out': fields.Datetime.now()})
+            return {'status': 'checkout', 'message': _('Salida registrada para %s. Duracion: %.1f horas.') % (teacher.name, active_log.duration)}
+
+        vals = {
+            'teacher_id': teacher.id,
+            'classroom_id': classroom.id,
+            'latitude': latitude,
+            'longitude': longitude,
+        }
+        log = self.create(vals)
+        return {'status': log.status, 'message': _('Entrada registrada para %s en %s.') % (teacher.name, classroom.name)}
+
     def action_validate_manually(self):
         self.write({'status': 'manual'})
         self.message_post(body=_("Attendance validated manually by %s") % self.env.user.name)

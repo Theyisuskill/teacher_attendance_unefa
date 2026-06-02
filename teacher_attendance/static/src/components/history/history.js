@@ -21,6 +21,10 @@ export class AttendanceHistory extends Component {
         });
     }
 
+    getRoundedDistance(dist) {
+        return Math.round(dist);
+    }
+
     async loadLogs() {
         const logs = await this.orm.searchRead(
             "attendance.log",

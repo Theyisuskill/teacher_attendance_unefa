@@ -3,7 +3,7 @@
     <t t-name="teacher_attendance.AttendanceKiosk" owl="1">
         <style>
             .o_kiosk_bg {
-                background: linear-gradient(135deg, #714B67 0%, #017e84 100%);
+                background: linear-gradient(135deg, #003DA5 0%, #001a4d 50%, #003DA5 100%);
                 height: 100vh;
                 width: 100vw;
                 display: flex;
@@ -11,6 +11,17 @@
                 align-items: center;
                 justify-content: center;
                 font-family: 'Inter', sans-serif;
+                position: relative;
+                overflow: hidden;
+            }
+            .o_kiosk_bg::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 6px;
+                background: linear-gradient(90deg, #FFCD00 33%, #003DA5 33%, #003DA5 66%, #CF142B 66%);
             }
             .kiosk_card {
                 background: rgba(255, 255, 255, 0.95);
@@ -26,11 +37,11 @@
                 width: 20px;
                 height: 20px;
                 border-radius: 50%;
-                border: 2px solid #714B67;
+                border: 2px solid #003DA5;
                 transition: all 0.2s ease;
             }
             .pin_dot.filled {
-                background: #714B67;
+                background: #003DA5;
                 transform: scale(1.2);
             }
             .num_btn {
@@ -49,7 +60,7 @@
                 transition: all 0.1s ease !important;
             }
             .num_btn:active {
-                background: #714B67 !important;
+                background: #003DA5 !important;
                 color: white !important;
                 transform: scale(0.9);
             }
@@ -66,7 +77,20 @@
                 background-color: white;
             }
             .success_overlay {
-                background: #00A09D;
+                background: linear-gradient(135deg, #28a745, #20c997);
+                color: white;
+                border-radius: 30px;
+                position: absolute;
+                top: 0; left: 0; right: 0; bottom: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                z-index: 10;
+                animation: fadeIn 0.3s ease;
+            }
+            .error_overlay {
+                background: linear-gradient(135deg, #CF142B, #a01020);
                 color: white;
                 border-radius: 30px;
                 position: absolute;
@@ -79,31 +103,46 @@
                 animation: fadeIn 0.3s ease;
             }
             @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+            .kiosk_flag-stripe {
+                height: 4px;
+                background: linear-gradient(90deg, #FFCD00 33%, #003DA5 33%, #003DA5 66%, #CF142B 66%);
+                border-radius: 2px;
+                width: 200px;
+                margin: 0 auto;
+            }
         </style>
 
         <div class="o_kiosk_bg">
             <div class="text-center text-white mb-4">
                 <div class="bg-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3 shadow" style="width: 100px; height: 100px;">
-                    <i class="fa fa-university fa-3x text-primary"/>
+                    <img src="/teacher_attendance/static/src/img/unefa_escudo.svg" alt="UNEFA" style="width: 80px; height: 80px; object-fit: contain;"/>
                 </div>
-                <h1 class="display-5 fw-bold">Campus Attendance</h1>
-                <p class="opacity-75 fs-5">Identify yourself to register</p>
+                <h1 class="display-5 fw-bold">UNEFA</h1>
+                <p class="opacity-75 fs-5">Asistencia en Kiosco</p>
+                <div class="kiosk_flag-stripe mt-2"/>
             </div>
 
             <div class="kiosk_card position-relative">
                 <t t-if="state.status === 'success'">
                     <div class="success_overlay">
                         <i class="fa fa-check-circle fa-5x mb-3"/>
-                        <h2>Success!</h2>
-                        <p class="fs-5">Have a great class</p>
+                        <h2>Registro Exitoso!</h2>
+                        <p class="fs-5">Que tenga buena clase</p>
+                    </div>
+                </t>
+                <t t-if="state.status === 'error'">
+                    <div class="error_overlay">
+                        <i class="fa fa-times-circle fa-5x mb-3"/>
+                        <h2>Error</h2>
+                        <p class="fs-5">PIN invalido</p>
                     </div>
                 </t>
 
                 <!-- Classroom Select -->
                 <div class="mb-4">
-                    <label class="text-muted small fw-bold text-uppercase mb-2 d-block">Current Classroom</label>
+                    <label class="text-muted small fw-bold text-uppercase mb-2 d-block">Aula Actual</label>
                     <select class="form-select kiosk_select shadow-sm" t-model="state.selectedClassroom">
-                        <option value="null">-- Tap to choose room --</option>
+                        <option value="null">-- Seleccione el aula --</option>
                         <t t-foreach="state.classrooms" t-as="aula" t-key="aula.id">
                             <option t-att-value="aula.id"><t t-esc="aula.name"/></option>
                         </t>
@@ -136,7 +175,7 @@
                     </div>
                     <div class="col-4 d-flex align-items-center justify-content-center">
                         <t t-if="state.status === 'loading'">
-                            <i class="fa fa-circle-o-notch fa-spin fa-2x text-primary"/>
+                            <i class="fa fa-circle-o-notch fa-spin fa-2x" style="color: #003DA5;"/>
                         </t>
                         <t t-else="">
                             <i class="fa fa-lock fa-2x text-muted opacity-25"/>
@@ -145,8 +184,9 @@
                 </div>
             </div>
 
-            <div class="mt-5 text-white-50">
-                Powered by Odoo 19 | Attendance System
+            <div class="mt-5 text-white-50 text-center">
+                <small>UNEFA - Sistema de Asistencia Docente</small>
+                <div class="kiosk_flag-stripe mt-2"/>
             </div>
         </div>
     </t>

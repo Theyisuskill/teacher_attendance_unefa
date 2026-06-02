@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Teacher Attendance',
-    'version': '1.0',
+    'version': '19.0.1.1.0',
     'category': 'Human Resources',
     'summary': 'Manage teacher attendance with QR codes, geolocation, and schedules.',
     'author': 'Odoo',
@@ -33,6 +33,7 @@
             'teacher_attendance/static/src/components/occupancy_map/occupancy_map.xml',
             'teacher_attendance/static/src/components/kiosk/kiosk.js',
             'teacher_attendance/static/src/components/kiosk/kiosk.xml',
+            'teacher_attendance/static/src/css/attendance_kanban.scss',
         ],
     },
     'installable': True,

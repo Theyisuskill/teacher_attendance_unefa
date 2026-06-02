@@ -1,5 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- ═══════ KANBAN VIEW ═══════ -->
+    <record id="view_attendance_log_kanban" model="ir.ui.view">
+        <field name="name">attendance.log.kanban</field>
+        <field name="model">attendance.log</field>
+        <field name="arch" type="xml">
+            <kanban class="attendance_kanban" create="false" default_order="check_in desc">
+                <field name="id"/>
+                <field name="teacher_id"/>
+                <field name="classroom_id"/>
+                <field name="subject_id"/>
+                <field name="check_in"/>
+                <field name="check_out"/>
+                <field name="duration"/>
+                <field name="distance"/>
+                <field name="status"/>
+                <field name="is_substitution"/>
+                <field name="signature"/>
+                <field name="latitude"/>
+                <field name="longitude"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="attendance_kanban_card">
+                            <!-- Status bar -->
+                            <div class="attendance_kanban_card_status-bar"
+                                 t-att-class="'status-' + record.status.raw_value"/>
+
+                            <div class="attendance_kanban_card_body">
+                                <!-- Top: Avatar + Teacher + Badge -->
+                                <div class="attendance_kanban_card-top">
+                                    <img t-if="record.teacher_id.raw_value"
+                                         class="attendance_kanban_avatar"
+                                         t-att-src="'/web/image/res.users/' + record.teacher_id.raw_value + '/image_128'"
+                                         alt="Avatar"/>
+                                    <div class="attendance_kanban_teacher-info">
+                                        <div class="teacher-name" t-out="record.teacher_id.value || 'Sin profesor'"/>
+                                        <div class="teacher-subject" t-if="record.subject_id.raw_value" t-out="record.subject_id.value"/>
+                                    </div>
+                                    <span class="attendance_kanban_status-badge"
+                                          t-att-class="'badge-' + record.status.raw_value">
+                                        <t t-if="record.status.raw_value === 'valid'">Valido</t>
+                                        <t t-if="record.status.raw_value === 'manual'">Manual</t>
+                                        <t t-if="record.status.raw_value === 'outside'">Fuera</t>
+                                        <t t-if="record.status.raw_value === 'late'">Tardio</t>
+                                        <t t-if="record.status.raw_value === 'invalid'">Invalido</t>
+                                    </span>
+                                </div>
+
+                                <div class="attendance_kanban_separator"/>
+
+                                <!-- Details -->
+                                <div class="attendance_kanban_details">
+                                    <!-- Classroom -->
+                                    <div class="attendance_kanban_detail-row" t-if="record.classroom_id.raw_value">
+                                        <i class="fa fa-building"/>
+                                        <span class="detail-label">Aula</span>
+                                        <span class="detail-value" t-out="record.classroom_id.value"/>
+                                    </div>
+
+                                    <!-- Time -->
+                                    <div class="attendance_kanban_detail-row" t-if="record.check_in.raw_value">
+                                        <i class="fa fa-clock"/>
+                                        <span class="detail-label">Horario</span>
+                                        <span class="detail-value">
+                                            <t t-out="record.check_in.value"/>
+                                            <t t-if="record.check_out.raw_value"> → <t t-out="record.check_out.value"/></t>
+                                        </span>
+                                    </div>
+
+                                    <!-- Duration -->
+                                    <div class="attendance_kanban_detail-row" t-if="record.duration.raw_value">
+                                        <i class="fa fa-hourglass-half"/>
+                                        <span class="detail-label">Duracion</span>
+                                        <span class="detail-value">
+                                            <t t-if="record.duration.raw_value &gt;= 1">
+                                                <t t-out="Math.floor(record.duration.raw_value)"/>h
+                                            </t>
+                                            <t t-if="record.duration.raw_value % 1 > 0">
+                                                <t t-out="Math.round((record.duration.raw_value % 1) * 60)"/>min
+                                            </t>
+                                        </span>
+                                    </div>
+
+                                    <!-- Distance -->
+                                    <div class="attendance_kanban_detail-row" t-if="record.distance.raw_value">
+                                        <i class="fa fa-map-marker-alt"/>
+                                        <span class="detail-label">Distancia</span>
+                                        <span class="detail-value" t-out="Math.round(record.distance.raw_value) + ' m'"/>
+                                    </div>
+
+                                    <!-- Substitution indicator -->
+                                    <div class="attendance_kanban_detail-row" t-if="record.is_substitution.raw_value">
+                                        <i class="fa fa-exchange-alt"/>
+                                        <span class="detail-label">Tipo</span>
+                                        <span class="detail-value attendance_kanban-substitution-badge">Sustitucion</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Footer -->
+                            <div class="attendance_kanban_card-footer">
+                                <span>
+                                    <i class="fa fa-map-pin me-1" title="Ubicacion"/>
+                                    <t t-if="record.latitude.raw_value" t-out="'GPS: ' + record.latitude.raw_value + ', ' + record.longitude.raw_value"/>
+                                    <t t-else="">Sin GPS</t>
+                                </span>
+                                <span>
+                                    <i class="fa fa-signature me-1" title="Firma"/>
+                                    <t t-if="record.signature.raw_value">Firmado</t>
+                                    <t t-else="">Sin firma</t>
+                                </span>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ═══════ LIST VIEW (original) ═══════ -->
     <record id="view_attendance_log_tree" model="ir.ui.view">
         <field name="name">attendance.log.tree</field>
         <field name="model">attendance.log</field>
@@ -124,7 +243,7 @@
     <record id="action_attendance_log" model="ir.actions.act_window">
         <field name="name">Attendance Logs</field>
         <field name="res_model">attendance.log</field>
-        <field name="view_mode">list,calendar,form</field>
+        <field name="view_mode">kanban,calendar,list,form</field>
     </record>
 
     <record id="action_attendance_analysis" model="ir.actions.act_window">
@@ -136,7 +255,7 @@
     <record id="action_attendance_log_my" model="ir.actions.act_window">
         <field name="name">My History</field>
         <field name="res_model">attendance.log</field>
-        <field name="view_mode">list,calendar,form</field>
+        <field name="view_mode">kanban,calendar,list,form</field>
         <field name="domain">[('teacher_id', '=', uid)]</field>
     </record>
 </odoo>

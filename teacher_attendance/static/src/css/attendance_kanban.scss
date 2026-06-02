@@ -1,0 +1,632 @@
+:root {
+    --unefa-yellow: #FFCD00;
+    --unefa-blue: #003DA5;
+    --unefa-red: #CF142B;
+    --unefa-dark: #1a1a2e;
+    --unefa-light: #f8f9fa;
+    --unefa-blue-light: #e8edf5;
+    --unefa-shadow: 0 2px 12px rgba(0, 61, 165, 0.08);
+    --unefa-shadow-hover: 0 8px 28px rgba(0, 61, 165, 0.15);
+    --unefa-radius: 16px;
+    --unefa-radius-sm: 10px;
+}
+
+/* ── Header Institucional ── */
+.o_kanban_view.attendance_kanban {
+    background: var(--unefa-light) !important;
+    padding: 0 !important;
+
+    .o_control_panel {
+        background: linear-gradient(135deg, var(--unefa-blue) 0%, #002a75 100%) !important;
+        border-radius: 0 0 24px 24px !important;
+        padding: 12px 24px !important;
+        box-shadow: 0 4px 20px rgba(0, 61, 165, 0.3);
+        position: relative;
+        overflow: hidden;
+
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--unefa-yellow) 33%, var(--unefa-blue) 33%, var(--unefa-blue) 66%, var(--unefa-red) 66%);
+        }
+
+        .o_control_panel_clearer {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .breadcrumb-item,
+        .breadcrumb-item a {
+            color: rgba(255, 255, 255, 0.8) !important;
+        }
+
+        .breadcrumb-item.active {
+            color: var(--unefa-yellow) !important;
+            font-weight: 700;
+        }
+
+        .o_searchview input {
+            background: rgba(255, 255, 255, 0.15) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            color: white !important;
+            border-radius: 10px !important;
+            backdrop-filter: blur(5px);
+
+            &::placeholder {
+                color: rgba(255, 255, 255, 0.5);
+            }
+        }
+
+        .btn {
+            color: white !important;
+            border-color: rgba(255, 255, 255, 0.3) !important;
+
+            &:hover {
+                background: rgba(255, 255, 255, 0.15) !important;
+            }
+        }
+    }
+}
+
+/* ── Kanban Container ── */
+.attendance_kanban_wrapper {
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.attendance_kanban_flag_top {
+    height: 6px;
+    background: linear-gradient(90deg,
+        var(--unefa-yellow) 33.33%,
+        var(--unefa-blue)   33.33%, var(--unefa-blue) 66.66%,
+        var(--unefa-red)    66.66%);
+    border-radius: var(--unefa-radius) var(--unefa-radius) 0 0;
+}
+
+.attendance_kanban_header {
+    background: linear-gradient(160deg, #002a7a 0%, #003DA5 55%, #001d5c 100%);
+    border-radius: 0 0 var(--unefa-radius) var(--unefa-radius);
+    padding: 18px 28px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    box-shadow: 0 6px 28px rgba(0, 29, 92, 0.4);
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: -70px;
+        right: -60px;
+        width: 240px;
+        height: 240px;
+        background: rgba(255, 255, 255, 0.04);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+}
+
+.attendance_kanban_escudo {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: white;
+    padding: 5px;
+    box-shadow: 0 3px 14px rgba(0, 0, 0, 0.3), 0 0 0 3px rgba(255, 205, 0, 0.35);
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.attendance_kanban_title {
+    color: white;
+    flex-grow: 1;
+
+    .kanban_unefa_nombre {
+        font-size: 0.65rem;
+        color: rgba(255, 255, 255, 0.75);
+        font-weight: 400;
+        line-height: 1.4;
+        display: block;
+    }
+
+    .kanban_unefa_siglas {
+        font-size: 1.4rem;
+        font-weight: 900;
+        color: var(--unefa-yellow);
+        letter-spacing: 2px;
+        line-height: 1.1;
+        display: block;
+        margin-top: 1px;
+    }
+
+    h4 {
+        margin: 0;
+        font-weight: 700;
+        font-size: 1.15rem;
+        letter-spacing: 0.3px;
+    }
+
+    small {
+        opacity: 0.7;
+        font-size: 0.78rem;
+    }
+}
+
+.attendance_kanban_badge {
+    background: rgba(255, 205, 0, 0.15);
+    border: 1px solid rgba(255, 205, 0, 0.35);
+    color: var(--unefa-yellow);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    text-transform: uppercase;
+}
+
+.attendance_kanban_flag {
+    height: 4px;
+    background: linear-gradient(90deg, var(--unefa-yellow) 33%, var(--unefa-blue) 33%, var(--unefa-blue) 66%, var(--unefa-red) 66%);
+    border-radius: 2px;
+    margin-bottom: 20px;
+}
+
+/* ── Grid de Tarjetas ── */
+.attendance_kanban_grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+}
+
+/* ── Tarjeta de Asistencia ── */
+.attendance_kanban_card {
+    background: white;
+    border-radius: var(--unefa-radius);
+    box-shadow: var(--unefa-shadow);
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    cursor: pointer;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+
+    &:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--unefa-shadow-hover);
+        border-color: rgba(0, 61, 165, 0.1);
+    }
+
+    &:active {
+        transform: translateY(-1px);
+    }
+}
+
+/* Barra de color superior por estado */
+.attendance_kanban_card_status-bar {
+    height: 4px;
+    width: 100%;
+
+    &.status-valid {
+        background: linear-gradient(90deg, #28a745, #5cd677);
+    }
+    &.status-manual {
+        background: linear-gradient(90deg, var(--unefa-blue), #4d7fd8);
+    }
+    &.status-outside {
+        background: linear-gradient(90deg, var(--unefa-red), #e74c6f);
+    }
+    &.status-late {
+        background: linear-gradient(90deg, var(--unefa-red), var(--unefa-yellow));
+    }
+    &.status-invalid {
+        background: linear-gradient(90deg, #6c757d, #adb5bd);
+    }
+}
+
+.attendance_kanban_card_body {
+    padding: 18px;
+}
+
+/* Fila superior: avatar + badge */
+.attendance_kanban_card-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.attendance_kanban_avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    object-fit: cover;
+    border: 2px solid var(--unefa-blue-light);
+    flex-shrink: 0;
+    background: var(--unefa-blue-light);
+}
+
+.attendance_kanban_teacher-info {
+    flex-grow: 1;
+    min-width: 0;
+
+    .teacher-name {
+        font-weight: 700;
+        font-size: 0.88rem;
+        color: var(--unefa-dark);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: 1.3;
+    }
+
+    .teacher-subject {
+        font-size: 0.75rem;
+        color: #6c757d;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+/* Badge de estado */
+.attendance_kanban_status-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    &.badge-valid {
+        background: rgba(40, 167, 69, 0.12);
+        color: #1e7e34;
+        border: 1px solid rgba(40, 167, 69, 0.2);
+    }
+    &.badge-manual {
+        background: rgba(0, 61, 165, 0.1);
+        color: var(--unefa-blue);
+        border: 1px solid rgba(0, 61, 165, 0.2);
+    }
+    &.badge-outside {
+        background: rgba(207, 20, 43, 0.1);
+        color: var(--unefa-red);
+        border: 1px solid rgba(207, 20, 43, 0.2);
+    }
+    &.badge-late {
+        background: rgba(255, 205, 0, 0.15);
+        color: #8a6d00;
+        border: 1px solid rgba(255, 205, 0, 0.3);
+    }
+    &.badge-invalid {
+        background: rgba(108, 117, 125, 0.1);
+        color: #6c757d;
+        border: 1px solid rgba(108, 117, 125, 0.2);
+    }
+}
+
+/* Detalles de la asistencia */
+.attendance_kanban_details {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.attendance_kanban_detail-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: #495057;
+
+    i {
+        width: 18px;
+        text-align: center;
+        font-size: 0.75rem;
+        flex-shrink: 0;
+
+        &.fa-building { color: var(--unefa-blue); }
+        &.fa-clock { color: var(--unefa-yellow); }
+        &.fa-hourglass-half { color: #6c757d; }
+        &.fa-map-marker-alt { color: var(--unefa-red); }
+        &.fa-exchange-alt { color: #17a2b8; }
+    }
+
+    .detail-label {
+        color: #adb5bd;
+        font-size: 0.72rem;
+        min-width: 60px;
+    }
+
+    .detail-value {
+        font-weight: 600;
+        color: var(--unefa-dark);
+    }
+}
+
+/* Separador */
+.attendance_kanban_separator {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #e9ecef, transparent);
+    margin: 10px 0;
+}
+
+/* Footer de la tarjeta */
+.attendance_kanban_card-footer {
+    padding: 10px 18px;
+    background: #fafbfc;
+    border-top: 1px solid #f0f1f3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    color: #adb5bd;
+}
+
+.attendance_kanban-substitution-badge {
+    background: rgba(23, 162, 184, 0.1);
+    color: #17a2b8;
+    border: 1px solid rgba(23, 162, 184, 0.2);
+    border-radius: 6px;
+    padding: 2px 8px;
+    font-weight: 600;
+    font-size: 0.68rem;
+}
+
+/* ── Empty State ── */
+.attendance_kanban_empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    background: white;
+    border-radius: var(--unefa-radius);
+    box-shadow: var(--unefa-shadow);
+
+    i {
+        font-size: 3.5rem;
+        color: var(--unefa-blue);
+        opacity: 0.2;
+        margin-bottom: 16px;
+        display: block;
+    }
+
+    h5 {
+        color: var(--unefa-dark);
+        font-weight: 700;
+        margin-bottom: 6px;
+    }
+
+    p {
+        color: #adb5bd;
+        font-size: 0.88rem;
+    }
+}
+
+/* ── Footer Institucional ── */
+.attendance_kanban_footer {
+    text-align: center;
+    padding: 20px;
+    margin-top: 20px;
+
+    .footer-flag {
+        height: 4px;
+        background: linear-gradient(90deg, var(--unefa-yellow) 33%, var(--unefa-blue) 33%, var(--unefa-blue) 66%, var(--unefa-red) 66%);
+        border-radius: 2px;
+        margin-bottom: 10px;
+    }
+
+    small {
+        color: #adb5bd;
+        font-size: 0.75rem;
+    }
+}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE — Media Queries
+   ══════════════════════════════════════════ */
+
+/* Tablet landscape */
+@media (max-width: 1199px) {
+    .attendance_kanban_grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Tablet portrait */
+@media (max-width: 991px) {
+    .attendance_kanban_grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+    }
+
+    .attendance_kanban_header {
+        padding: 16px 20px;
+    }
+
+    .attendance_kanban_escudo {
+        width: 48px;
+        height: 48px;
+    }
+
+    .attendance_kanban_card-body {
+        padding: 14px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+    .o_kanban_view.attendance_kanban .o_control_panel {
+        border-radius: 0 !important;
+        padding: 10px 16px !important;
+    }
+
+    .attendance_kanban_wrapper {
+        padding: 12px;
+    }
+
+    .attendance_kanban_grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .attendance_kanban_header {
+        padding: 14px 16px;
+        border-radius: 12px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .attendance_kanban_escudo {
+        width: 42px;
+        height: 42px;
+    }
+
+    .attendance_kanban_title h4 {
+        font-size: 1rem;
+    }
+
+    .attendance_kanban_card-body {
+        padding: 14px;
+    }
+
+    .attendance_kanban_card-top {
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+    .attendance_kanban_avatar {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+    }
+
+    .teacher-name {
+        font-size: 0.82rem;
+    }
+
+    .attendance_kanban_status-badge {
+        padding: 3px 8px;
+        font-size: 0.6rem;
+    }
+
+    .attendance_kanban_detail-row {
+        font-size: 0.75rem;
+    }
+
+    .attendance_kanban_card-footer {
+        padding: 8px 14px;
+        font-size: 0.68rem;
+    }
+}
+
+/* Small mobile */
+@media (max-width: 575px) {
+    .attendance_kanban_header {
+        padding: 12px 14px;
+    }
+
+    .attendance_kanban_escudo {
+        width: 36px;
+        height: 36px;
+        padding: 3px;
+    }
+
+    .attendance_kanban_title h4 {
+        font-size: 0.92rem;
+    }
+
+    .attendance_kanban_badge {
+        display: none;
+    }
+
+    .attendance_kanban_card-body {
+        padding: 12px;
+    }
+
+    .attendance_kanban_avatar {
+        width: 34px;
+        height: 34px;
+    }
+
+    .teacher-name {
+        font-size: 0.78rem;
+    }
+
+    .teacher-subject {
+        font-size: 0.7rem;
+    }
+
+    .attendance_kanban_details {
+        gap: 6px;
+    }
+
+    .attendance_kanban_detail-row {
+        font-size: 0.72rem;
+        gap: 6px;
+    }
+}
+
+/* ── Print Styles ── */
+@media print {
+    .o_kanban_view.attendance_kanban .o_control_panel,
+    .attendance_kanban_footer,
+    .o_main_navbar {
+        display: none !important;
+    }
+
+    .attendance_kanban_wrapper {
+        padding: 0;
+    }
+
+    .attendance_kanban_grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .attendance_kanban_card {
+        box-shadow: none;
+        border: 1px solid #dee2e6;
+        break-inside: avoid;
+        page-break-inside: avoid;
+
+        &:hover {
+            transform: none;
+            box-shadow: none;
+        }
+    }
+
+    .attendance_kanban_header {
+        background: white !important;
+        color: black !important;
+        box-shadow: none;
+        border: 2px solid var(--unefa-blue);
+        border-radius: 8px;
+
+        &::before {
+            display: none;
+        }
+
+        .attendance_kanban_title h4 {
+            color: var(--unefa-blue);
+        }
+
+        .attendance_kanban_escudo {
+            box-shadow: none;
+            border: 1px solid #dee2e6;
+        }
+
+        .attendance_kanban_badge {
+            background: var(--unefa-blue);
+            color: white;
+        }
+    }
+}

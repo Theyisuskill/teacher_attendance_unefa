@@ -1,85 +1,235 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
     <t t-name="teacher_attendance.AttendanceScanner">
-        <div class="o_attendance_scanner text-center p-4 h-100 d-flex flex-column align-items-center overflow-auto bg-light">
-            
-            <!-- KPI Cards -->
-            <div class="kpi-container d-flex justify-content-center gap-3 w-100 mb-4 flex-wrap">
-                <div class="kpi-card bg-white p-3 rounded shadow-sm border-start border-primary border-4" style="min-width: 150px;">
-                    <div class="text-muted small uppercase fw-bold">Today</div>
-                    <div class="h3 mb-0" t-out="state.kpis.todayCount"/>
-                </div>
-                <div class="kpi-card bg-white p-3 rounded shadow-sm border-start border-success border-4" style="min-width: 150px;">
-                    <div class="text-muted small uppercase fw-bold">Active Aulas</div>
-                    <div class="h3 mb-0" t-out="state.kpis.activeAulas"/>
-                </div>
-                <div class="kpi-card bg-white p-3 rounded shadow-sm border-start border-warning border-4" style="min-width: 150px;">
-                    <div class="text-muted small uppercase fw-bold">Late/Unscheduled</div>
-                    <div class="h3 mb-0 text-warning" t-out="state.kpis.lateCount"/>
-                </div>
-                <div class="kpi-card bg-white p-3 rounded shadow-sm border-start border-info border-4" style="min-width: 150px;">
-                    <div class="text-muted small uppercase fw-bold">Worked Hours (Month)</div>
-                    <div class="h3 mb-0" t-out="state.kpis.totalHours"/>
-                </div>
-                <div class="kpi-card bg-white p-3 rounded shadow-sm border-start border-dark border-4" style="min-width: 150px;">
-                    <div class="text-muted small uppercase fw-bold">Punctuality %</div>
-                    <div class="h3 mb-0" t-att-class="state.kpis.punctuality &lt; 80 ? 'text-danger' : 'text-success'">
-                        <t t-out="state.kpis.punctuality"/>%
+        <div class="o_attendance_scanner">
+
+            <!-- ══════════════════════════════════════════
+                 HEADER INSTITUCIONAL UNEFA — 3 zonas
+                 ══════════════════════════════════════════ -->
+            <div class="unefa-header">
+
+                <!-- ZONA 1 — Franja tricolor venezolana -->
+                <div class="unefa-flag-top"/>
+
+                <!-- ZONA 2 — Cabecera institucional -->
+                <div class="unefa-header-main">
+                    <div class="unefa-header-logo">
+                        <img src="/teacher_attendance/static/src/img/unefa_escudo.svg"
+                             alt="Escudo UNEFA" class="unefa-escudo"/>
+                        <div class="unefa-header-text">
+                            <div class="unefa-nombre-linea1">Universidad Nacional Experimental</div>
+                            <div class="unefa-nombre-linea2">de las Fuerzas Armadas</div>
+                            <div class="unefa-siglas">UNEFA</div>
+                            <div class="unefa-lema">Excelencia Educativa</div>
+                        </div>
                     </div>
+
+                    <div class="unefa-header-info">
+                        <div class="unefa-clock">
+                            <i class="fa fa-clock-o unefa-clock-icon"/>
+                            <div>
+                                <div class="unefa-clock-time" t-out="state.currentTime">--:--</div>
+                                <div class="unefa-clock-date" t-out="state.currentDate">--</div>
+                            </div>
+                        </div>
+                        <div class="unefa-teacher-pill">
+                            <i class="fa fa-user-circle"/>
+                            <span t-out="state.teacherName">Docente</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ZONA 3 — Barra de navegación -->
+                <div class="unefa-nav-bar">
+                    <button class="unefa-btn-back" t-on-click="goBack">
+                        <i class="fa fa-arrow-left"/>
+                        <span>Mis Registros</span>
+                    </button>
+                    <div class="unefa-nav-separator"/>
+                    <span class="unefa-nav-current">
+                        <i class="fa fa-qrcode"/>
+                        Escanear Asistencia
+                    </span>
                 </div>
             </div>
 
-            <h2 class="mb-4 text-dark fw-light">Classroom Attendance</h2>
-            
-            <div class="scanner-container mb-4 position-relative" style="width: 320px; min-height: 320px;">
-                <t t-if="state.isScanning">
-                    <BarcodeVideoScanner 
-                        facingMode="'environment'"
-                        onResult.bind="onResult"
-                        onError.bind="onError"
-                        cssClass="'w-100 h-100 border rounded shadow'"/>
-                </t>
-                <t t-else="">
-                    <div class="scanner-placeholder d-flex align-items-center justify-content-center bg-white border rounded shadow-sm w-100 h-100" 
-                         t-on-click="toggleScanner" style="min-height: 320px; cursor: pointer;">
-                        <i class="fa fa-qrcode fa-5x text-primary opacity-25"/>
-                    </div>
-                </t>
-                
-                <!-- Feedback Overlay -->
-                <div t-if="['success', 'error', 'loading'].includes(state.status)" 
-                     class="status-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center rounded"
-                     t-att-class="{'bg-success-opacity': state.status === 'success', 'bg-danger-opacity': state.status === 'error', 'bg-light-opacity': state.status === 'loading'}">
-                    <t t-if="state.status === 'success'">
-                        <i class="fa fa-check-circle fa-5x text-white check-animation"/>
-                    </t>
-                    <t t-if="state.status === 'error'">
-                        <i class="fa fa-times-circle fa-5x text-white error-animation"/>
-                    </t>
-                    <t t-if="state.status === 'loading'">
-                        <i class="fa fa-spinner fa-spin fa-5x text-primary"/>
-                    </t>
-                </div>
-            </div>
+            <!-- ══════════════════════════════════════════
+                 CUERPO — Layout de dos columnas en desktop
+                 ══════════════════════════════════════════ -->
+            <div class="unefa-body">
+                <div class="unefa-layout">
 
-            <!-- Signature Area -->
-            <t t-if="state.status === 'signing'">
-                <div class="signature-modal-backdrop position-fixed top-0 start-0 w-100 h-100 bg-dark opacity-50 z-1000"/>
-                <div class="signature-modal-content position-fixed top-50 start-50 translate-middle z-2000 w-100 px-3">
-                    <SignaturePad onSave.bind="onSignatureSave" onCancel.bind="onSignatureCancel"/>
+                    <!-- COLUMNA IZQUIERDA: Scanner + Tarjetas de info -->
+                    <div class="scanner-col">
+
+                        <!-- Scanner Card -->
+                        <div class="scanner-card">
+                            <div class="scanner-card-header">
+                                <h5 class="scanner-title">
+                                    <i class="fa fa-qrcode"/>Escanear Asistencia
+                                </h5>
+                                <t t-if="state.lastQrType">
+                                    <span class="qr-type-badge"
+                                          t-att-class="{
+                                              'qr-badge-classroom': state.lastQrType === 'classroom',
+                                              'qr-badge-teacher':   state.lastQrType === 'teacher'
+                                          }">
+                                        <t t-if="state.lastQrType === 'classroom'">QR Aula</t>
+                                        <t t-if="state.lastQrType === 'teacher'">QR Carnet</t>
+                                    </span>
+                                </t>
+                            </div>
+
+                            <div class="scanner-container position-relative">
+                                <t t-if="state.isScanning">
+                                    <BarcodeVideoScanner
+                                        facingMode="'environment'"
+                                        onResult.bind="onResult"
+                                        onError.bind="onError"
+                                        cssClass="'scanner-video'"/>
+                                </t>
+                                <t t-else="">
+                                    <div class="scanner-placeholder" t-on-click="toggleScanner">
+                                        <div class="scanner-icon-ring">
+                                            <i class="fa fa-qrcode"/>
+                                        </div>
+                                        <p class="scanner-placeholder-text">Toca para iniciar el escaneo</p>
+                                        <small class="scanner-placeholder-sub">Escanea el QR del aula o tu carnet</small>
+                                    </div>
+                                </t>
+
+                                <!-- Feedback Overlay -->
+                                <div t-if="['success', 'error', 'loading'].includes(state.status)"
+                                     class="status-overlay"
+                                     t-att-class="{
+                                         'status-success': state.status === 'success',
+                                         'status-error':   state.status === 'error',
+                                         'status-loading': state.status === 'loading'
+                                     }">
+                                    <t t-if="state.status === 'success'">
+                                        <i class="fa fa-check-circle fa-4x check-animation"/>
+                                        <p class="status-msg" t-out="state.statusMessage || 'Asistencia Registrada'"/>
+                                    </t>
+                                    <t t-if="state.status === 'error'">
+                                        <i class="fa fa-times-circle fa-4x error-animation"/>
+                                        <p class="status-msg" t-out="state.statusMessage || 'Error'"/>
+                                    </t>
+                                    <t t-if="state.status === 'loading'">
+                                        <i class="fa fa-spinner fa-spin fa-4x status-spinner"/>
+                                        <p class="status-msg status-msg-dark">Procesando...</p>
+                                    </t>
+                                </div>
+                            </div>
+
+                            <!-- Firma -->
+                            <t t-if="state.status === 'signing'">
+                                <div class="signature-modal-backdrop"/>
+                                <div class="signature-modal-content">
+                                    <SignaturePad onSave.bind="onSignatureSave" onCancel.bind="onSignatureCancel"/>
+                                </div>
+                            </t>
+
+                            <div class="scanner-actions">
+                                <button t-if="!state.isScanning"
+                                        class="btn btn-unefa-primary"
+                                        t-on-click="toggleScanner"
+                                        t-att-disabled="state.status === 'signing'">
+                                    <i class="fa fa-camera"/>Iniciar Escaneo
+                                </button>
+                                <button t-if="state.isScanning"
+                                        class="btn btn-unefa-danger"
+                                        t-on-click="toggleScanner">
+                                    <i class="fa fa-stop"/>Detener
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Info Cards (horizontal row) -->
+                        <div class="info-row">
+                            <div class="info-card">
+                                <div class="info-icon info-icon-blue"><i class="fa fa-id-card"/></div>
+                                <div class="info-body">
+                                    <div class="info-title">QR Carnet</div>
+                                    <div class="info-desc">Escanea tu carnet para entrada/salida</div>
+                                </div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-icon info-icon-red"><i class="fa fa-building"/></div>
+                                <div class="info-body">
+                                    <div class="info-title">QR Aula</div>
+                                    <div class="info-desc">Escanea el codigo del salon</div>
+                                </div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-icon info-icon-yellow"><i class="fa fa-map-marker-alt"/></div>
+                                <div class="info-body">
+                                    <div class="info-title">Geolocalizacion</div>
+                                    <div class="info-desc">Verifica tu ubicacion</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COLUMNA DERECHA: KPIs + Historial -->
+                    <div class="stats-col">
+
+                        <!-- KPI Cards -->
+                        <div class="kpi-grid">
+                            <div class="kpi-card">
+                                <div class="kpi-icon kpi-icon-blue"><i class="fa fa-calendar-check"/></div>
+                                <div class="kpi-data">
+                                    <span class="kpi-label">Registros Hoy</span>
+                                    <span class="kpi-value kpi-value-blue" t-out="state.kpis.todayCount"/>
+                                </div>
+                            </div>
+                            <div class="kpi-card">
+                                <div class="kpi-icon kpi-icon-green"><i class="fa fa-door-open"/></div>
+                                <div class="kpi-data">
+                                    <span class="kpi-label">Aulas Activas</span>
+                                    <span class="kpi-value kpi-value-green" t-out="state.kpis.activeAulas"/>
+                                </div>
+                            </div>
+                            <div class="kpi-card">
+                                <div class="kpi-icon kpi-icon-red"><i class="fa fa-clock"/></div>
+                                <div class="kpi-data">
+                                    <span class="kpi-label">Tardanzas</span>
+                                    <span class="kpi-value kpi-value-red" t-out="state.kpis.lateCount"/>
+                                </div>
+                            </div>
+                            <div class="kpi-card">
+                                <div class="kpi-icon kpi-icon-yellow"><i class="fa fa-hourglass-half"/></div>
+                                <div class="kpi-data">
+                                    <span class="kpi-label">Horas del Mes</span>
+                                    <span class="kpi-value kpi-value-dark" t-out="state.kpis.totalHours"/>
+                                </div>
+                            </div>
+                            <div class="kpi-card kpi-card-wide">
+                                <div class="kpi-icon kpi-icon-dark"><i class="fa fa-bullseye"/></div>
+                                <div class="kpi-data">
+                                    <span class="kpi-label">Puntualidad</span>
+                                    <span class="kpi-value"
+                                          t-att-class="state.kpis.punctuality &lt; 80 ? 'kpi-value-red' : 'kpi-value-green'">
+                                        <t t-out="state.kpis.punctuality"/>%
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Historial -->
+                        <div class="history-section">
+                            <AttendanceHistory onRegister="(comp) => this.historyComponent = comp"/>
+                        </div>
+                    </div>
+
+                </div><!-- /unefa-layout -->
+
+                <!-- Footer -->
+                <div class="unefa-footer">
+                    <div class="unefa-flag-stripe"/>
+                    <span>UNEFA · Sistema de Asistencia Docente v1.0 · Excelencia Educativa</span>
                 </div>
-            </t>
-            
-            <button class="btn btn-primary btn-lg px-5 shadow mb-5" t-on-click="toggleScanner" t-att-disabled="state.status === 'signing'">
-                <t t-if="state.isScanning">Stop Scanner</t>
-                <t t-else="">Start Scanner</t>
-            </button>
-            
-            <AttendanceHistory onRegister="(comp) => this.historyComponent = comp"/>
-            
-            <div class="mt-4 text-muted pb-5">
-                <p>Ensure you are inside the classroom and scan the QR code posted in the room.</p>
-            </div>
+
+            </div><!-- /unefa-body -->
         </div>
     </t>
 </templates>
