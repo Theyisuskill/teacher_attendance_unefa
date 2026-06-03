@@ -20,6 +20,9 @@
     ],
     'assets': {
         'web.assets_backend': [
+            'teacher_attendance/static/src/components/navbar/unefa_nav.js',
+            'teacher_attendance/static/src/components/navbar/unefa_nav.xml',
+            'teacher_attendance/static/src/components/navbar/unefa_nav.scss',
             'teacher_attendance/static/src/components/history/history.js',
             'teacher_attendance/static/src/components/history/history.xml',
             'teacher_attendance/static/src/components/scanner/scanner.js',
@@ -34,6 +37,7 @@
             'teacher_attendance/static/src/components/kiosk/kiosk.js',
             'teacher_attendance/static/src/components/kiosk/kiosk.xml',
             'teacher_attendance/static/src/css/attendance_kanban.scss',
+            'teacher_attendance/static/src/css/attendance_form.scss',
         ],
     },
     'installable': True,

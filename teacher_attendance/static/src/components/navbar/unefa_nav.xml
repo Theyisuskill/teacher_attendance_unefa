@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="teacher_attendance.UnefaNav">
+        <div class="unefa-globalnav">
+
+            <!-- Botón flotante ☰ (siempre visible) -->
+            <button class="unefa-fab" t-on-click="toggle" aria-label="Abrir menú">
+                <i class="fa fa-bars"/>
+            </button>
+
+            <!-- Fondo oscuro -->
+            <div class="unefa-sidebar-backdrop"
+                 t-att-class="{'is-open': state.open}"
+                 t-on-click="close"/>
+
+            <!-- Panel lateral -->
+            <aside class="unefa-sidebar" t-att-class="{'is-open': state.open}">
+                <div class="unefa-sidebar-head">
+                    <img src="/teacher_attendance/static/src/img/unefa_escudo.svg"
+                         alt="UNEFA" class="unefa-sidebar-escudo"/>
+                    <div class="unefa-sidebar-brand">
+                        <span class="unefa-sidebar-siglas">UNEFA</span>
+                        <span class="unefa-sidebar-sub">Asistencia Docente</span>
+                    </div>
+                    <button class="unefa-sidebar-close" t-on-click="close" aria-label="Cerrar menú">
+                        <i class="fa fa-times"/>
+                    </button>
+                </div>
+
+                <nav class="unefa-sidebar-nav">
+                    <t t-foreach="navSections" t-as="section" t-key="section.label">
+                        <div class="unefa-sidebar-section">
+                            <span class="unefa-sidebar-section-label" t-out="section.label"/>
+                            <t t-foreach="section.items" t-as="item" t-key="item.action">
+                                <button class="unefa-sidebar-link"
+                                        t-on-click="() => this.navigateTo(item.action)">
+                                    <i class="fa" t-att-class="item.icon"/>
+                                    <span t-out="item.label"/>
+                                </button>
+                            </t>
+                        </div>
+                    </t>
+                </nav>
+
+                <div class="unefa-sidebar-foot">
+                    <div class="unefa-sidebar-user">
+                        <i class="fa fa-user-circle"/>
+                        <span t-out="state.userName"/>
+                    </div>
+                    <button class="unefa-sidebar-logout" t-on-click="logout">
+                        <i class="fa fa-power-off"/>
+                        <span>Cerrar sesión</span>
+                    </button>
+                    <div class="unefa-flag-stripe"/>
+                </div>
+            </aside>
+        </div>
+    </t>
+</templates>

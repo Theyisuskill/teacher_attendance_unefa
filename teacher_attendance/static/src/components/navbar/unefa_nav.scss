@@ -1,0 +1,239 @@
+/* ══════════════════════════════════════════════════════════
+   PANEL LATERAL GLOBAL UNEFA  +  ocultar barra superior Odoo
+   Paleta pastel. Único medio de navegación de la app.
+   ══════════════════════════════════════════════════════════ */
+
+/* ── Ocultar la barra de menú superior de Odoo ── */
+.o_main_navbar { display: none !important; }
+.o_action_manager { top: 0 !important; }
+
+/* Dejar espacio para el FAB en la esquina superior izquierda
+   de cualquier barra superior de vista (control panel) */
+.o_control_panel { padding-left: 58px !important; }
+
+/* ── Botón flotante ☰ ── */
+.unefa-fab {
+    position: fixed;
+    top: 9px;
+    left: 10px;
+    width: 40px;
+    height: 40px;
+    z-index: 1080;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--unefa-blue) 0%, var(--unefa-blue-dark) 100%);
+    color: #fff;
+    font-size: 1.05rem;
+    cursor: pointer;
+    box-shadow: 0 3px 12px rgba(82, 115, 168, 0.45);
+    transition: all 0.18s ease;
+
+    &:hover {
+        filter: brightness(1.06);
+        box-shadow: 0 5px 16px rgba(82, 115, 168, 0.55);
+    }
+    &:active { transform: scale(0.93); }
+}
+
+/* ── Fondo oscuro ── */
+.unefa-sidebar-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+    z-index: 1090;
+
+    &.is-open { opacity: 1; visibility: visible; }
+}
+
+/* ── Drawer ── */
+.unefa-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 286px;
+    max-width: 85vw;
+    background: linear-gradient(180deg, var(--unefa-blue-dark) 0%, var(--unefa-blue) 100%);
+    box-shadow: 6px 0 30px rgba(0, 0, 0, 0.4);
+    transform: translateX(-100%);
+    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1100;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    /* franja tricolor en el borde derecho */
+    &::after {
+        content: '';
+        position: absolute;
+        top: 0; right: 0; bottom: 0;
+        width: 4px;
+        background: linear-gradient(180deg,
+            var(--unefa-yellow) 33.33%,
+            var(--unefa-blue) 33.33%, var(--unefa-blue) 66.66%,
+            var(--unefa-red) 66.66%);
+    }
+
+    &.is-open { transform: translateX(0); }
+}
+
+.unefa-sidebar-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 18px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
+}
+
+.unefa-sidebar-escudo {
+    width: 46px; height: 46px;
+    border-radius: 50%;
+    background: #fff;
+    padding: 3px;
+    object-fit: contain;
+    box-shadow: 0 0 0 2px rgba(241, 216, 139, 0.6);
+    flex-shrink: 0;
+}
+
+.unefa-sidebar-brand { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+
+.unefa-sidebar-siglas {
+    color: var(--unefa-yellow);
+    font-weight: 900;
+    font-size: 1.25rem;
+    letter-spacing: 3px;
+    line-height: 1;
+}
+
+.unefa-sidebar-sub {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 3px;
+}
+
+.unefa-sidebar-close {
+    width: 32px; height: 32px;
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.15s ease;
+    &:hover { background: rgba(222, 151, 157, 0.4); color: #fff; }
+}
+
+.unefa-sidebar-nav {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.unefa-sidebar-section { display: flex; flex-direction: column; gap: 4px; }
+
+.unefa-sidebar-section-label {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 4px 12px;
+}
+
+.unefa-sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    border: none;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.82);
+    padding: 11px 14px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.16s ease;
+
+    > i:first-child {
+        width: 20px;
+        text-align: center;
+        font-size: 0.95rem;
+        color: rgba(241, 216, 139, 0.9);
+        flex-shrink: 0;
+    }
+
+    span { flex: 1; }
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+    }
+}
+
+.unefa-sidebar-foot {
+    padding: 14px 16px 18px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.unefa-sidebar-user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 0.82rem;
+    font-weight: 600;
+
+    i { color: var(--unefa-yellow); font-size: 1.05rem; }
+    span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+}
+
+.unefa-sidebar-logout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    border: 1px solid rgba(222, 151, 157, 0.5);
+    background: rgba(222, 151, 157, 0.15);
+    color: #fff;
+    padding: 9px 12px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.16s ease;
+
+    &:hover { background: rgba(222, 151, 157, 0.3); }
+    i { font-size: 0.85rem; }
+}
+
+.unefa-sidebar-foot .unefa-flag-stripe {
+    width: 70px;
+    align-self: center;
+    margin-top: 2px;
+}
+
+/* ── Impresión: nada de esto se imprime ── */
+@media print {
+    .unefa-fab, .unefa-sidebar, .unefa-sidebar-backdrop { display: none !important; }
+}

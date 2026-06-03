@@ -2,16 +2,17 @@
    VARIABLES UNEFA
    ══════════════════════════════════════════════════════════ */
 :root {
-    --unefa-yellow:     #FFCD00;
-    --unefa-blue:       #003DA5;
-    --unefa-blue-dark:  #002060;
-    --unefa-red:        #CF142B;
-    --unefa-dark:       #1a1a2e;
+    /* Paleta PASTEL UNEFA (tonos suaves) */
+    --unefa-yellow:     #F1D88B;   /* amarillo mantequilla */
+    --unefa-blue:       #6E8FC7;   /* azul periwinkle pastel */
+    --unefa-blue-dark:  #5273A8;   /* azul medio */
+    --unefa-red:        #DE979D;   /* rosa polvo */
+    --unefa-dark:       #424A66;   /* azul grisáceo (texto) */
     --unefa-light:      #f4f6fb;
     --unefa-white:      #ffffff;
-    --unefa-shadow-sm:  0 2px 8px rgba(0, 61, 165, 0.08);
-    --unefa-shadow-md:  0 4px 16px rgba(0, 61, 165, 0.12);
-    --unefa-shadow-lg:  0 8px 32px rgba(0, 61, 165, 0.18);
+    --unefa-shadow-sm:  0 2px 8px rgba(82, 115, 168, 0.10);
+    --unefa-shadow-md:  0 4px 16px rgba(82, 115, 168, 0.14);
+    --unefa-shadow-lg:  0 8px 32px rgba(82, 115, 168, 0.18);
     --r-sm:  10px;
     --r-md:  14px;
     --r-lg:  18px;
@@ -542,7 +543,7 @@ body.attendance-scanner-fullscreen {
 }
 
 .btn-unefa-danger {
-    background: linear-gradient(135deg, var(--unefa-red) 0%, #a01020 100%);
+    background: linear-gradient(135deg, var(--unefa-red) 0%, #C57680 100%);
     color: white;
     box-shadow: 0 4px 12px rgba(207,20,43,0.28);
     &:hover { box-shadow: 0 6px 18px rgba(207,20,43,0.38); color: white; }

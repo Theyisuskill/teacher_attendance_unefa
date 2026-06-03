@@ -5,7 +5,7 @@
         <field name="name">attendance.subject.list</field>
         <field name="model">attendance.subject</field>
         <field name="arch" type="xml">
-            <list editable="bottom">
+            <list editable="bottom" class="o_unefa_view">
                 <field name="name"/>
                 <field name="code"/>
             </list>
@@ -23,7 +23,7 @@
         <field name="name">attendance.substitution.form</field>
         <field name="model">attendance.substitution</field>
         <field name="arch" type="xml">
-            <form>
+            <form class="o_unefa_view">
                 <header>
                     <button name="action_activate" string="Activate" type="object" class="btn-primary" invisible="state != 'draft'"/>
                     <button name="action_done" string="Mark Done" type="object" invisible="state != 'active'"/>
@@ -50,7 +50,7 @@
         <field name="name">attendance.substitution.list</field>
         <field name="model">attendance.substitution</field>
         <field name="arch" type="xml">
-            <list>
+            <list class="o_unefa_view">
                 <field name="date"/>
                 <field name="classroom_id"/>
                 <field name="subject_id"/>

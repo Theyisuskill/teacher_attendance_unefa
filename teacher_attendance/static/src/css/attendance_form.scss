@@ -1,0 +1,163 @@
+/* ══════════════════════════════════════════════════════════
+   UNEFA — Branding pastel de las vistas backend
+   (barra superior, pestañas notebook y listados)
+   Aplica solo a las vistas del módulo marcadas con
+   la clase  .o_unefa_view  en el root del arch.
+   Paleta PASTEL (suave) por petición académica.
+   ══════════════════════════════════════════════════════════ */
+
+.o_unefa_view {
+    --u-blue:       #6E8FC7;   /* azul periwinkle pastel */
+    --u-blue-dark:  #5273A8;   /* azul medio */
+    --u-blue-deep:  #43618F;   /* azul profundo (gradiente) */
+    --u-yellow:     #F1D88B;   /* amarillo mantequilla */
+    --u-yellow-ink: #8A7430;   /* texto sobre amarillo claro */
+    --u-red:        #DE979D;   /* rosa polvo */
+    --u-blue-bg:    #EEF2FA;   /* fondo periwinkle muy claro */
+    --u-tricolor: linear-gradient(90deg,
+        var(--u-yellow) 33.33%,
+        var(--u-blue)   33.33%, var(--u-blue) 66.66%,
+        var(--u-red)    66.66%);
+
+    /* ── Barra superior institucional (control panel) ── */
+    .o_control_panel {
+        background: linear-gradient(135deg, var(--u-blue) 0%, var(--u-blue-dark) 100%) !important;
+        border-radius: 0 0 18px 18px;
+        box-shadow: 0 4px 18px rgba(82, 115, 168, 0.22);
+        position: relative;
+        overflow: hidden;
+
+        /* franja tricolor superior */
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: var(--u-tricolor);
+            z-index: 2;
+        }
+
+        /* breadcrumbs / título */
+        .breadcrumb-item,
+        .breadcrumb-item a,
+        .o_breadcrumb,
+        .o_last_breadcrumb_item {
+            color: rgba(255, 255, 255, 0.85) !important;
+        }
+        .breadcrumb-item.active,
+        .o_last_breadcrumb_item {
+            color: #ffffff !important;
+            font-weight: 700;
+        }
+
+        /* botones de la barra (vista, paginador, exportar…) */
+        .btn {
+            color: #ffffff !important;
+            border-color: rgba(255, 255, 255, 0.3) !important;
+
+            &:hover { background: rgba(255, 255, 255, 0.16) !important; }
+        }
+        /* botón primario destacado en amarillo institucional */
+        .btn-primary {
+            background: var(--u-yellow) !important;
+            border-color: var(--u-yellow) !important;
+            color: var(--u-blue-dark) !important;
+            font-weight: 700;
+
+            &:hover { filter: brightness(1.04); }
+        }
+
+        /* paginador y switcher de vistas */
+        .o_pager, .o_pager *,
+        .o_cp_switch_buttons .btn { color: #ffffff !important; }
+
+        /* buscador */
+        .o_searchview {
+            background: rgba(255, 255, 255, 0.15) !important;
+            border: 1px solid rgba(255, 255, 255, 0.25) !important;
+            border-radius: 10px !important;
+
+            input {
+                color: #ffffff !important;
+                &::placeholder { color: rgba(255, 255, 255, 0.6); }
+            }
+            .o_searchview_facet,
+            .o_facet_value { color: #ffffff; }
+        }
+    }
+
+    /* ── Fondo suave del contenido ── */
+    .o_content {
+        background: var(--u-blue-bg);
+    }
+
+    /* ── Pestañas del formulario (notebook) ── */
+    .o_notebook {
+        .o_notebook_headers {
+            background: linear-gradient(135deg, var(--u-blue) 0%, var(--u-blue-dark) 100%);
+            border-radius: 12px 12px 0 0;
+            padding: 6px 6px 0 6px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 14px rgba(82, 115, 168, 0.2);
+
+            &::before {
+                content: '';
+                position: absolute;
+                top: 0; left: 0; right: 0;
+                height: 4px;
+                background: var(--u-tricolor);
+            }
+
+            .nav-tabs {
+                border-bottom: none;
+                gap: 4px;
+
+                .nav-item .nav-link {
+                    color: rgba(255, 255, 255, 0.8);
+                    border: none;
+                    border-radius: 8px 8px 0 0;
+                    font-weight: 600;
+                    letter-spacing: 0.2px;
+                    padding: 10px 18px;
+                    transition: all 0.2s ease;
+
+                    &:hover {
+                        color: #ffffff;
+                        background: rgba(255, 255, 255, 0.14);
+                    }
+
+                    &.active {
+                        color: var(--u-blue-dark);
+                        background: #ffffff;
+                        font-weight: 700;
+                        box-shadow: 0 -3px 0 0 var(--u-yellow) inset;
+                    }
+                }
+            }
+        }
+
+        .tab-content {
+            background: #ffffff;
+            border: 1px solid rgba(110, 143, 199, 0.18);
+            border-top: none;
+            border-radius: 0 0 12px 12px;
+            padding: 18px;
+            box-shadow: 0 4px 14px rgba(82, 115, 168, 0.06);
+        }
+    }
+
+    /* ── Listados: encabezado y hover suaves ── */
+    .o_list_renderer {
+        thead th {
+            color: var(--u-blue-dark);
+        }
+        .o_data_row:hover {
+            background: var(--u-blue-bg) !important;
+        }
+        /* fila seleccionada */
+        .o_data_row.o_data_row_selected {
+            background: rgba(110, 143, 199, 0.12) !important;
+        }
+    }
+}

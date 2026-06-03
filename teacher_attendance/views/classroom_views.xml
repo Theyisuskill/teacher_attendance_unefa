@@ -4,7 +4,7 @@
         <field name="name">attendance.classroom.form</field>
         <field name="model">attendance.classroom</field>
         <field name="arch" type="xml">
-            <form>
+            <form class="o_unefa_view">
                 <header>
                     <button name="action_download_qr" type="object" string="Download QR" icon="fa-download" class="btn-primary"/>
                 </header>
@@ -59,7 +59,7 @@
         <field name="name">attendance.classroom.tree</field>
         <field name="model">attendance.classroom</field>
         <field name="arch" type="xml">
-            <list>
+            <list class="o_unefa_view">
                 <field name="name"/>
                 <field name="code"/>
                 <field name="latitude"/>

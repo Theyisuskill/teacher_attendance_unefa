@@ -1,12 +1,13 @@
 :root {
-    --unefa-yellow: #FFCD00;
-    --unefa-blue: #003DA5;
-    --unefa-red: #CF142B;
-    --unefa-dark: #1a1a2e;
+    /* Paleta PASTEL UNEFA (tonos suaves) */
+    --unefa-yellow: #F1D88B;
+    --unefa-blue: #6E8FC7;
+    --unefa-red: #DE979D;
+    --unefa-dark: #424A66;
     --unefa-light: #f8f9fa;
     --unefa-blue-light: #e8edf5;
-    --unefa-shadow: 0 2px 12px rgba(0, 61, 165, 0.08);
-    --unefa-shadow-hover: 0 8px 28px rgba(0, 61, 165, 0.15);
+    --unefa-shadow: 0 2px 12px rgba(82, 115, 168, 0.10);
+    --unefa-shadow-hover: 0 8px 28px rgba(82, 115, 168, 0.16);
     --unefa-radius: 16px;
     --unefa-radius-sm: 10px;
 }
@@ -17,7 +18,7 @@
     padding: 0 !important;
 
     .o_control_panel {
-        background: linear-gradient(135deg, var(--unefa-blue) 0%, #002a75 100%) !important;
+        background: linear-gradient(135deg, var(--unefa-blue) 0%, #5273A8 100%) !important;
         border-radius: 0 0 24px 24px !important;
         padding: 12px 24px !important;
         box-shadow: 0 4px 20px rgba(0, 61, 165, 0.3);
@@ -90,7 +91,7 @@
 }
 
 .attendance_kanban_header {
-    background: linear-gradient(160deg, #002a7a 0%, #003DA5 55%, #001d5c 100%);
+    background: linear-gradient(160deg, #5273A8 0%, #6E8FC7 55%, #43618F 100%);
     border-radius: 0 0 var(--unefa-radius) var(--unefa-radius);
     padding: 18px 28px;
     margin-bottom: 20px;

@@ -3,10 +3,10 @@
     <t t-name="teacher_attendance.AttendanceHistory">
         <div class="o_attendance_history w-100">
             <div class="d-flex align-items-center justify-content-between mb-3">
-                <h5 class="mb-0 fw-bold" style="color: #003DA5;">
+                <h5 class="mb-0 fw-bold" style="color: #5273A8;">
                     <i class="fa fa-history me-2"/>Actividad Reciente
                 </h5>
-                <span class="badge rounded-pill" style="background: #003DA5;">
+                <span class="badge rounded-pill" style="background: #6E8FC7;">
                     <t t-out="state.logs.length"/> registros
                 </span>
             </div>
