@@ -1,0 +1,170 @@
+/* ═══════════════════════════════════════════
+   SUBSTITUTION MANAGER — Limpio
+   ═══════════════════════════════════════════ */
+
+.o_substitution_manager {
+    background: var(--unefa-light);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ── Filter Bar ── */
+.unefa-filter-bar {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.unefa-filter-btn {
+    padding: 7px 14px;
+    border: 1px solid var(--unefa-border);
+    background: #fff;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--unefa-gray);
+    cursor: pointer;
+    transition: 0.15s;
+
+    &:hover { border-color: var(--unefa-blue); color: var(--unefa-blue); }
+    &.is-active {
+        background: var(--unefa-blue);
+        border-color: var(--unefa-blue);
+        color: #fff;
+    }
+}
+
+/* ── Substitution List ── */
+.unefa-substitution-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.unefa-substitution-card {
+    background: #fff;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--unefa-border);
+    overflow: hidden;
+    transition: 0.15s;
+
+    &:hover { box-shadow: var(--shadow-md); }
+    &.is-done { opacity: 0.6; }
+}
+
+.unefa-substitution-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.unefa-substitution-date {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--unefa-dark);
+    i { color: var(--unefa-blue); font-size: 0.75rem; }
+}
+
+.unefa-substitution-badge {
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+
+    &.badge-draft {
+        background: rgba(160,174,192,0.1);
+        color: #718096;
+        border: 1px solid rgba(160,174,192,0.2);
+    }
+    &.badge-active {
+        background: rgba(72,187,120,0.1);
+        color: #276749;
+        border: 1px solid rgba(72,187,120,0.2);
+    }
+    &.badge-done {
+        background: rgba(110,143,199,0.1);
+        color: var(--unefa-blue-dark);
+        border: 1px solid rgba(110,143,199,0.2);
+    }
+    &.badge-cancelled {
+        background: rgba(222,151,157,0.1);
+        color: #c53030;
+        border: 1px solid rgba(222,151,157,0.2);
+    }
+}
+
+.unefa-substitution-card-body {
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.unefa-substitution-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: var(--unefa-gray);
+
+    i { width: 14px; text-align: center; color: var(--unefa-blue); opacity: 0.5; font-size: 0.7rem; }
+}
+
+.unefa-substitution-teachers {
+    display: flex;
+    gap: 20px;
+    padding-top: 8px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.unefa-substitution-teacher {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.teacher-label {
+    font-size: 0.62rem;
+    color: #a0aec0;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    font-weight: 600;
+}
+
+.teacher-name {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--unefa-dark);
+}
+
+.unefa-substitution-card-actions {
+    display: flex;
+    gap: 6px;
+    padding: 10px 16px;
+    background: #f9fafb;
+    border-top: 1px solid #f0f0f0;
+}
+
+.btn-activate {
+    color: #38a169;
+    &:hover { background: rgba(56,161,105,0.08); border-color: #38a169; }
+}
+
+.btn-complete {
+    color: var(--unefa-blue);
+    &:hover { background: rgba(110,143,199,0.08); border-color: var(--unefa-blue); }
+}
+
+@media (max-width: 768px) {
+    .unefa-substitution-teachers { flex-direction: column; gap: 8px; }
+}

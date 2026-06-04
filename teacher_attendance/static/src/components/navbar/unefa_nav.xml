@@ -3,18 +3,19 @@
     <t t-name="teacher_attendance.UnefaNav">
         <div class="unefa-globalnav">
 
-            <!-- Botón flotante ☰ (siempre visible) -->
+            <!-- Botón hamburguesa -->
             <button class="unefa-fab" t-on-click="toggle" aria-label="Abrir menú">
                 <i class="fa fa-bars"/>
             </button>
 
-            <!-- Fondo oscuro -->
+            <!-- Backdrop -->
             <div class="unefa-sidebar-backdrop"
                  t-att-class="{'is-open': state.open}"
                  t-on-click="close"/>
 
-            <!-- Panel lateral -->
+            <!-- Sidebar -->
             <aside class="unefa-sidebar" t-att-class="{'is-open': state.open}">
+                <!-- Header -->
                 <div class="unefa-sidebar-head">
                     <img src="/teacher_attendance/static/src/img/unefa_escudo.svg"
                          alt="UNEFA" class="unefa-sidebar-escudo"/>
@@ -22,36 +23,55 @@
                         <span class="unefa-sidebar-siglas">UNEFA</span>
                         <span class="unefa-sidebar-sub">Asistencia Docente</span>
                     </div>
-                    <button class="unefa-sidebar-close" t-on-click="close" aria-label="Cerrar menú">
+                    <button class="unefa-sidebar-close" t-on-click="close" aria-label="Cerrar">
                         <i class="fa fa-times"/>
                     </button>
                 </div>
 
+                <!-- Usuario -->
+                <div class="unefa-sidebar-user">
+                    <div class="unefa-sidebar-avatar" t-out="state.userInitial"/>
+                    <div class="unefa-sidebar-user-meta">
+                        <span class="unefa-sidebar-username" t-out="state.userName"/>
+                        <span class="unefa-sidebar-userrole" t-if="state.isAdmin">Administrador</span>
+                        <span class="unefa-sidebar-userrole" t-elif="state.isCoordinator">Coordinador</span>
+                        <span class="unefa-sidebar-userrole" t-else="">Docente</span>
+                    </div>
+                </div>
+
+                <!-- Navegación -->
                 <nav class="unefa-sidebar-nav">
-                    <t t-foreach="navSections" t-as="section" t-key="section.label">
-                        <div class="unefa-sidebar-section">
-                            <span class="unefa-sidebar-section-label" t-out="section.label"/>
-                            <t t-foreach="section.items" t-as="item" t-key="item.action">
-                                <button class="unefa-sidebar-link"
-                                        t-on-click="() => this.navigateTo(item.action)">
-                                    <i class="fa" t-att-class="item.icon"/>
-                                    <span t-out="item.label"/>
-                                </button>
-                            </t>
+                    <t t-foreach="navSections" t-as="section" t-key="section.id">
+                        <div class="nav-section">
+                            <button class="nav-section-head"
+                                    t-on-click="() => this.toggleSection(section.id)">
+                                <div class="nav-section-label">
+                                    <i class="fa" t-att-class="section.icon"/>
+                                    <span t-out="section.label"/>
+                                </div>
+                                <i class="fa fa-chevron-down nav-chevron"
+                                   t-att-class="{'open': this.isSectionExpanded(section.id)}"/>
+                            </button>
+                            <div class="nav-section-body"
+                                 t-att-class="{'open': this.isSectionExpanded(section.id)}">
+                                <t t-foreach="section.items" t-as="item" t-key="item.action">
+                                    <button class="nav-link"
+                                            t-on-click="() => this.navigateTo(item)">
+                                        <i class="fa" t-att-class="item.icon"/>
+                                        <span t-out="item.label"/>
+                                    </button>
+                                </t>
+                            </div>
                         </div>
                     </t>
                 </nav>
 
+                <!-- Footer -->
                 <div class="unefa-sidebar-foot">
-                    <div class="unefa-sidebar-user">
-                        <i class="fa fa-user-circle"/>
-                        <span t-out="state.userName"/>
-                    </div>
-                    <button class="unefa-sidebar-logout" t-on-click="logout">
+                    <button class="nav-link nav-link-logout" t-on-click="logout">
                         <i class="fa fa-power-off"/>
                         <span>Cerrar sesión</span>
                     </button>
-                    <div class="unefa-flag-stripe"/>
                 </div>
             </aside>
         </div>

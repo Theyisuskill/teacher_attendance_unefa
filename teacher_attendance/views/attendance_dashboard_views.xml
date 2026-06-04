@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- Acciones de cliente existentes -->
     <record id="action_attendance_dashboard" model="ir.actions.client">
         <field name="name">Attendance Dashboard</field>
         <field name="tag">attendance_scanner_action</field>
@@ -16,6 +17,28 @@
         <field name="target">fullscreen</field>
     </record>
 
+    <!-- Nuevas acciones de cliente para gestión Owl -->
+    <record id="action_user_manager" model="ir.actions.client">
+        <field name="name">Gestión de Usuarios</field>
+        <field name="tag">action_user_manager</field>
+    </record>
+
+    <record id="action_classroom_manager" model="ir.actions.client">
+        <field name="name">Gestión de Aulas</field>
+        <field name="tag">action_classroom_manager</field>
+    </record>
+
+    <record id="action_subject_manager" model="ir.actions.client">
+        <field name="name">Gestión de Materias</field>
+        <field name="tag">action_subject_manager</field>
+    </record>
+
+    <record id="action_substitution_manager" model="ir.actions.client">
+        <field name="name">Gestión de Suplencias</field>
+        <field name="tag">action_substitution_manager</field>
+    </record>
+
+    <!-- Menús -->
     <menuitem id="menu_attendance_dashboard"
               name="Scan QR"
               parent="menu_teacher_attendance_root"

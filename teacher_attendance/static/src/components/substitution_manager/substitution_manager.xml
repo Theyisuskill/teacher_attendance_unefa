@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="teacher_attendance.SubstitutionManager">
+        <div class="o_substitution_manager">
+
+            <!-- Header institucional -->
+            <div class="unefa-page-header">
+                <div class="unefa-flag-top"/>
+                <div class="unefa-page-header-main">
+                    <div class="unefa-page-header-left">
+                        <button class="unefa-btn-back" t-on-click="goBack">
+                            <i class="fa fa-arrow-left"/>
+                        </button>
+                        <div class="unefa-page-header-info">
+                            <h1 class="unefa-page-title">
+                                <i class="fa fa-exchange-alt"/>
+                                Gestión de Suplencias
+                            </h1>
+                            <p class="unefa-page-subtitle">Administrar suplencias de docentes</p>
+                        </div>
+                    </div>
+                    <button class="unefa-btn-primary" t-on-click="showCreateForm"
+                            t-if="state.currentView === 'list'">
+                        <i class="fa fa-plus"/>
+                        Nueva Suplencia
+                    </button>
+                </div>
+            </div>
+
+            <div class="unefa-page-content">
+
+                <!-- Vista de lista -->
+                <t t-if="state.currentView === 'list'">
+                    <!-- Filtros de estado -->
+                    <div class="unefa-filter-bar">
+                        <button class="unefa-filter-btn" t-att-class="{'is-active': state.filterState === 'all'}"
+                                t-on-click="() => this.setFilterState('all')">
+                            Todas
+                        </button>
+                        <button class="unefa-filter-btn" t-att-class="{'is-active': state.filterState === 'draft'}"
+                                t-on-click="() => this.setFilterState('draft')">
+                            Borrador
+                        </button>
+                        <button class="unefa-filter-btn" t-att-class="{'is-active': state.filterState === 'active'}"
+                                t-on-click="() => this.setFilterState('active')">
+                            Activas
+                        </button>
+                        <button class="unefa-filter-btn" t-att-class="{'is-active': state.filterState === 'done'}"
+                                t-on-click="() => this.setFilterState('done')">
+                            Completadas
+                        </button>
+                    </div>
+
+                    <!-- Barra de búsqueda -->
+                    <div class="unefa-search-bar">
+                        <div class="unefa-search-input-wrap">
+                            <i class="fa fa-search"/>
+                            <input type="text"
+                                   class="unefa-search-input"
+                                   placeholder="Buscar por aula, materia o profesor..."
+                                   t-model="state.searchQuery"
+                                   t-on-input="onSearchInput"/>
+                        </div>
+                        <div class="unefa-search-count">
+                            <t t-out="state.filteredSubstitutions.length"/> suplencias
+                        </div>
+                    </div>
+
+                    <!-- Loading -->
+                    <div t-if="state.isLoading" class="unefa-loading">
+                        <i class="fa fa-spinner fa-spin fa-2x"/>
+                        <p>Cargando suplencias...</p>
+                    </div>
+
+                    <!-- Lista de suplencias -->
+                    <div t-elif="state.filteredSubstitutions.length === 0" class="unefa-empty-state">
+                        <i class="fa fa-exchange-alt fa-3x"/>
+                        <h4>No se encontraron suplencias</h4>
+                        <p>Cree una nueva suplencia o cambie los filtros</p>
+                    </div>
+
+                    <div t-else="" class="unefa-substitution-list">
+                        <t t-foreach="state.filteredSubstitutions" t-as="sub" t-key="sub.id">
+                            <div class="unefa-substitution-card" t-att-class="{'is-done': sub.state === 'done'}">
+                                <div class="unefa-substitution-card-header">
+                                    <div class="unefa-substitution-date">
+                                        <i class="fa fa-calendar"/>
+                                        <span t-out="sub.date"/>
+                                    </div>
+                                    <span class="unefa-substitution-badge"
+                                          t-att-class="this.getStateBadgeClass(sub.state)">
+                                        <t t-out="this.getStateLabel(sub.state)"/>
+                                    </span>
+                                </div>
+
+                                <div class="unefa-substitution-card-body">
+                                    <div class="unefa-substitution-row">
+                                        <i class="fa fa-building"/>
+                                        <span t-out="sub.classroom_id ? sub.classroom_id[1] : 'Sin aula'"/>
+                                    </div>
+                                    <div class="unefa-substitution-row">
+                                        <i class="fa fa-book"/>
+                                        <span t-out="sub.subject_id ? sub.subject_id[1] : 'Sin materia'"/>
+                                    </div>
+                                    <div class="unefa-substitution-teachers">
+                                        <div class="unefa-substitution-teacher">
+                                            <span class="teacher-label">Profesor original:</span>
+                                            <span class="teacher-name" t-out="sub.original_teacher_id ? sub.original_teacher_id[1] : 'N/A'"/>
+                                        </div>
+                                        <div class="unefa-substitution-teacher">
+                                            <span class="teacher-label">Suplente:</span>
+                                            <span class="teacher-name" t-out="sub.substitute_teacher_id ? sub.substitute_teacher_id[1] : 'N/A'"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="unefa-substitution-card-actions">
+                                    <button t-if="sub.state === 'draft'"
+                                            class="unefa-btn-icon btn-activate"
+                                            t-on-click="() => this.activateSubstitution(sub.id)"
+                                            title="Activar">
+                                        <i class="fa fa-play"/>
+                                    </button>
+                                    <button t-if="sub.state === 'active'"
+                                            class="unefa-btn-icon btn-complete"
+                                            t-on-click="() => this.completeSubstitution(sub.id)"
+                                            title="Completar">
+                                        <i class="fa fa-check"/>
+                                    </button>
+                                    <button class="unefa-btn-icon btn-edit"
+                                            t-on-click="() => this.showEditForm(sub.id)"
+                                            title="Editar">
+                                        <i class="fa fa-pencil-alt"/>
+                                    </button>
+                                    <button class="unefa-btn-icon btn-delete"
+                                            t-on-click="() => this.deleteSubstitution(sub.id)"
+                                            title="Eliminar">
+                                        <i class="fa fa-trash"/>
+                                    </button>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                </t>
+
+                <!-- Vista de formulario -->
+                <t t-if="state.currentView === 'form'">
+                    <div class="unefa-form-container">
+                        <div class="unefa-form-header">
+                            <h2>
+                                <i class="fa" t-att-class="state.editingSubstitution ? 'fa-edit' : 'fa-plus-circle'"/>
+                                <t t-if="state.editingSubstitution">Editar Suplencia</t>
+                                <t t-else="">Nueva Suplencia</t>
+                            </h2>
+                        </div>
+
+                        <div class="unefa-form-body">
+                            <div class="unefa-form-section">
+                                <h3 class="unefa-form-section-title">
+                                    <i class="fa fa-calendar"/>
+                                    Detalles de la Suplencia
+                                </h3>
+                                <div class="unefa-form-grid">
+                                    <div class="unefa-form-group">
+                                        <label class="unefa-label">Fecha *</label>
+                                        <input type="date"
+                                               class="unefa-input"
+                                               t-model="state.formData.date"/>
+                                    </div>
+                                    <div class="unefa-form-group">
+                                        <label class="unefa-label">Aula *</label>
+                                        <select class="unefa-input"
+                                                t-model="state.formData.classroom_id">
+                                            <option value="">-- Seleccione --</option>
+                                            <t t-foreach="state.classrooms" t-as="cr" t-key="cr.id">
+                                                <option t-att-value="cr.id"><t t-out="cr.name"/></option>
+                                            </t>
+                                        </select>
+                                    </div>
+                                    <div class="unefa-form-group">
+                                        <label class="unefa-label">Materia *</label>
+                                        <select class="unefa-input"
+                                                t-model="state.formData.subject_id">
+                                            <option value="">-- Seleccione --</option>
+                                            <t t-foreach="state.subjects" t-as="sub" t-key="sub.id">
+                                                <option t-att-value="sub.id"><t t-out="sub.name"/></option>
+                                            </t>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="unefa-form-section">
+                                <h3 class="unefa-form-section-title">
+                                    <i class="fa fa-users"/>
+                                    Profesores
+                                </h3>
+                                <div class="unefa-form-grid">
+                                    <div class="unefa-form-group">
+                                        <label class="unefa-label">Profesor Original *</label>
+                                        <select class="unefa-input"
+                                                t-model="state.formData.original_teacher_id">
+                                            <option value="">-- Seleccione --</option>
+                                            <t t-foreach="state.teachers" t-as="tch" t-key="tch.id">
+                                                <option t-att-value="tch.id"><t t-out="tch.name"/></option>
+                                            </t>
+                                        </select>
+                                    </div>
+                                    <div class="unefa-form-group">
+                                        <label class="unefa-label">Profesor Suplente *</label>
+                                        <select class="unefa-input"
+                                                t-model="state.formData.substitute_teacher_id">
+                                            <option value="">-- Seleccione --</option>
+                                            <t t-foreach="state.teachers" t-as="tch" t-key="tch.id">
+                                                <option t-att-value="tch.id"><t t-out="tch.name"/></option>
+                                            </t>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="unefa-form-footer">
+                            <button class="unefa-btn-secondary" t-on-click="cancelForm">
+                                <i class="fa fa-times"/>
+                                Cancelar
+                            </button>
+                            <button class="unefa-btn-primary" t-on-click="saveSubstitution">
+                                <i class="fa fa-check"/>
+                                <t t-if="state.editingSubstitution">Guardar Cambios</t>
+                                <t t-else="">Crear Suplencia</t>
+                            </button>
+                        </div>
+                    </div>
+                </t>
+            </div>
+
+            <!-- Footer -->
+            <div class="unefa-page-footer">
+                <div class="unefa-flag-stripe"/>
+                <span>UNEFA · Sistema de Asistencia Docente</span>
+            </div>
+        </div>
+    </t>
+</templates>

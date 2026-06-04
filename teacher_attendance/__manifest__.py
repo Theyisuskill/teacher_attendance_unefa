@@ -20,22 +20,47 @@
     ],
     'assets': {
         'web.assets_backend': [
+            # Navbar global
             'teacher_attendance/static/src/components/navbar/unefa_nav.js',
             'teacher_attendance/static/src/components/navbar/unefa_nav.xml',
             'teacher_attendance/static/src/components/navbar/unefa_nav.scss',
-            'teacher_attendance/static/src/components/history/history.js',
-            'teacher_attendance/static/src/components/history/history.xml',
+            # Scanner (dashboard principal)
             'teacher_attendance/static/src/components/scanner/scanner.js',
             'teacher_attendance/static/src/components/scanner/scanner.xml',
             'teacher_attendance/static/src/components/scanner/scanner.scss',
-            'teacher_attendance/static/src/widgets/location_picker/location_picker.js',
-            'teacher_attendance/static/src/widgets/location_picker/location_picker.xml',
+            # Historial
+            'teacher_attendance/static/src/components/history/history.js',
+            'teacher_attendance/static/src/components/history/history.xml',
+            # Firma digital
             'teacher_attendance/static/src/components/signature/signature.js',
             'teacher_attendance/static/src/components/signature/signature.xml',
+            # Mapa de ocupación
             'teacher_attendance/static/src/components/occupancy_map/occupancy_map.js',
             'teacher_attendance/static/src/components/occupancy_map/occupancy_map.xml',
+            # Modo kiosco
             'teacher_attendance/static/src/components/kiosk/kiosk.js',
             'teacher_attendance/static/src/components/kiosk/kiosk.xml',
+            # Gestión de usuarios (admin)
+            'teacher_attendance/static/src/components/user_manager/user_manager.js',
+            'teacher_attendance/static/src/components/user_manager/user_manager.xml',
+            'teacher_attendance/static/src/components/user_manager/user_manager.scss',
+            # Gestión de aulas
+            'teacher_attendance/static/src/components/classroom_manager/classroom_manager.js',
+            'teacher_attendance/static/src/components/classroom_manager/classroom_manager.xml',
+            'teacher_attendance/static/src/components/classroom_manager/classroom_manager.scss',
+            # Gestión de materias
+            'teacher_attendance/static/src/components/subject_manager/subject_manager.js',
+            'teacher_attendance/static/src/components/subject_manager/subject_manager.xml',
+            'teacher_attendance/static/src/components/subject_manager/subject_manager.scss',
+            # Gestión de suplencias
+            'teacher_attendance/static/src/components/substitution_manager/substitution_manager.js',
+            'teacher_attendance/static/src/components/substitution_manager/substitution_manager.xml',
+            'teacher_attendance/static/src/components/substitution_manager/substitution_manager.scss',
+            # Widgets
+            'teacher_attendance/static/src/widgets/location_picker/location_picker.js',
+            'teacher_attendance/static/src/widgets/location_picker/location_picker.xml',
+            # CSS global
+            'teacher_attendance/static/src/css/unefa_global.scss',
             'teacher_attendance/static/src/css/attendance_kanban.scss',
             'teacher_attendance/static/src/css/attendance_form.scss',
         ],

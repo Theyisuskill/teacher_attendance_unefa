@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="teacher_attendance.SubjectManager">
+        <div class="o_subject_manager">
+
+            <!-- Header institucional -->
+            <div class="unefa-page-header">
+                <div class="unefa-flag-top"/>
+                <div class="unefa-page-header-main">
+                    <div class="unefa-page-header-left">
+                        <button class="unefa-btn-back" t-on-click="goBack">
+                            <i class="fa fa-arrow-left"/>
+                        </button>
+                        <div class="unefa-page-header-info">
+                            <h1 class="unefa-page-title">
+                                <i class="fa fa-book"/>
+                                Gestión de Materias
+                            </h1>
+                            <p class="unefa-page-subtitle">Administrar materias académicas</p>
+                        </div>
+                    </div>
+                    <button class="unefa-btn-primary" t-on-click="showCreateForm"
+                            t-if="state.currentView === 'list'">
+                        <i class="fa fa-plus"/>
+                        Nueva Materia
+                    </button>
+                </div>
+            </div>
+
+            <div class="unefa-page-content">
+
+                <!-- Vista de lista -->
+                <t t-if="state.currentView === 'list'">
+                    <!-- Agregar rápido -->
+                    <div class="unefa-quick-add">
+                        <div class="unefa-quick-add-inputs">
+                            <input type="text"
+                                   class="unefa-input"
+                                   placeholder="Nombre de la materia"
+                                   t-model="state.newSubjectName"/>
+                            <input type="text"
+                                   class="unefa-input"
+                                   placeholder="Código (opcional)"
+                                   t-model="state.newSubjectCode"/>
+                        </div>
+                        <button class="unefa-btn-primary btn-sm" t-on-click="quickAdd">
+                            <i class="fa fa-plus"/>
+                            Agregar
+                        </button>
+                    </div>
+
+                    <!-- Barra de búsqueda -->
+                    <div class="unefa-search-bar">
+                        <div class="unefa-search-input-wrap">
+                            <i class="fa fa-search"/>
+                            <input type="text"
+                                   class="unefa-search-input"
+                                   placeholder="Buscar materia..."
+                                   t-model="state.searchQuery"
+                                   t-on-input="onSearchInput"/>
+                        </div>
+                        <div class="unefa-search-count">
+                            <t t-out="state.filteredSubjects.length"/> materias
+                        </div>
+                    </div>
+
+                    <!-- Loading -->
+                    <div t-if="state.isLoading" class="unefa-loading">
+                        <i class="fa fa-spinner fa-spin fa-2x"/>
+                        <p>Cargando materias...</p>
+                    </div>
+
+                    <!-- Lista de materias -->
+                    <div t-elif="state.filteredSubjects.length === 0" class="unefa-empty-state">
+                        <i class="fa fa-book fa-3x"/>
+                        <h4>No se encontraron materias</h4>
+                        <p>Agregue una materia usando el formulario de arriba</p>
+                    </div>
+
+                    <div t-else="" class="unefa-subject-list">
+                        <t t-foreach="state.filteredSubjects" t-as="sub" t-key="sub.id">
+                            <div class="unefa-subject-item">
+                                <div class="unefa-subject-icon">
+                                    <i class="fa fa-book-open"/>
+                                </div>
+                                <div class="unefa-subject-info">
+                                    <span class="unefa-subject-name" t-out="sub.name"/>
+                                    <span class="unefa-subject-code" t-if="sub.code" t-out="sub.code"/>
+                                </div>
+                                <div class="unefa-subject-actions">
+                                    <button class="unefa-btn-icon btn-edit"
+                                            t-on-click="() => this.showEditForm(sub.id)"
+                                            title="Editar">
+                                        <i class="fa fa-pencil-alt"/>
+                                    </button>
+                                    <button class="unefa-btn-icon btn-delete"
+                                            t-on-click="() => this.deleteSubject(sub.id)"
+                                            title="Eliminar">
+                                        <i class="fa fa-trash"/>
+                                    </button>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                </t>
+
+                <!-- Vista de formulario -->
+                <t t-if="state.currentView === 'form'">
+                    <div class="unefa-form-container">
+                        <div class="unefa-form-header">
+                            <h2>
+                                <i class="fa" t-att-class="state.editingSubject ? 'fa-edit' : 'fa-plus-circle'"/>
+                                <t t-if="state.editingSubject">Editar Materia</t>
+                                <t t-else="">Nueva Materia</t>
+                            </h2>
+                        </div>
+
+                        <div class="unefa-form-body">
+                            <div class="unefa-form-section">
+                                <div class="unefa-form-grid">
+                                    <div class="unefa-form-group">
+                                        <label class="unefa-label">Nombre de la materia *</label>
+                                        <input type="text"
+                                               class="unefa-input"
+                                               placeholder="Ej: Matemáticas"
+                                               t-model="state.formData.name"/>
+                                    </div>
+                                    <div class="unefa-form-group">
+                                        <label class="unefa-label">Código</label>
+                                        <input type="text"
+                                               class="unefa-input"
+                                               placeholder="Ej: MAT-101"
+                                               t-model="state.formData.code"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="unefa-form-footer">
+                            <button class="unefa-btn-secondary" t-on-click="cancelForm">
+                                <i class="fa fa-times"/>
+                                Cancelar
+                            </button>
+                            <button class="unefa-btn-primary" t-on-click="saveSubject">
+                                <i class="fa fa-check"/>
+                                <t t-if="state.editingSubject">Guardar Cambios</t>
+                                <t t-else="">Crear Materia</t>
+                            </button>
+                        </div>
+                    </div>
+                </t>
+            </div>
+
+            <!-- Footer -->
+            <div class="unefa-page-footer">
+                <div class="unefa-flag-stripe"/>
+                <span>UNEFA · Sistema de Asistencia Docente</span>
+            </div>
+        </div>
+    </t>
+</templates>

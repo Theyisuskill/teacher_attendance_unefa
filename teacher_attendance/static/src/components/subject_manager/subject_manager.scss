@@ -1,0 +1,102 @@
+/* ═══════════════════════════════════════════
+   SUBJECT MANAGER — Limpio
+   ═══════════════════════════════════════════ */
+
+.o_subject_manager {
+    background: var(--unefa-light);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ── Quick Add ── */
+.unefa-quick-add {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 14px 16px;
+    background: #fff;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--unefa-border);
+    margin-bottom: 16px;
+    border-left: 3px solid var(--unefa-yellow);
+}
+
+.unefa-quick-add-inputs {
+    flex: 1;
+    display: flex;
+    gap: 8px;
+    input { flex: 1; }
+}
+
+.btn-sm {
+    padding: 8px 14px;
+    font-size: 0.78rem;
+}
+
+/* ── Subject List ── */
+.unefa-subject-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.unefa-subject-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: #fff;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-xs);
+    border: 1px solid var(--unefa-border);
+    transition: 0.15s;
+
+    &:hover { box-shadow: var(--shadow-sm); transform: translateX(2px); }
+}
+
+.unefa-subject-icon {
+    width: 36px; height: 36px;
+    border-radius: var(--radius-sm);
+    background: rgba(110,143,199,0.06);
+    display: grid;
+    place-items: center;
+    color: var(--unefa-blue);
+    font-size: 0.8rem;
+    flex-shrink: 0;
+}
+
+.unefa-subject-info {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+.unefa-subject-name {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--unefa-dark);
+}
+
+.unefa-subject-code {
+    font-size: 0.65rem;
+    color: var(--unefa-blue);
+    background: rgba(110,143,199,0.08);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.unefa-subject-actions {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+    .unefa-quick-add { flex-direction: column; }
+    .unefa-quick-add-inputs { flex-direction: column; width: 100%; }
+}
