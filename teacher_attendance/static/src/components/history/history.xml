@@ -24,7 +24,7 @@
                                   style="width: 40px; height: 40px; min-width: 40px;">
                                 <i t-att-class="{
                                     'fa fa-check text-success': log.status === 'valid',
-                                    'fa fa-map-marker-alt text-danger': log.status === 'outside',
+                                    'fa fa-map-marker text-danger': log.status === 'outside',
                                     'fa fa-clock text-warning': log.status === 'late',
                                     'fa fa-question text-secondary': log.status === 'invalid' || log.status === 'manual'
                                 }"/>

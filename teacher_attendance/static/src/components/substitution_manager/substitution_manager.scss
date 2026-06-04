@@ -18,7 +18,7 @@
 }
 
 .unefa-filter-btn {
-    padding: 7px 14px;
+    padding: 8px 16px;
     border: 1px solid var(--unefa-border);
     background: #fff;
     border-radius: 20px;
@@ -28,11 +28,16 @@
     cursor: pointer;
     transition: 0.15s;
 
-    &:hover { border-color: var(--unefa-blue); color: var(--unefa-blue); }
+    &:hover {
+        border-color: var(--unefa-blue);
+        color: var(--unefa-blue);
+        background: rgba(110,143,199,0.05);
+    }
     &.is-active {
-        background: var(--unefa-blue);
+        background: linear-gradient(135deg, var(--unefa-blue) 0%, var(--unefa-blue-dark) 100%);
         border-color: var(--unefa-blue);
         color: #fff;
+        box-shadow: 0 2px 6px rgba(110,143,199,0.3);
     }
 }
 
@@ -74,7 +79,7 @@
 }
 
 .unefa-substitution-badge {
-    padding: 3px 10px;
+    padding: 4px 12px;
     border-radius: 20px;
     font-size: 0.62rem;
     font-weight: 700;
@@ -82,14 +87,14 @@
     letter-spacing: 0.3px;
 
     &.badge-draft {
-        background: rgba(160,174,192,0.1);
-        color: #718096;
-        border: 1px solid rgba(160,174,192,0.2);
+        background: rgba(241,216,139,0.15);
+        color: #8b7a2d;
+        border: 1px solid rgba(241,216,139,0.3);
     }
     &.badge-active {
-        background: rgba(72,187,120,0.1);
-        color: #276749;
-        border: 1px solid rgba(72,187,120,0.2);
+        background: rgba(110,143,199,0.15);
+        color: #43618f;
+        border: 1px solid rgba(110,143,199,0.3);
     }
     &.badge-done {
         background: rgba(110,143,199,0.1);
@@ -97,9 +102,9 @@
         border: 1px solid rgba(110,143,199,0.2);
     }
     &.badge-cancelled {
-        background: rgba(222,151,157,0.1);
-        color: #c53030;
-        border: 1px solid rgba(222,151,157,0.2);
+        background: rgba(222,151,157,0.15);
+        color: #8b4c52;
+        border: 1px solid rgba(222,151,157,0.3);
     }
 }
 
@@ -156,13 +161,23 @@
 }
 
 .btn-activate {
-    color: #38a169;
-    &:hover { background: rgba(56,161,105,0.08); border-color: #38a169; }
+    color: var(--unefa-yellow);
+    &:hover { background: rgba(241,216,139,0.08); border-color: var(--unefa-yellow); }
 }
 
 .btn-complete {
     color: var(--unefa-blue);
     &:hover { background: rgba(110,143,199,0.08); border-color: var(--unefa-blue); }
+}
+
+.btn-edit-substitution {
+    color: var(--unefa-blue);
+    &:hover { background: rgba(110,143,199,0.08); border-color: var(--unefa-blue); }
+}
+
+.btn-delete-substitution {
+    color: var(--unefa-red);
+    &:hover { background: rgba(222,151,157,0.08); border-color: var(--unefa-red); }
 }
 
 @media (max-width: 768px) {

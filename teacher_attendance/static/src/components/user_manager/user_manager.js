@@ -39,7 +39,7 @@ export class UserManager extends Component {
             email: "",
             phone: "",
             attendance_pin: "",
-            groups_id: [],
+            group_ids: [],
             active: true,
         };
     }
@@ -47,26 +47,20 @@ export class UserManager extends Component {
     async loadData() {
         this.state.isLoading = true;
         try {
-            const [users, groups] = await Promise.all([
-                this.orm.searchRead(
-                    "res.users",
-                    [],
-                    ["name", "login", "email", "phone", "attendance_pin", "active", "groups_id"],
-                    { order: "name asc" }
-                ),
-                this.orm.searchRead(
-                    "res.groups",
-                    [["category_id", "!=", false]],
-                    ["name", "category_id"],
-                    { order: "name asc" }
-                ),
-            ]);
+            const users = await this.orm.searchRead(
+                "res.users",
+                [],
+                ["name", "login", "email", "phone", "attendance_pin", "active", "group_ids"],
+                { order: "name asc" }
+            );
 
-            this.state.users = users;
-            this.state.filteredUsers = users;
-            this.state.groups = groups;
+            this.state.users = users || [];
+            this.state.filteredUsers = users || [];
         } catch (error) {
+            console.error("Error loading users:", error);
             this.notification.add("Error al cargar datos", { type: "danger" });
+            this.state.users = [];
+            this.state.filteredUsers = [];
         }
         this.state.isLoading = false;
     }
@@ -107,7 +101,7 @@ export class UserManager extends Component {
             email: u.email || "",
             phone: u.phone || "",
             attendance_pin: u.attendance_pin || "",
-            groups_id: u.groups_id || [],
+            group_ids: u.group_ids || [],
             active: u.active !== false,
         };
         this.state.currentView = "form";
@@ -198,7 +192,7 @@ export class UserManager extends Component {
     }
 
     goBack() {
-        this.action.doAction("teacher_attendance.action_attendance_dashboard");
+        this.action.doAction("teacher_attendance.action_attendance_dashboard", { clearBreadcrumbs: true });
     }
 }
 

@@ -58,7 +58,7 @@ export class AttendanceScanner extends Component {
     }
 
     goBack() {
-        this.action.doAction("teacher_attendance.action_attendance_log_my");
+        this.action.doAction("teacher_attendance.action_attendance_log_my", { clearBreadcrumbs: true });
     }
 
     updateClock() {

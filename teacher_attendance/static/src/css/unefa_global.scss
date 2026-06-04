@@ -97,8 +97,10 @@ body.attendance-scanner-fullscreen {
     width: 100%;
 }
 
-/* ── Botones ── */
-.unefa-btn-back {
+/* ── Botones ──
+   Scoped al page-header para no pisar el .unefa-btn-back
+   del scanner (que es un pill con texto, no un cuadrado). */
+.unefa-page-header .unefa-btn-back {
     width: 36px; height: 36px;
     border: none;
     background: rgba(255,255,255,0.12);
@@ -386,6 +388,87 @@ select.unefa-input {
         color: var(--unefa-red);
         &:hover { background: rgba(222,151,157,0.08); border-color: var(--unefa-red); }
     }
+}
+
+/* ── Badges UNEFA ── */
+.unefa-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+
+    &.badge-primary {
+        background: rgba(110,143,199,0.12);
+        color: var(--unefa-blue);
+    }
+    &.badge-yellow {
+        background: rgba(241,216,139,0.2);
+        color: #8b7a2d;
+    }
+    &.badge-rose {
+        background: rgba(222,151,157,0.15);
+        color: #8b4c52;
+    }
+    &.badge-valid { @extend .badge-primary; }
+    &.badge-warning { @extend .badge-yellow; }
+    &.badge-error { @extend .badge-rose; }
+}
+
+/* ── Buttons con colores pastel ── */
+.unefa-btn-yellow {
+    @extend .unefa-btn-primary;
+}
+
+.unefa-btn-rose {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--unefa-red);
+    color: #fff;
+    border: none;
+    padding: 9px 18px;
+    border-radius: var(--radius-md);
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.15s;
+    box-shadow: 0 1px 3px rgba(222,151,157,0.4);
+
+    &:hover { filter: brightness(1.08); box-shadow: 0 2px 8px rgba(222,151,157,0.5); }
+}
+
+.unefa-btn-accent {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(110,143,199,0.12);
+    color: var(--unefa-blue);
+    border: 1px solid rgba(110,143,199,0.3);
+    padding: 9px 18px;
+    border-radius: var(--radius-md);
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.15s;
+
+    &:hover { background: rgba(110,143,199,0.18); border-color: var(--unefa-blue); }
+}
+
+/* ── Gradientes UNEFA ── */
+.unefa-gradient-blue-yellow {
+    background: linear-gradient(135deg, var(--unefa-blue) 0%, rgba(241,216,139,0.3) 100%);
+}
+
+.unefa-gradient-blue-rose {
+    background: linear-gradient(135deg, var(--unefa-blue) 0%, rgba(222,151,157,0.25) 100%);
+}
+
+.unefa-gradient-yellow-rose {
+    background: linear-gradient(135deg, var(--unefa-yellow) 0%, var(--unefa-red) 100%);
 }
 
 /* ── Footer ── */

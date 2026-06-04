@@ -216,19 +216,19 @@
     width: 100%;
 
     &.status-valid {
-        background: linear-gradient(90deg, #28a745, #5cd677);
+        background: linear-gradient(90deg, var(--unefa-blue), #7b9dd4);
     }
     &.status-manual {
-        background: linear-gradient(90deg, var(--unefa-blue), #4d7fd8);
+        background: linear-gradient(90deg, var(--unefa-blue), #8ba8d8);
     }
     &.status-outside {
-        background: linear-gradient(90deg, var(--unefa-red), #e74c6f);
+        background: linear-gradient(90deg, var(--unefa-red), #e8a7ac);
     }
     &.status-late {
-        background: linear-gradient(90deg, var(--unefa-red), var(--unefa-yellow));
+        background: linear-gradient(90deg, var(--unefa-yellow), var(--unefa-red));
     }
     &.status-invalid {
-        background: linear-gradient(90deg, #6c757d, #adb5bd);
+        background: linear-gradient(90deg, #9ca3af, #d1d5db);
     }
 }
 
@@ -289,24 +289,24 @@
     flex-shrink: 0;
 
     &.badge-valid {
-        background: rgba(40, 167, 69, 0.12);
-        color: #1e7e34;
-        border: 1px solid rgba(40, 167, 69, 0.2);
+        background: rgba(110, 143, 199, 0.15);
+        color: #43618f;
+        border: 1px solid rgba(110, 143, 199, 0.3);
     }
     &.badge-manual {
-        background: rgba(0, 61, 165, 0.1);
+        background: rgba(110, 143, 199, 0.1);
         color: var(--unefa-blue);
-        border: 1px solid rgba(0, 61, 165, 0.2);
+        border: 1px solid rgba(110, 143, 199, 0.2);
     }
     &.badge-outside {
-        background: rgba(207, 20, 43, 0.1);
-        color: var(--unefa-red);
-        border: 1px solid rgba(207, 20, 43, 0.2);
+        background: rgba(222, 151, 157, 0.15);
+        color: #8b4c52;
+        border: 1px solid rgba(222, 151, 157, 0.3);
     }
     &.badge-late {
-        background: rgba(255, 205, 0, 0.15);
-        color: #8a6d00;
-        border: 1px solid rgba(255, 205, 0, 0.3);
+        background: rgba(241, 216, 139, 0.15);
+        color: #8b7a2d;
+        border: 1px solid rgba(241, 216, 139, 0.3);
     }
     &.badge-invalid {
         background: rgba(108, 117, 125, 0.1);

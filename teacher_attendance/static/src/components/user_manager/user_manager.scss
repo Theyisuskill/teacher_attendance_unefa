@@ -48,7 +48,9 @@
     place-items: center;
     color: #fff;
     font-size: 0.9rem;
+    font-weight: 700;
     flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(110,143,199,0.3);
 }
 
 .unefa-user-card-info {
@@ -73,7 +75,7 @@
 }
 
 .unefa-user-status {
-    padding: 3px 8px;
+    padding: 4px 10px;
     border-radius: 20px;
     font-size: 0.6rem;
     font-weight: 700;
@@ -82,9 +84,9 @@
     flex-shrink: 0;
 
     &.status-active {
-        background: rgba(72,187,120,0.1);
-        color: #276749;
-        border: 1px solid rgba(72,187,120,0.2);
+        background: rgba(241,216,139,0.15);
+        color: #8b7a2d;
+        border: 1px solid rgba(241,216,139,0.3);
     }
     &.status-inactive {
         background: rgba(160,174,192,0.1);
@@ -116,6 +118,22 @@
     padding: 10px 16px;
     background: #f9fafb;
     border-top: 1px solid #f0f0f0;
+}
+
+/* ── Action Buttons ── */
+.btn-edit-user {
+    color: var(--unefa-blue);
+    &:hover { background: rgba(110,143,199,0.08); border-color: var(--unefa-blue); }
+}
+
+.btn-delete-user {
+    color: var(--unefa-red);
+    &:hover { background: rgba(222,151,157,0.08); border-color: var(--unefa-red); }
+}
+
+.btn-toggle-user {
+    color: var(--unefa-yellow);
+    &:hover { background: rgba(241,216,139,0.1); border-color: var(--unefa-yellow); }
 }
 
 /* ── Responsive ── */

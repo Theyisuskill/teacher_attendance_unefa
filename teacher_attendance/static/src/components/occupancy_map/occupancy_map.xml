@@ -1,18 +1,76 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
     <t t-name="teacher_attendance.OccupancyMap" owl="1">
-        <div class="o_occupancy_map h-100 d-flex flex-column bg-light p-3">
-            <div class="mb-3 d-flex justify-content-between align-items-center">
-                <h2>Real-Time Occupancy Map</h2>
-                <div class="d-flex gap-3">
-                    <span class="badge bg-success rounded-pill px-3 py-2">● Occupied</span>
-                    <span class="badge bg-secondary rounded-pill px-3 py-2">● Empty</span>
+        <div class="o_occupancy_map o_unefa_view">
+
+            <!-- ══════════════════════════════════════════
+                 HEADER INSTITUCIONAL UNEFA
+                 ══════════════════════════════════════════ -->
+            <div class="unefa-header">
+                <div class="unefa-flag-top"/>
+                <div class="unefa-header-main">
+                    <div class="unefa-header-text">
+                        <div class="unefa-nombre">Mapa de Ocupación en Tiempo Real</div>
+                        <div class="unefa-subtitulo">UNEFA · Sistema de Asistencia</div>
+                    </div>
                 </div>
             </div>
-            <div t-ref="mapContainer" class="flex-grow-1 border rounded shadow-sm bg-white"/>
-            <div class="mt-2 text-muted small">
-                <i class="fa fa-info-circle me-1"/> Map shows classrooms with valid check-ins today in green.
+
+            <!-- ══════════════════════════════════════════
+                 CUERPO — Layout
+                 ══════════════════════════════════════════ -->
+            <div class="unefa-body unefa-occupancy-body">
+
+                <!-- Stats / Leyenda -->
+                <div class="occupancy-legend">
+                    <div class="legend-item legend-occupied">
+                        <span class="legend-dot"/>
+                        <div class="legend-text">
+                            <span class="legend-label">Aula Ocupada</span>
+                            <span class="legend-count" t-out="occupiedCount">0</span>
+                        </div>
+                    </div>
+                    <div class="legend-item legend-empty">
+                        <span class="legend-dot"/>
+                        <div class="legend-text">
+                            <span class="legend-label">Aula Vacía</span>
+                            <span class="legend-count" t-out="emptyCount">0</span>
+                        </div>
+                    </div>
+                    <div class="legend-item legend-class">
+                        <span class="legend-dot"/>
+                        <div class="legend-text">
+                            <span class="legend-label">Clase en Progreso</span>
+                            <span class="legend-count" t-out="activeCount">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mapa -->
+                <div class="map-container-wrapper">
+                    <div t-ref="mapContainer" class="map-container"/>
+                    <div t-if="!mapLoaded" class="map-loading">
+                        <i class="fa fa-spinner fa-spin"/>
+                        <p>Cargando mapa...</p>
+                    </div>
+                </div>
+
+                <!-- Info -->
+                <div class="occupancy-info">
+                    <i class="fa fa-info-circle"/>
+                    <span>El mapa muestra todas las aulas registradas con asistencias válidas de hoy.</span>
+                </div>
+
+            </div><!-- /unefa-body -->
+
+            <!-- ══════════════════════════════════════════
+                 FOOTER INSTITUCIONAL
+                 ══════════════════════════════════════════ -->
+            <div class="unefa-footer">
+                <div class="unefa-flag-stripe"/>
+                <span>UNEFA · Mapa de Ocupación v1.0 · Excelencia Educativa</span>
             </div>
+
         </div>
     </t>
 </templates>

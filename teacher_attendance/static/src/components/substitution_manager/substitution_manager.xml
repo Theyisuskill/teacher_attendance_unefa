@@ -13,7 +13,7 @@
                         </button>
                         <div class="unefa-page-header-info">
                             <h1 class="unefa-page-title">
-                                <i class="fa fa-exchange-alt"/>
+                                <i class="fa fa-exchange"/>
                                 Gestión de Suplencias
                             </h1>
                             <p class="unefa-page-subtitle">Administrar suplencias de docentes</p>
@@ -74,7 +74,7 @@
 
                     <!-- Lista de suplencias -->
                     <div t-elif="state.filteredSubstitutions.length === 0" class="unefa-empty-state">
-                        <i class="fa fa-exchange-alt fa-3x"/>
+                        <i class="fa fa-exchange fa-3x"/>
                         <h4>No se encontraron suplencias</h4>
                         <p>Cree una nueva suplencia o cambie los filtros</p>
                     </div>
@@ -130,7 +130,7 @@
                                     <button class="unefa-btn-icon btn-edit"
                                             t-on-click="() => this.showEditForm(sub.id)"
                                             title="Editar">
-                                        <i class="fa fa-pencil-alt"/>
+                                        <i class="fa fa-pencil"/>
                                     </button>
                                     <button class="unefa-btn-icon btn-delete"
                                             t-on-click="() => this.deleteSubstitution(sub.id)"

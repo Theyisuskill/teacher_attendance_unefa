@@ -38,12 +38,14 @@
 .unefa-classroom-icon {
     width: 42px; height: 42px;
     border-radius: var(--radius-sm);
-    background: linear-gradient(135deg, var(--unefa-blue) 0%, var(--unefa-blue-dark) 100%);
+    background: linear-gradient(135deg, var(--unefa-yellow) 0%, #e8cf75 100%);
     display: grid;
     place-items: center;
-    color: #fff;
+    color: #5a4a1a;
     font-size: 1rem;
+    font-weight: 700;
     flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(241,216,139,0.3);
 }
 
 .unefa-classroom-card-info { flex: 1; min-width: 0; }
@@ -72,12 +74,14 @@
 .unefa-classroom-qr {
     width: 32px; height: 32px;
     border-radius: 6px;
-    background: rgba(241,216,139,0.12);
+    background: linear-gradient(135deg, var(--unefa-yellow) 0%, rgba(241,216,139,0.5) 100%);
     display: grid;
     place-items: center;
-    color: var(--unefa-yellow);
+    color: #fff;
     font-size: 0.9rem;
+    font-weight: 700;
     flex-shrink: 0;
+    box-shadow: 0 1px 4px rgba(241,216,139,0.4);
 }
 
 .unefa-classroom-card-body {
@@ -106,8 +110,18 @@
 }
 
 .btn-download {
-    color: #38a169;
-    &:hover { background: rgba(56,161,105,0.08); border-color: #38a169; }
+    color: var(--unefa-yellow);
+    &:hover { background: rgba(241,216,139,0.08); border-color: var(--unefa-yellow); }
+}
+
+.btn-validate-gps {
+    color: var(--unefa-blue);
+    &:hover { background: rgba(110,143,199,0.08); border-color: var(--unefa-blue); }
+}
+
+.btn-delete-classroom {
+    color: var(--unefa-red);
+    &:hover { background: rgba(222,151,157,0.08); border-color: var(--unefa-red); }
 }
 
 @media (max-width: 768px) {

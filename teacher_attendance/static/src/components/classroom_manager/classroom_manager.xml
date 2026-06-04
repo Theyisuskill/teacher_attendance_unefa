@@ -64,7 +64,7 @@
                             <div class="unefa-classroom-card">
                                 <div class="unefa-classroom-card-header">
                                     <div class="unefa-classroom-icon">
-                                        <i class="fa fa-door-open"/>
+                                        <i class="fa fa-building-o"/>
                                     </div>
                                     <div class="unefa-classroom-card-info">
                                         <h3 class="unefa-classroom-name" t-out="cr.name"/>
@@ -77,14 +77,14 @@
 
                                 <div class="unefa-classroom-card-body">
                                     <div class="unefa-classroom-detail">
-                                        <i class="fa fa-map-marker-alt"/>
+                                        <i class="fa fa-map-marker"/>
                                         <span t-if="cr.latitude">
                                             GPS: <t t-out="cr.latitude.toFixed(5)"/>, <t t-out="cr.longitude.toFixed(5)"/>
                                         </span>
                                         <span t-else="">Sin ubicación GPS</span>
                                     </div>
                                     <div class="unefa-classroom-detail">
-                                        <i class="fa fa-expand-arrows-alt"/>
+                                        <i class="fa fa-arrows-alt"/>
                                         <span>Radio: <t t-out="cr.radius"/> metros</span>
                                     </div>
                                     <div class="unefa-classroom-detail" t-if="cr.check_schedule">
@@ -97,7 +97,7 @@
                                     <button class="unefa-btn-icon btn-edit"
                                             t-on-click="() => this.showEditForm(cr.id)"
                                             title="Editar">
-                                        <i class="fa fa-pencil-alt"/>
+                                        <i class="fa fa-pencil"/>
                                     </button>
                                     <button class="unefa-btn-icon btn-download"
                                             t-on-click="() => this.downloadQR(cr.id)"
@@ -152,7 +152,7 @@
 
                             <div class="unefa-form-section">
                                 <h3 class="unefa-form-section-title">
-                                    <i class="fa fa-map-marker-alt"/>
+                                    <i class="fa fa-map-marker"/>
                                     Ubicación GPS
                                 </h3>
                                 <div class="unefa-form-grid">

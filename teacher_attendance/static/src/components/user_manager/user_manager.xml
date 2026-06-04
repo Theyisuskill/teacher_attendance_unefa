@@ -13,7 +13,7 @@
                         </button>
                         <div class="unefa-page-header-info">
                             <h1 class="unefa-page-title">
-                                <i class="fa fa-users-cog"/>
+                                <i class="fa fa-users"/>
                                 Gestión de Usuarios
                             </h1>
                             <p class="unefa-page-subtitle">Administrar usuarios del sistema de asistencia</p>
@@ -96,7 +96,7 @@
                                     <button class="unefa-btn-icon btn-edit"
                                             t-on-click="() => this.showEditForm(u.id)"
                                             title="Editar">
-                                        <i class="fa fa-pencil-alt"/>
+                                        <i class="fa fa-pencil"/>
                                     </button>
                                     <button class="unefa-btn-icon btn-toggle"
                                             t-on-click="() => this.toggleUserActive(u.id)"
@@ -119,7 +119,7 @@
                     <div class="unefa-form-container">
                         <div class="unefa-form-header">
                             <h2>
-                                <i class="fa" t-att-class="state.editingUser ? 'fa-user-edit' : 'fa-user-plus'"/>
+                                <i class="fa" t-att-class="state.editingUser ? 'fa-pencil' : 'fa-user-plus'"/>
                                 <t t-if="state.editingUser">Editar Usuario</t>
                                 <t t-else="">Nuevo Usuario</t>
                             </h2>
@@ -166,7 +166,7 @@
 
                             <div class="unefa-form-section">
                                 <h3 class="unefa-form-section-title">
-                                    <i class="fa fa-shield-alt"/>
+                                    <i class="fa fa-shield"/>
                                     Acceso al Sistema
                                 </h3>
                                 <div class="unefa-form-grid">

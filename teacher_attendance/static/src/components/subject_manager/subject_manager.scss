@@ -15,12 +15,18 @@
     gap: 10px;
     align-items: center;
     padding: 14px 16px;
-    background: #fff;
+    background: linear-gradient(135deg, #fff 0%, rgba(241,216,139,0.05) 100%);
     border-radius: var(--radius-md);
-    box-shadow: var(--shadow-sm);
-    border: 1px solid var(--unefa-border);
+    box-shadow: 0 2px 6px rgba(241,216,139,0.15);
+    border: 1px solid rgba(241,216,139,0.3);
     margin-bottom: 16px;
-    border-left: 3px solid var(--unefa-yellow);
+    border-left: 4px solid var(--unefa-yellow);
+    transition: 0.2s;
+
+    &:hover {
+        box-shadow: 0 4px 12px rgba(241,216,139,0.25);
+        border-color: rgba(241,216,139,0.5);
+    }
 }
 
 .unefa-quick-add-inputs {
@@ -59,12 +65,14 @@
 .unefa-subject-icon {
     width: 36px; height: 36px;
     border-radius: var(--radius-sm);
-    background: rgba(110,143,199,0.06);
+    background: linear-gradient(135deg, var(--unefa-blue) 0%, var(--unefa-blue-dark) 100%);
     display: grid;
     place-items: center;
-    color: var(--unefa-blue);
+    color: #fff;
     font-size: 0.8rem;
+    font-weight: 700;
     flex-shrink: 0;
+    box-shadow: 0 2px 4px rgba(110,143,199,0.2);
 }
 
 .unefa-subject-info {
@@ -94,6 +102,24 @@
     display: flex;
     gap: 4px;
     flex-shrink: 0;
+}
+
+/* ── Action Buttons ── */
+.btn-edit-subject {
+    color: var(--unefa-blue);
+    &:hover { background: rgba(110,143,199,0.08); border-color: var(--unefa-blue); }
+}
+
+.btn-delete-subject {
+    color: var(--unefa-red);
+    &:hover { background: rgba(222,151,157,0.08); border-color: var(--unefa-red); }
+}
+
+.btn-add-subject {
+    background: linear-gradient(135deg, var(--unefa-yellow) 0%, #e8cf75 100%);
+    color: #5a4a1a;
+    border: none;
+    &:hover { filter: brightness(0.98); }
 }
 
 @media (max-width: 768px) {

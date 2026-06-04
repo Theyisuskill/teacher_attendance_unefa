@@ -31,15 +31,18 @@
             # Historial
             'teacher_attendance/static/src/components/history/history.js',
             'teacher_attendance/static/src/components/history/history.xml',
+            'teacher_attendance/static/src/components/history/history.scss',
             # Firma digital
             'teacher_attendance/static/src/components/signature/signature.js',
             'teacher_attendance/static/src/components/signature/signature.xml',
             # Mapa de ocupación
             'teacher_attendance/static/src/components/occupancy_map/occupancy_map.js',
             'teacher_attendance/static/src/components/occupancy_map/occupancy_map.xml',
+            'teacher_attendance/static/src/components/occupancy_map/occupancy_map.scss',
             # Modo kiosco
             'teacher_attendance/static/src/components/kiosk/kiosk.js',
             'teacher_attendance/static/src/components/kiosk/kiosk.xml',
+            'teacher_attendance/static/src/components/kiosk/kiosk.scss',
             # Gestión de usuarios (admin)
             'teacher_attendance/static/src/components/user_manager/user_manager.js',
             'teacher_attendance/static/src/components/user_manager/user_manager.xml',

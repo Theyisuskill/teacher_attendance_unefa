@@ -184,7 +184,7 @@ export class ClassroomManager extends Component {
     }
 
     goBack() {
-        this.action.doAction("teacher_attendance.action_attendance_dashboard");
+        this.action.doAction("teacher_attendance.action_attendance_dashboard", { clearBreadcrumbs: true });
     }
 }
 

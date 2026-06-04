@@ -161,7 +161,7 @@
                                 </div>
                             </div>
                             <div class="info-card">
-                                <div class="info-icon info-icon-yellow"><i class="fa fa-map-marker-alt"/></div>
+                                <div class="info-icon info-icon-yellow"><i class="fa fa-map-marker"/></div>
                                 <div class="info-body">
                                     <div class="info-title">Geolocalizacion</div>
                                     <div class="info-desc">Verifica tu ubicacion</div>
@@ -176,14 +176,14 @@
                         <!-- KPI Cards -->
                         <div class="kpi-grid">
                             <div class="kpi-card">
-                                <div class="kpi-icon kpi-icon-blue"><i class="fa fa-calendar-check"/></div>
+                                <div class="kpi-icon kpi-icon-blue"><i class="fa fa-calendar-check-o"/></div>
                                 <div class="kpi-data">
                                     <span class="kpi-label">Registros Hoy</span>
                                     <span class="kpi-value kpi-value-blue" t-out="state.kpis.todayCount"/>
                                 </div>
                             </div>
                             <div class="kpi-card">
-                                <div class="kpi-icon kpi-icon-green"><i class="fa fa-door-open"/></div>
+                                <div class="kpi-icon kpi-icon-green"><i class="fa fa-building-o"/></div>
                                 <div class="kpi-data">
                                     <span class="kpi-label">Aulas Activas</span>
                                     <span class="kpi-value kpi-value-green" t-out="state.kpis.activeAulas"/>

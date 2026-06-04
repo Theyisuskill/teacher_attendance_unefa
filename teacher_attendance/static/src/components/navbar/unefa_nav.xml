@@ -4,7 +4,7 @@
         <div class="unefa-globalnav">
 
             <!-- Botón hamburguesa -->
-            <button class="unefa-fab" t-on-click="toggle" aria-label="Abrir menú">
+            <button class="unefa-fab" t-if="!state.open" t-on-click="toggle" aria-label="Abrir menú">
                 <i class="fa fa-bars"/>
             </button>
 

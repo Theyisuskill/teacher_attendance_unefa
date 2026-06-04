@@ -81,7 +81,7 @@
                         <t t-foreach="state.filteredSubjects" t-as="sub" t-key="sub.id">
                             <div class="unefa-subject-item">
                                 <div class="unefa-subject-icon">
-                                    <i class="fa fa-book-open"/>
+                                    <i class="fa fa-book"/>
                                 </div>
                                 <div class="unefa-subject-info">
                                     <span class="unefa-subject-name" t-out="sub.name"/>
@@ -91,7 +91,7 @@
                                     <button class="unefa-btn-icon btn-edit"
                                             t-on-click="() => this.showEditForm(sub.id)"
                                             title="Editar">
-                                        <i class="fa fa-pencil-alt"/>
+                                        <i class="fa fa-pencil"/>
                                     </button>
                                     <button class="unefa-btn-icon btn-delete"
                                             t-on-click="() => this.deleteSubject(sub.id)"

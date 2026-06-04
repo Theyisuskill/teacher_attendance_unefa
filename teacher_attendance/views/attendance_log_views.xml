@@ -5,7 +5,7 @@
         <field name="name">attendance.log.kanban</field>
         <field name="model">attendance.log</field>
         <field name="arch" type="xml">
-            <kanban class="attendance_kanban" create="false" default_order="check_in desc">
+            <kanban class="attendance_kanban o_unefa_view" create="false" default_order="check_in desc">
                 <field name="id"/>
                 <field name="teacher_id"/>
                 <field name="classroom_id"/>

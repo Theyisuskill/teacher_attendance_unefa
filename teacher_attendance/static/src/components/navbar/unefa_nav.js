@@ -37,12 +37,12 @@ export class UnefaNav extends Component {
             {
                 id: "attendance",
                 label: "Asistencia",
-                icon: "fa-clipboard-check",
+                icon: "fa-clipboard",
                 items: [
                     { action: "attendance_scanner_action", label: "Escanear QR", icon: "fa-qrcode" },
                     { action: "action_attendance_log_my", label: "Mis Registros", icon: "fa-history", isOdooAction: true },
                     { action: "attendance_kiosk_action", label: "Modo Kiosko", icon: "fa-desktop" },
-                    { action: "attendance_occupancy_map", label: "Mapa de Ocupación", icon: "fa-map-marker-alt" },
+                    { action: "attendance_occupancy_map", label: "Mapa de Ocupación", icon: "fa-map-marker" },
                 ],
             },
         ];
@@ -56,8 +56,8 @@ export class UnefaNav extends Component {
                     { action: "action_attendance_log", label: "Todos los Registros", icon: "fa-list-alt", isOdooAction: true },
                     { action: "action_classroom_manager", label: "Aulas", icon: "fa-building" },
                     { action: "action_subject_manager", label: "Materias", icon: "fa-book" },
-                    { action: "action_substitution_manager", label: "Suplencias", icon: "fa-exchange-alt" },
-                    { action: "action_attendance_analysis", label: "Análisis", icon: "fa-chart-bar", isOdooAction: true },
+                    { action: "action_substitution_manager", label: "Suplencias", icon: "fa-exchange" },
+                    { action: "action_attendance_analysis", label: "Análisis", icon: "fa-bar-chart", isOdooAction: true },
                 ],
             });
         }
@@ -66,9 +66,14 @@ export class UnefaNav extends Component {
             sections.push({
                 id: "admin",
                 label: "Administración",
-                icon: "fa-shield-alt",
+                icon: "fa-shield",
                 items: [
-                    { action: "action_user_manager", label: "Gestión de Usuarios", icon: "fa-users-cog" },
+                    { action: "action_attendance_log", label: "Todos los Registros", icon: "fa-list-alt", isOdooAction: true },
+                    { action: "action_classroom_manager", label: "Aulas", icon: "fa-building" },
+                    { action: "action_subject_manager", label: "Materias", icon: "fa-book" },
+                    { action: "action_substitution_manager", label: "Suplencias", icon: "fa-exchange" },
+                    { action: "action_attendance_analysis", label: "Análisis", icon: "fa-bar-chart", isOdooAction: true },
+                    { action: "action_user_manager", label: "Gestión de Usuarios", icon: "fa-users" },
                 ],
             });
         }
@@ -94,11 +99,8 @@ export class UnefaNav extends Component {
 
     navigateTo(item) {
         this.state.open = false;
-        if (item.isOdooAction) {
-            this.action.doAction("teacher_attendance." + item.action);
-        } else {
-            this.action.doAction(item.action);
-        }
+        const actionId = item.isOdooAction ? `teacher_attendance.${item.action}` : item.action;
+        this.action.doAction(actionId, { clearBreadcrumbs: true });
     }
 
     logout() {

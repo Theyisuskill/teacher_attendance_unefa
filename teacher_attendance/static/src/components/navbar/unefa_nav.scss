@@ -5,28 +5,53 @@
 /* Ocultar navbar Odoo */
 .o_main_navbar { display: none !important; }
 .o_action_manager { top: 0 !important; }
-.o_control_panel { padding-left: 56px !important; }
+
+/* ── Espacio reservado para el botón hamburguesa ──
+   El botón es fixed (12px + 44px ancho), así que todos los
+   headers necesitan ~72px de padding-left para no solaparse. */
+.o_control_panel {
+    position: relative;
+    z-index: 100;
+    padding-left: 0 !important;
+
+    .o_control_panel_main {
+        padding-left: 72px !important;
+    }
+}
+
+/* Headers de componentes OWL (mapa, scanner) */
+.unefa-header .unefa-header-main {
+    padding-left: 72px !important;
+}
+
+/* Headers de páginas de gestión (aulas, materias, usuarios, suplencias) */
+.unefa-page-header .unefa-page-header-main {
+    padding-left: 72px !important;
+}
 
 /* ── Botón hamburguesa ── */
 .unefa-fab {
     position: fixed;
-    top: 10px;
-    left: 10px;
-    width: 40px;
-    height: 40px;
-    z-index: 1080;
+    top: 12px;
+    left: 12px;
+    width: 44px;
+    height: 44px;
+    z-index: 2000;
     display: grid;
     place-items: center;
     border: none;
     border-radius: 10px;
     background: var(--unefa-blue-dark);
     color: #fff;
-    font-size: 1rem;
+    font-size: 1.2rem;
     cursor: pointer;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-    transition: background 0.15s, transform 0.15s;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+    transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
 
-    &:hover { background: var(--unefa-blue); }
+    &:hover {
+        background: var(--unefa-blue);
+        box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+    }
     &:active { transform: scale(0.92); }
 }
 
@@ -143,13 +168,14 @@
 .unefa-sidebar-avatar {
     width: 36px; height: 36px;
     border-radius: 8px;
-    background: var(--unefa-blue);
+    background: linear-gradient(135deg, var(--unefa-blue) 0%, var(--unefa-blue-dark) 100%);
     display: grid;
     place-items: center;
     color: #fff;
     font-weight: 700;
     font-size: 0.9rem;
     flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(110,143,199,0.3);
 }
 
 .unefa-sidebar-user-meta {
@@ -277,11 +303,17 @@
     border: 1px solid rgba(255,255,255,0.08);
     justify-content: center;
     font-weight: 600;
+    transition: 0.2s;
+
+    i {
+        color: var(--unefa-red) !important;
+    }
 
     &:hover {
-        background: rgba(222,151,157,0.15);
-        border-color: rgba(222,151,157,0.3);
-        color: rgba(255,255,255,0.9);
+        background: linear-gradient(135deg, rgba(222,151,157,0.2) 0%, rgba(241,216,139,0.1) 100%);
+        border-color: rgba(222,151,157,0.4);
+        color: rgba(255,255,255,0.95);
+        box-shadow: 0 0 12px rgba(222,151,157,0.2);
     }
 }
 
