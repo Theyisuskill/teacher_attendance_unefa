@@ -1,14 +1,10 @@
 /* ═══════════════════════════════════════════
-   SIDEBAR UNEFA — Limpio y moderno
+   SIDEBAR UNEFA — Toggle dinámico + secciones colapsables
    ═══════════════════════════════════════════ */
 
-/* Ocultar navbar Odoo */
 .o_main_navbar { display: none !important; }
 .o_action_manager { top: 0 !important; }
 
-/* ── Espacio reservado para el botón hamburguesa ──
-   El botón es fixed (12px + 44px ancho), así que todos los
-   headers necesitan ~72px de padding-left para no solaparse. */
 .o_control_panel {
     position: relative;
     z-index: 100;
@@ -19,12 +15,10 @@
     }
 }
 
-/* Headers de componentes OWL (mapa, scanner) */
 .unefa-header .unefa-header-main {
     padding-left: 72px !important;
 }
 
-/* Headers de páginas de gestión (aulas, materias, usuarios, suplencias) */
 .unefa-page-header .unefa-page-header-main {
     padding-left: 72px !important;
 }
@@ -86,7 +80,6 @@
 
     &.is-open { transform: translateX(0); }
 
-    /* franja derecha */
     &::after {
         content: '';
         position: absolute;

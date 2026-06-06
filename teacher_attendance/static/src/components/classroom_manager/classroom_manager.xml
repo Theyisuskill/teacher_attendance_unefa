@@ -155,23 +155,20 @@
                                     <i class="fa fa-map-marker"/>
                                     Ubicación GPS
                                 </h3>
+                                <div class="unefa-classroom-map-toolbar">
+                                    <div class="unefa-classroom-map-coords">
+                                        <span class="badge bg-info me-2">Lat: <t t-esc="state.formData.latitude.toFixed(6)"/></span>
+                                        <span class="badge bg-info">Lng: <t t-esc="state.formData.longitude.toFixed(6)"/></span>
+                                    </div>
+                                    <button class="unefa-btn-secondary unefa-btn-sm" t-on-click="useMyLocation">
+                                        <i class="fa fa-crosshairs"/> Mi ubicación
+                                    </button>
+                                </div>
+                                <div t-ref="classroomMap" class="unefa-classroom-map"/>
+                                <p class="unefa-form-section-help">
+                                    <i class="fa fa-info-circle"/> Haga clic en el mapa o arrastre el marcador para seleccionar la ubicación exacta del aula.
+                                </p>
                                 <div class="unefa-form-grid">
-                                    <div class="unefa-form-group">
-                                        <label class="unefa-label">Latitud</label>
-                                        <input type="number"
-                                               class="unefa-input"
-                                               step="0.00001"
-                                               placeholder="0.00000"
-                                               t-model="state.formData.latitude"/>
-                                    </div>
-                                    <div class="unefa-form-group">
-                                        <label class="unefa-label">Longitud</label>
-                                        <input type="number"
-                                               class="unefa-input"
-                                               step="0.00001"
-                                               placeholder="0.00000"
-                                               t-model="state.formData.longitude"/>
-                                    </div>
                                     <div class="unefa-form-group">
                                         <label class="unefa-label">Radio de validación (metros)</label>
                                         <input type="number"

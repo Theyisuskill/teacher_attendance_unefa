@@ -8,8 +8,11 @@
             <xpath expr="//notebook" position="inside">
                 <page string="Attendance" name="attendance">
                     <group>
+                        <group string="Rol en Asistencia">
+                            <field name="attendance_role"/>
+                        </group>
                         <group string="Kiosk Mode">
-                            <field name="attendance_pin" password="True" placeholder="4-digit PIN"/>
+                            <field name="attendance_pin" password="True" placeholder="PIN de 4 dígitos"/>
                         </group>
                     </group>
                 </page>

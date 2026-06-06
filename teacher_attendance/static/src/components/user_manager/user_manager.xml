@@ -31,13 +31,12 @@
 
                 <!-- Vista de lista -->
                 <t t-if="state.currentView === 'list'">
-                    <!-- Barra de búsqueda -->
                     <div class="unefa-search-bar">
                         <div class="unefa-search-input-wrap">
                             <i class="fa fa-search"/>
                             <input type="text"
                                    class="unefa-search-input"
-                                   placeholder="Buscar por nombre, login o email..."
+                                   placeholder="Buscar por nombre, login o cédula..."
                                    t-model="state.searchQuery"
                                    t-on-input="onSearchInput"/>
                         </div>
@@ -64,31 +63,23 @@
                             <div class="unefa-user-card" t-att-class="{'is-inactive': !u.active}">
                                 <div class="unefa-user-card-header">
                                     <div class="unefa-user-avatar">
-                                        <i class="fa fa-user"/>
+                                        <t t-out="u.name ? u.name.charAt(0).toUpperCase() : '?'"/>
                                     </div>
                                     <div class="unefa-user-card-info">
                                         <h3 class="unefa-user-name" t-out="u.name"/>
                                         <span class="unefa-user-login" t-out="'@' + u.login"/>
+                                        <span class="unefa-user-vat" t-if="u.vat" t-out="u.vat"/>
                                     </div>
-                                    <span class="unefa-user-status"
-                                          t-att-class="u.active ? 'status-active' : 'status-inactive'">
-                                        <t t-if="u.active">Activo</t>
-                                        <t t-else="">Inactivo</t>
-                                    </span>
-                                </div>
-
-                                <div class="unefa-user-card-body">
-                                    <div class="unefa-user-detail" t-if="u.email">
-                                        <i class="fa fa-envelope"/>
-                                        <span t-out="u.email"/>
-                                    </div>
-                                    <div class="unefa-user-detail" t-if="u.phone">
-                                        <i class="fa fa-phone"/>
-                                        <span t-out="u.phone"/>
-                                    </div>
-                                    <div class="unefa-user-detail" t-if="u.attendance_pin">
-                                        <i class="fa fa-key"/>
-                                        <span>PIN configurado</span>
+                                    <div class="unefa-user-badges">
+                                        <span class="unefa-role-badge"
+                                              t-att-class="'role-' + (u.attendance_role || 'none')">
+                                            <t t-out="roleLabels[u.attendance_role] || 'Sin rol'"/>
+                                        </span>
+                                        <span class="unefa-user-status"
+                                              t-att-class="u.active ? 'status-active' : 'status-inactive'">
+                                            <t t-if="u.active">Activo</t>
+                                            <t t-else="">Inactivo</t>
+                                        </span>
                                     </div>
                                 </div>
 
@@ -127,10 +118,7 @@
 
                         <div class="unefa-form-body">
                             <div class="unefa-form-section">
-                                <h3 class="unefa-form-section-title">
-                                    <i class="fa fa-id-card"/>
-                                    Información Personal
-                                </h3>
+                                <h3 class="unefa-form-section-title">Información Personal</h3>
                                 <div class="unefa-form-grid">
                                     <div class="unefa-form-group">
                                         <label class="unefa-label">Nombre completo *</label>
@@ -140,41 +128,67 @@
                                                t-model="state.formData.name"/>
                                     </div>
                                     <div class="unefa-form-group">
-                                        <label class="unefa-label">Login (usuario) *</label>
+                                        <label class="unefa-label">Cédula / RIF</label>
                                         <input type="text"
                                                class="unefa-input"
-                                               placeholder="nombre.usuario"
-                                               t-model="state.formData.login"
-                                               t-att-disabled="!!state.editingUser"/>
+                                               placeholder="V-12345678"
+                                               t-model="state.formData.vat"/>
                                     </div>
                                     <div class="unefa-form-group">
+                                        <label class="unefa-label">Teléfono</label>
+                                        <input type="tel"
+                                               class="unefa-input"
+                                               placeholder="+58 412-1234567"
+                                               t-model="state.formData.phone"/>
+                                    </div>
+                                    <div class="unefa-form-group" t-if="!state.editingUser">
                                         <label class="unefa-label">Email *</label>
                                         <input type="email"
                                                class="unefa-input"
                                                placeholder="correo@unefa.edu.ve"
                                                t-model="state.formData.email"/>
                                     </div>
-                                    <div class="unefa-form-group">
-                                        <label class="unefa-label">Teléfono</label>
-                                        <input type="tel"
+                                    <div class="unefa-form-group" t-if="state.editingUser">
+                                        <label class="unefa-label">Email</label>
+                                        <input type="email"
                                                class="unefa-input"
-                                               placeholder="+58 000-000-0000"
-                                               t-model="state.formData.phone"/>
+                                               placeholder="correo@unefa.edu.ve"
+                                               t-model="state.formData.email"/>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="unefa-form-section">
-                                <h3 class="unefa-form-section-title">
-                                    <i class="fa fa-shield"/>
-                                    Acceso al Sistema
-                                </h3>
+                                <h3 class="unefa-form-section-title">Acceso y Rol</h3>
                                 <div class="unefa-form-grid">
-                                    <div class="unefa-form-group">
-                                        <label class="unefa-label">PIN de Asistencia (4 dígitos)</label>
+                                    <div class="unefa-form-group" t-if="!state.editingUser">
+                                        <label class="unefa-label">Login (usuario) *</label>
                                         <input type="text"
                                                class="unefa-input"
-                                               placeholder="0000"
+                                               placeholder="nombre.usuario"
+                                               t-model="state.formData.login"/>
+                                    </div>
+                                    <div class="unefa-form-group" t-if="state.editingUser">
+                                        <label class="unefa-label">Login</label>
+                                        <input type="text"
+                                               class="unefa-input"
+                                               t-att-value="state.formData.login"
+                                               disabled=""/>
+                                    </div>
+                                    <div class="unefa-form-group">
+                                        <label class="unefa-label">Rol de Asistencia</label>
+                                        <select class="unefa-input" t-model="state.formData.attendance_role">
+                                            <option value="none">Sin rol</option>
+                                            <option value="employee">Empleado</option>
+                                            <option value="teacher">Docente</option>
+                                            <option value="coordinator">Coordinador</option>
+                                        </select>
+                                    </div>
+                                    <div class="unefa-form-group">
+                                        <label class="unefa-label">PIN Kiosko (4 dígitos)</label>
+                                        <input type="password"
+                                               class="unefa-input"
+                                               placeholder="****"
                                                maxlength="4"
                                                t-model="state.formData.attendance_pin"/>
                                     </div>
@@ -189,6 +203,27 @@
                                             <span class="unefa-toggle-label"
                                                   t-out="state.formData.active ? 'Activo' : 'Inactivo'"/>
                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="unefa-form-section" t-if="state.editingUser">
+                                <h3 class="unefa-form-section-title">Cambiar Contraseña</h3>
+                                <p class="unefa-form-section-help">Dejar en blanco si no desea cambiar la contraseña</p>
+                                <div class="unefa-form-grid">
+                                    <div class="unefa-form-group">
+                                        <label class="unefa-label">Nueva contraseña</label>
+                                        <input type="password"
+                                               class="unefa-input"
+                                               placeholder="••••••••"
+                                               t-model="state.formData.new_password"/>
+                                    </div>
+                                    <div class="unefa-form-group">
+                                        <label class="unefa-label">Confirmar contraseña</label>
+                                        <input type="password"
+                                               class="unefa-input"
+                                               placeholder="••••••••"
+                                               t-model="state.formData.confirm_password"/>
                                     </div>
                                 </div>
                             </div>

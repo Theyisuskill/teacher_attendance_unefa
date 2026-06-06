@@ -1,10 +1,11 @@
 /** @odoo-module **/
 
-import { Component, useState, onWillStart } from "@odoo/owl";
+import { Component, useState, onWillStart, onMounted, onWillUnmount, useRef } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
-import { _t } from "@web/core/l10n/translation";
 import { Dialog } from "@web/core/dialog/dialog";
+
+const VENEZUELA_CENTER = { lat: 10.4806, lng: -66.9036 };
 
 export class ClassroomManager extends Component {
     static template = "teacher_attendance.ClassroomManager";
@@ -14,6 +15,9 @@ export class ClassroomManager extends Component {
         this.notification = useService("notification");
         this.dialog = useService("dialog");
         this.action = useService("action");
+        this.mapRef = useRef("classroomMap");
+        this.map = null;
+        this.marker = null;
 
         this.state = useState({
             classrooms: [],
@@ -23,11 +27,16 @@ export class ClassroomManager extends Component {
             editingClassroom: null,
             isLoading: true,
             formData: this._getEmptyForm(),
-            schedules: [],
+            mapLat: 0,
+            mapLng: 0,
         });
 
         onWillStart(async () => {
             await this.loadData();
+        });
+
+        onWillUnmount(() => {
+            this._destroyMap();
         });
     }
 
@@ -41,6 +50,98 @@ export class ClassroomManager extends Component {
             check_schedule: false,
             tolerance_margin: 15,
         };
+    }
+
+    _destroyMap() {
+        if (this.map) {
+            this.map.remove();
+            this.map = null;
+            this.marker = null;
+        }
+    }
+
+    _initMap() {
+        this._destroyMap();
+        if (!window.L) {
+            const link = document.createElement("link");
+            link.rel = "stylesheet";
+            link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+            document.head.appendChild(link);
+
+            const script = document.createElement("script");
+            script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+            script.onload = () => this._createMap();
+            document.head.appendChild(script);
+        } else {
+            this._createMap();
+        }
+    }
+
+    _createMap() {
+        if (!this.mapRef.el) return;
+
+        const lat = this.state.formData.latitude || VENEZUELA_CENTER.lat;
+        const lng = this.state.formData.longitude || VENEZUELA_CENTER.lng;
+        const hasCoords = this.state.formData.latitude !== 0 && this.state.formData.longitude !== 0;
+        const zoom = hasCoords ? 18 : 6;
+
+        this.map = L.map(this.mapRef.el).setView([lat, lng], zoom);
+
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution: "&copy; OpenStreetMap contributors",
+        }).addTo(this.map);
+
+        if (hasCoords) {
+            this.marker = L.marker([lat, lng], { draggable: true }).addTo(this.map);
+            this._bindMarkerEvents();
+            this._addRadiusCircle();
+        }
+
+        this.map.on("click", (event) => {
+            const pos = event.latlng;
+            if (this.marker) {
+                this.marker.setLatLng(pos);
+            } else {
+                this.marker = L.marker(pos, { draggable: true }).addTo(this.map);
+                this._bindMarkerEvents();
+            }
+            this._updateMapCoords(pos.lat, pos.lng);
+        });
+
+        setTimeout(() => this.map.invalidateSize(), 200);
+    }
+
+    _bindMarkerEvents() {
+        this.marker.on("dragend", (event) => {
+            const pos = event.target.getLatLng();
+            this._updateMapCoords(pos.lat, pos.lng);
+        });
+    }
+
+    _addRadiusCircle() {
+        if (this.radiusCircle) {
+            this.radiusCircle.remove();
+        }
+        const lat = this.state.formData.latitude;
+        const lng = this.state.formData.longitude;
+        const radius = this.state.formData.radius || 20;
+        if (lat && lng) {
+            this.radiusCircle = L.circle([lat, lng], {
+                radius: radius,
+                color: "#6E8FC7",
+                fillColor: "#6E8FC7",
+                fillOpacity: 0.15,
+                weight: 2,
+            }).addTo(this.map);
+        }
+    }
+
+    _updateMapCoords(lat, lng) {
+        this.state.formData.latitude = lat;
+        this.state.formData.longitude = lng;
+        this.state.mapLat = lat;
+        this.state.mapLng = lng;
+        this._addRadiusCircle();
     }
 
     async loadData() {
@@ -82,6 +183,9 @@ export class ClassroomManager extends Component {
         this.state.editingClassroom = null;
         this.state.formData = this._getEmptyForm();
         this.state.currentView = "form";
+        this.state.mapLat = 0;
+        this.state.mapLng = 0;
+        setTimeout(() => this._initMap(), 100);
     }
 
     showEditForm(classroomId) {
@@ -98,17 +202,37 @@ export class ClassroomManager extends Component {
             check_schedule: c.check_schedule || false,
             tolerance_margin: c.tolerance_margin || 15,
         };
+        this.state.mapLat = c.latitude || 0;
+        this.state.mapLng = c.longitude || 0;
         this.state.currentView = "form";
+        setTimeout(() => this._initMap(), 100);
     }
 
     cancelForm() {
+        this._destroyMap();
         this.state.currentView = "list";
         this.state.editingClassroom = null;
         this.state.formData = this._getEmptyForm();
+        this.state.mapLat = 0;
+        this.state.mapLng = 0;
     }
 
-    onFormFieldChange(field, value) {
-        this.state.formData[field] = value;
+    useMyLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((position) => {
+                const { latitude, longitude } = position.coords;
+                if (this.marker) {
+                    this.marker.setLatLng([latitude, longitude]);
+                } else if (this.map) {
+                    this.marker = L.marker([latitude, longitude], { draggable: true }).addTo(this.map);
+                    this._bindMarkerEvents();
+                }
+                if (this.map) {
+                    this.map.setView([latitude, longitude], 18);
+                }
+                this._updateMapCoords(latitude, longitude);
+            });
+        }
     }
 
     async saveClassroom() {
@@ -144,6 +268,7 @@ export class ClassroomManager extends Component {
                 this.notification.add("Aula creada correctamente", { type: "success" });
             }
 
+            this._destroyMap();
             await this.loadData();
             this.cancelForm();
         } catch (error) {
@@ -184,6 +309,7 @@ export class ClassroomManager extends Component {
     }
 
     goBack() {
+        this._destroyMap();
         this.action.doAction("teacher_attendance.action_attendance_dashboard", { clearBreadcrumbs: true });
     }
 }

@@ -4,6 +4,8 @@ import { registry } from "@web/core/registry";
 import { Component, onMounted, useRef, useState, onWillUnmount } from "@odoo/owl";
 import { standardFieldProps } from "@web/views/fields/standard_field_props";
 
+const VENEZUELA_CENTER = { lat: 10.4806, lng: -66.9036 };
+
 export class LocationPicker extends Component {
     static template = "teacher_attendance.LocationPicker";
     static props = {
@@ -30,16 +32,19 @@ export class LocationPicker extends Component {
         });
     }
 
+    get hasLocation() {
+        return this.state.lat !== 0 && this.state.lng !== 0;
+    }
+
     initMap() {
         if (!window.L) {
-            // Load Leaflet dynamically if not loaded
-            const link = document.createElement('link');
-            link.rel = 'stylesheet';
-            link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+            const link = document.createElement("link");
+            link.rel = "stylesheet";
+            link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
             document.head.appendChild(link);
 
-            const script = document.createElement('script');
-            script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+            const script = document.createElement("script");
+            script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
             script.onload = () => this._createMap();
             document.head.appendChild(script);
         } else {
@@ -48,25 +53,40 @@ export class LocationPicker extends Component {
     }
 
     _createMap() {
-        const initialLat = this.state.lat || -12.04637; // Default to Lima or somewhere
-        const initialLng = this.state.lng || -77.04279;
+        const initialLat = this.state.lat || VENEZUELA_CENTER.lat;
+        const initialLng = this.state.lng || VENEZUELA_CENTER.lng;
+        const zoom = this.hasLocation ? 18 : 6;
 
-        this.map = L.map(this.mapContainer.el).setView([initialLat, initialLng], 15);
+        this.map = L.map(this.mapContainer.el).setView([initialLat, initialLng], zoom);
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors'
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution: "&copy; OpenStreetMap contributors",
         }).addTo(this.map);
 
-        this.marker = L.marker([initialLat, initialLng], { draggable: true }).addTo(this.map);
+        if (this.hasLocation) {
+            this.marker = L.marker([initialLat, initialLng], { draggable: true }).addTo(this.map);
+            this._bindMarkerEvents();
+        }
 
-        this.marker.on('dragend', (event) => {
-            const position = event.target.getLatLng();
+        this.map.on("click", (event) => {
+            const position = event.latlng;
+            if (this.marker) {
+                this.marker.setLatLng(position);
+            } else {
+                this.marker = L.marker(position, { draggable: true }).addTo(this.map);
+                this._bindMarkerEvents();
+            }
             this.updateCoords(position.lat, position.lng);
         });
 
-        this.map.on('click', (event) => {
-            const position = event.latlng;
-            this.marker.setLatLng(position);
+        setTimeout(() => {
+            this.map.invalidateSize();
+        }, 200);
+    }
+
+    _bindMarkerEvents() {
+        this.marker.on("dragend", (event) => {
+            const position = event.target.getLatLng();
             this.updateCoords(position.lat, position.lng);
         });
     }
@@ -84,8 +104,13 @@ export class LocationPicker extends Component {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(async (position) => {
                 const { latitude, longitude } = position.coords;
-                this.marker.setLatLng([latitude, longitude]);
-                this.map.setView([latitude, longitude], 15);
+                if (this.marker) {
+                    this.marker.setLatLng([latitude, longitude]);
+                } else {
+                    this.marker = L.marker([latitude, longitude], { draggable: true }).addTo(this.map);
+                    this._bindMarkerEvents();
+                }
+                this.map.setView([latitude, longitude], 18);
                 await this.updateCoords(latitude, longitude);
             });
         }

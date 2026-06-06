@@ -20,15 +20,14 @@
                             <field name="secret_key"/>
                         </group>
                         <group>
-                            <label for="latitude" string="Location Selection"/>
-                            <div class="o_address_format">
-                                <field name="latitude" widget="location_picker" nolabel="1"/>
-                                <field name="longitude" invisible="1"/>
-                            </div>
                             <field name="radius"/>
                         </group>
                     </group>
                     <notebook>
+                        <page string="Ubicación en el Mapa" name="location">
+                            <field name="latitude" widget="location_picker" nolabel="1"/>
+                            <field name="longitude" invisible="1"/>
+                        </page>
                         <page string="QR Code" name="qr_code">
                             <field name="qr_code" widget="image" class="oe_avatar" options="{'size': [256, 256]}"/>
                         </page>

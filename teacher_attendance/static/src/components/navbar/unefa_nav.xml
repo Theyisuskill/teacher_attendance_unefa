@@ -33,9 +33,7 @@
                     <div class="unefa-sidebar-avatar" t-out="state.userInitial"/>
                     <div class="unefa-sidebar-user-meta">
                         <span class="unefa-sidebar-username" t-out="state.userName"/>
-                        <span class="unefa-sidebar-userrole" t-if="state.isAdmin">Administrador</span>
-                        <span class="unefa-sidebar-userrole" t-elif="state.isCoordinator">Coordinador</span>
-                        <span class="unefa-sidebar-userrole" t-else="">Docente</span>
+                        <span class="unefa-sidebar-userrole" t-out="userRoleLabel"/>
                     </div>
                 </div>
 
@@ -43,24 +41,24 @@
                 <nav class="unefa-sidebar-nav">
                     <t t-foreach="navSections" t-as="section" t-key="section.id">
                         <div class="nav-section">
-                            <button class="nav-section-head"
-                                    t-on-click="() => this.toggleSection(section.id)">
+                            <button class="nav-section-head" t-on-click="() => this.toggleSection(section.id)">
                                 <div class="nav-section-label">
                                     <i class="fa" t-att-class="section.icon"/>
                                     <span t-out="section.label"/>
                                 </div>
                                 <i class="fa fa-chevron-down nav-chevron"
-                                   t-att-class="{'open': this.isSectionExpanded(section.id)}"/>
+                                   t-att-class="{'open': isSectionExpanded(section.id)}"/>
                             </button>
-                            <div class="nav-section-body"
-                                 t-att-class="{'open': this.isSectionExpanded(section.id)}">
-                                <t t-foreach="section.items" t-as="item" t-key="item.action">
-                                    <button class="nav-link"
-                                            t-on-click="() => this.navigateTo(item)">
-                                        <i class="fa" t-att-class="item.icon"/>
-                                        <span t-out="item.label"/>
-                                    </button>
-                                </t>
+                            <div class="nav-section-body" t-att-class="{'open': isSectionExpanded(section.id)}">
+                                <div>
+                                    <t t-foreach="section.items" t-as="item" t-key="item.action">
+                                        <button class="nav-link"
+                                                t-on-click="() => this.navigateTo(item)">
+                                            <i class="fa" t-att-class="item.icon"/>
+                                            <span t-out="item.label"/>
+                                        </button>
+                                    </t>
+                                </div>
                             </div>
                         </div>
                     </t>

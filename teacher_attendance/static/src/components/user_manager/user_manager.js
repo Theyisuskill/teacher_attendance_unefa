@@ -4,7 +4,6 @@ import { Component, useState, onWillStart } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { user } from "@web/core/user";
-import { _t } from "@web/core/l10n/translation";
 import { Dialog } from "@web/core/dialog/dialog";
 
 export class UserManager extends Component {
@@ -20,11 +19,10 @@ export class UserManager extends Component {
             users: [],
             filteredUsers: [],
             searchQuery: "",
-            currentView: "list", // 'list', 'form'
+            currentView: "list",
             editingUser: null,
             isLoading: true,
             formData: this._getEmptyForm(),
-            groups: [],
         });
 
         onWillStart(async () => {
@@ -38,8 +36,11 @@ export class UserManager extends Component {
             login: "",
             email: "",
             phone: "",
+            vat: "",
+            attendance_role: "none",
             attendance_pin: "",
-            group_ids: [],
+            new_password: "",
+            confirm_password: "",
             active: true,
         };
     }
@@ -50,7 +51,7 @@ export class UserManager extends Component {
             const users = await this.orm.searchRead(
                 "res.users",
                 [],
-                ["name", "login", "email", "phone", "attendance_pin", "active", "group_ids"],
+                ["name", "login", "email", "phone", "vat", "attendance_role", "attendance_pin", "active"],
                 { order: "name asc" }
             );
 
@@ -80,7 +81,8 @@ export class UserManager extends Component {
             (u) =>
                 u.name.toLowerCase().includes(query) ||
                 u.login.toLowerCase().includes(query) ||
-                (u.email && u.email.toLowerCase().includes(query))
+                (u.email && u.email.toLowerCase().includes(query)) ||
+                (u.vat && u.vat.toLowerCase().includes(query))
         );
     }
 
@@ -91,17 +93,19 @@ export class UserManager extends Component {
     }
 
     showEditForm(userId) {
-        const u = this.state.users.find((user) => user.id === userId);
+        const u = this.state.users.find((usr) => usr.id === userId);
         if (!u) return;
-
         this.state.editingUser = u;
         this.state.formData = {
             name: u.name || "",
             login: u.login || "",
             email: u.email || "",
             phone: u.phone || "",
+            vat: u.vat || "",
+            attendance_role: u.attendance_role || "none",
             attendance_pin: u.attendance_pin || "",
-            group_ids: u.group_ids || [],
+            new_password: "",
+            confirm_password: "",
             active: u.active !== false,
         };
         this.state.currentView = "form";
@@ -113,10 +117,6 @@ export class UserManager extends Component {
         this.state.formData = this._getEmptyForm();
     }
 
-    onFormFieldChange(field, value) {
-        this.state.formData[field] = value;
-    }
-
     async saveUser() {
         const { formData, editingUser } = this.state;
 
@@ -126,35 +126,58 @@ export class UserManager extends Component {
         }
 
         try {
+            const vals = {
+                name: formData.name,
+                email: formData.email,
+                phone: formData.phone,
+                vat: formData.vat,
+                attendance_role: formData.attendance_role,
+                attendance_pin: formData.attendance_pin || false,
+                active: formData.active,
+            };
+
             if (editingUser) {
-                await this.orm.write("res.users", [editingUser.id], {
-                    name: formData.name,
-                    email: formData.email,
-                    phone: formData.phone,
-                    attendance_pin: formData.attendance_pin,
-                    active: formData.active,
-                });
-                this.notification.add("Usuario actualizado correctamente", { type: "success" });
+                await this.orm.write("res.users", [editingUser.id], vals);
+                if (formData.new_password) {
+                    await this._changePassword(editingUser.id, formData.new_password, formData.confirm_password);
+                } else {
+                    this.notification.add("Usuario actualizado correctamente", { type: "success" });
+                }
             } else {
                 if (!formData.email) {
                     this.notification.add("El email es obligatorio para nuevos usuarios", { type: "warning" });
                     return;
                 }
-                await this.orm.create("res.users", [{
-                    name: formData.name,
-                    login: formData.login,
-                    email: formData.email,
-                    phone: formData.phone,
-                    attendance_pin: formData.attendance_pin,
-                    active: formData.active,
-                }]);
+                vals.login = formData.login;
+                if (formData.new_password) {
+                    vals.new_password = formData.new_password;
+                }
+                await this.orm.create("res.users", [vals]);
                 this.notification.add("Usuario creado correctamente", { type: "success" });
             }
-
             await this.loadData();
             this.cancelForm();
         } catch (error) {
             this.notification.add(error.data?.message || "Error al guardar usuario", { type: "danger" });
+        }
+    }
+
+    async _changePassword(userId, newPassword, confirmPassword) {
+        if (!newPassword) {
+            this.notification.add("La contraseña no puede estar vacía", { type: "warning" });
+            return false;
+        }
+        if (newPassword !== confirmPassword) {
+            this.notification.add("Las contraseñas no coinciden", { type: "warning" });
+            return false;
+        }
+        try {
+            await this.orm.call("res.users", "_change_password", [[userId], newPassword]);
+            this.notification.add("Contraseña actualizada correctamente", { type: "success" });
+            return true;
+        } catch (error) {
+            this.notification.add(error.data?.message || "Error al cambiar contraseña", { type: "danger" });
+            return false;
         }
     }
 
@@ -176,9 +199,8 @@ export class UserManager extends Component {
     }
 
     async toggleUserActive(userId) {
-        const u = this.state.users.find((user) => user.id === userId);
+        const u = this.state.users.find((usr) => usr.id === userId);
         if (!u) return;
-
         try {
             await this.orm.write("res.users", [userId], { active: !u.active });
             this.notification.add(
@@ -189,6 +211,15 @@ export class UserManager extends Component {
         } catch (error) {
             this.notification.add("Error al cambiar estado", { type: "danger" });
         }
+    }
+
+    get roleLabels() {
+        return {
+            none: "Sin rol",
+            employee: "Empleado",
+            teacher: "Docente",
+            coordinator: "Coordinador",
+        };
     }
 
     goBack() {

@@ -127,3 +127,32 @@
 @media (max-width: 768px) {
     .unefa-classroom-grid { grid-template-columns: 1fr; }
 }
+
+.unefa-classroom-map {
+    height: 400px;
+    width: 100%;
+    border-radius: var(--radius-md);
+    border: 2px solid var(--unefa-border);
+    margin: 12px 0;
+    z-index: 1;
+}
+
+.unefa-classroom-map-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.unefa-classroom-map-coords {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.unefa-btn-sm {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+}

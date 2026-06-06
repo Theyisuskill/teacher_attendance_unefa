@@ -265,6 +265,13 @@ body.attendance-scanner-fullscreen {
     i { color: var(--unefa-blue); font-size: 0.75rem; }
 }
 
+.unefa-form-section-help {
+    font-size: 0.75rem;
+    color: var(--unefa-gray);
+    margin: -8px 0 14px;
+    font-style: italic;
+}
+
 .unefa-form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;

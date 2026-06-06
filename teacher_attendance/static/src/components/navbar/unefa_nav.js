@@ -13,9 +13,10 @@ export class UnefaNav extends Component {
         this.action = useService("action");
         this.state = useState({
             open: false,
-            expandedSections: { attendance: true },
+            expandedSections: { attendance: true, management: true, admin: true },
             isCoordinator: false,
             isAdmin: false,
+            isEmployee: false,
             userName: user.name,
             userInitial: user.name ? user.name.charAt(0).toUpperCase() : "U",
         });
@@ -23,12 +24,7 @@ export class UnefaNav extends Component {
         onWillStart(async () => {
             this.state.isCoordinator = await user.hasGroup("teacher_attendance.group_coordinator");
             this.state.isAdmin = await user.hasGroup("base.group_system");
-            if (this.state.isCoordinator) {
-                this.state.expandedSections.management = true;
-            }
-            if (this.state.isAdmin) {
-                this.state.expandedSections.admin = true;
-            }
+            this.state.isEmployee = await user.hasGroup("teacher_attendance.group_employee");
         });
     }
 
@@ -81,6 +77,13 @@ export class UnefaNav extends Component {
         return sections;
     }
 
+    get userRoleLabel() {
+        if (this.state.isAdmin) return "Administrador";
+        if (this.state.isCoordinator) return "Coordinador";
+        if (this.state.isEmployee) return "Empleado";
+        return "Docente";
+    }
+
     toggle() {
         this.state.open = !this.state.open;
     }
@@ -94,11 +97,10 @@ export class UnefaNav extends Component {
     }
 
     isSectionExpanded(sectionId) {
-        return this.state.expandedSections[sectionId] || false;
+        return this.state.expandedSections[sectionId] !== false;
     }
 
     navigateTo(item) {
-        this.state.open = false;
         const actionId = item.isOdooAction ? `teacher_attendance.${item.action}` : item.action;
         this.action.doAction(actionId, { clearBreadcrumbs: true });
     }

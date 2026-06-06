@@ -74,6 +74,13 @@
     font-weight: 500;
 }
 
+.unefa-user-vat {
+    display: block;
+    font-size: 0.68rem;
+    color: var(--unefa-gray);
+    font-weight: 500;
+}
+
 .unefa-user-status {
     padding: 4px 10px;
     border-radius: 20px;
@@ -134,6 +141,42 @@
 .btn-toggle-user {
     color: var(--unefa-yellow);
     &:hover { background: rgba(241,216,139,0.1); border-color: var(--unefa-yellow); }
+}
+
+/* ── Badges de rol ── */
+.unefa-user-badges {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    margin-left: auto;
+}
+
+.unefa-role-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+
+    &.role-teacher {
+        background: rgba(110, 143, 199, 0.15);
+        color: #5273A8;
+    }
+    &.role-coordinator {
+        background: rgba(241, 216, 139, 0.2);
+        color: #8a6d00;
+    }
+    &.role-employee {
+        background: rgba(156, 163, 175, 0.15);
+        color: #4b5563;
+    }
+    &.role-none {
+        background: rgba(113, 128, 150, 0.1);
+        color: #718096;
+    }
 }
 
 /* ── Responsive ── */
