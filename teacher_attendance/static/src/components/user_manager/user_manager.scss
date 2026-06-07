@@ -183,3 +183,77 @@
 @media (max-width: 768px) {
     .unefa-user-grid { grid-template-columns: 1fr; }
 }
+
+/* Chip de dispositivo vinculado */
+.unefa-device-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 14px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    background: rgba(110, 143, 199, 0.12);
+    color: #5273A8;
+    white-space: nowrap;
+    margin-right: auto;
+
+    i { font-size: 0.75rem; }
+}
+
+/* Chip de cuenta bloqueada */
+.unefa-lock-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 14px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    background: rgba(222, 151, 157, 0.15);
+    color: #8b2a32;
+    border: 1px solid rgba(222, 151, 157, 0.4);
+    white-space: nowrap;
+    margin-right: auto;
+
+    i { font-size: 0.72rem; }
+}
+
+.btn-unlock {
+    color: #276749;
+    &:hover { background: rgba(72, 187, 120, 0.1); border-color: #48bb78; }
+}
+
+/* Card con usuario bloqueado */
+.unefa-user-card.is-locked {
+    border-left: 3px solid var(--unefa-red);
+    background: linear-gradient(135deg, rgba(222,151,157,0.04) 0%, #fff 100%);
+}
+
+/* ── Perfil académico en cards ── */
+.unefa-teacher-meta {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    margin-top: 3px;
+}
+
+.unefa-cat-badge,
+.unefa-ded-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 5px;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+.unefa-cat-badge {
+    background: rgba(110, 143, 199, 0.12);
+    color: var(--unefa-blue-dark);
+}
+
+.unefa-ded-badge {
+    background: rgba(241, 216, 139, 0.2);
+    color: #7a5c1a;
+}

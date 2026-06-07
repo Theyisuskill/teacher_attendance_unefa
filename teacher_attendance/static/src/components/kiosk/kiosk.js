@@ -45,35 +45,31 @@ export class AttendanceKiosk extends Component {
 
         this.state.status = "loading";
         try {
-            // Find user by PIN
-            const users = await this.orm.searchRead("res.users", [["attendance_pin", "=", this.state.pin]], ["name", "id"]);
-            
-            if (users.length === 0) {
+            const aula = this.state.classrooms.find(c => c.id == this.state.selectedClassroom);
+
+            // Registro vía backend: valida PIN, método habilitado y entrada/salida
+            const response = await this.orm.call(
+                "attendance.log",
+                "action_log_attendance_by_pin",
+                [this.state.pin, aula.id]
+            );
+
+            if (response.status === 'invalid') {
                 this.state.status = "error";
-                this.notification.add("Invalid PIN.", { type: "danger" });
+                this.notification.add(response.message || "PIN inválido.", { type: "danger" });
                 this.state.pin = "";
-                setTimeout(() => this.state.status = "idle", 2000);
+                setTimeout(() => this.state.status = "idle", 2500);
                 return;
             }
 
-            const user = users[0];
-            const aula = this.state.classrooms.find(c => c.id == this.state.selectedClassroom);
-            
-            // Manual call to log attendance (assuming coordinates of the room for kiosk)
-            const response = await this.orm.call("attendance.log", "create", [{
-                teacher_id: user.id,
-                classroom_id: aula.id,
-                latitude: 0, // Kiosk is fixed
-                longitude: 0,
-            }]);
-
             this.state.status = "success";
-            this.notification.add(`Welcome, ${user.name}!`, { type: "success" });
+            this.notification.add(response.message || `Bienvenido, ${response.teacher_name}!`, { type: "success" });
             this.state.pin = "";
             setTimeout(() => this.state.status = "idle", 3000);
 
         } catch (error) {
             this.state.status = "error";
+            this.notification.add("Error al registrar asistencia.", { type: "danger" });
             this.state.pin = "";
             setTimeout(() => this.state.status = "idle", 2000);
         }

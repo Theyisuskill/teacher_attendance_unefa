@@ -38,6 +38,21 @@
         <field name="tag">action_substitution_manager</field>
     </record>
 
+    <record id="action_attendance_config" model="ir.actions.client">
+        <field name="name">Configuración de Asistencia</field>
+        <field name="tag">action_attendance_config</field>
+    </record>
+
+    <record id="action_contingency_manager" model="ir.actions.client">
+        <field name="name">Contingencia Manual</field>
+        <field name="tag">action_contingency_manager</field>
+    </record>
+
+    <record id="action_schedule_manager" model="ir.actions.client">
+        <field name="name">Carga Horaria</field>
+        <field name="tag">action_schedule_manager</field>
+    </record>
+
     <!-- Menús -->
     <menuitem id="menu_attendance_dashboard"
               name="Scan QR"

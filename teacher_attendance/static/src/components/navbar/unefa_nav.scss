@@ -314,3 +314,53 @@
 @media print {
     .unefa-fab, .unefa-sidebar, .unefa-sidebar-backdrop { display: none !important; }
 }
+/* ── Sección de usuario — botón clickeable ── */
+.unefa-sidebar-user-btn {
+    width: 100%;
+    border: none;
+    background: rgba(255,255,255,0.05);
+    cursor: pointer;
+    text-align: left;
+    border-radius: 10px;
+    transition: background 0.15s;
+
+    &:hover {
+        background: rgba(255,255,255,0.1);
+        .unefa-profile-hint { opacity: 0.8; }
+    }
+}
+
+.unefa-profile-hint {
+    color: rgba(255,255,255,0.3);
+    font-size: 0.65rem;
+    margin-left: auto;
+    opacity: 0;
+    transition: opacity 0.15s;
+    flex-shrink: 0;
+}
+
+/* ── Botón Mi Perfil en footer ── */
+.nav-link-profile {
+    color: rgba(255,255,255,0.6);
+    border: 1px solid rgba(255,255,255,0.08);
+    justify-content: flex-start;
+    gap: 10px;
+    margin-bottom: 6px;
+    transition: 0.2s;
+
+    i { color: var(--unefa-blue); }
+
+    &:hover {
+        background: rgba(110,143,199,0.15);
+        border-color: rgba(110,143,199,0.35);
+        color: rgba(255,255,255,0.9);
+        i { color: var(--unefa-yellow); }
+    }
+}
+
+.unefa-profile-sub {
+    font-size: 0.58rem;
+    color: rgba(255,255,255,0.3);
+    margin-left: auto;
+    white-space: nowrap;
+}

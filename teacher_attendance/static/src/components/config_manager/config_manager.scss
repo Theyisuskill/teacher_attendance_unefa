@@ -1,0 +1,81 @@
+/* ═══════════════════════════════════════════
+   CONFIG MANAGER — Métodos de registro
+   ═══════════════════════════════════════════ */
+
+.o_attendance_config {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: var(--unefa-light);
+    overflow-y: auto;
+}
+
+.unefa-config-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-width: 720px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.unefa-config-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 20px;
+    background: #fff;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--unefa-border);
+    box-shadow: var(--shadow-sm);
+    transition: 0.2s;
+
+    &.is-disabled {
+        opacity: 0.65;
+        .unefa-config-icon {
+            background: rgba(113, 128, 150, 0.1);
+            i { color: var(--unefa-gray); }
+        }
+    }
+}
+
+.unefa-config-icon {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    border-radius: var(--radius-md);
+    background: rgba(110, 143, 199, 0.12);
+
+    i {
+        font-size: 1.3rem;
+        color: var(--unefa-blue-dark);
+    }
+}
+
+.unefa-config-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.unefa-config-label {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--unefa-dark);
+    margin: 0 0 4px;
+}
+
+.unefa-config-desc {
+    font-size: 0.76rem;
+    color: var(--unefa-gray);
+    margin: 0;
+    line-height: 1.45;
+}
+
+@media (max-width: 600px) {
+    .unefa-config-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

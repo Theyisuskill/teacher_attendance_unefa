@@ -10,6 +10,8 @@
     'data': [
         'security/security_groups.xml',
         'security/ir.model.access.csv',
+        'data/security_params.xml',
+        'data/cron.xml',
         'report/attendance_report_templates.xml',
         'views/academic_views.xml',
         'views/classroom_views.xml',
@@ -59,6 +61,26 @@
             'teacher_attendance/static/src/components/substitution_manager/substitution_manager.js',
             'teacher_attendance/static/src/components/substitution_manager/substitution_manager.xml',
             'teacher_attendance/static/src/components/substitution_manager/substitution_manager.scss',
+            # Configuración de métodos de registro
+            'teacher_attendance/static/src/components/config_manager/config_manager.js',
+            'teacher_attendance/static/src/components/config_manager/config_manager.xml',
+            'teacher_attendance/static/src/components/config_manager/config_manager.scss',
+            # Contingencia manual
+            'teacher_attendance/static/src/components/contingency_manager/contingency_manager.js',
+            'teacher_attendance/static/src/components/contingency_manager/contingency_manager.xml',
+            'teacher_attendance/static/src/components/contingency_manager/contingency_manager.scss',
+            # Visor de registros de asistencia (OWL — reemplaza vistas nativas)
+            'teacher_attendance/static/src/components/attendance_viewer/attendance_viewer.js',
+            'teacher_attendance/static/src/components/attendance_viewer/attendance_viewer.xml',
+            'teacher_attendance/static/src/components/attendance_viewer/attendance_viewer.scss',
+            # Análisis de asistencia (OWL)
+            'teacher_attendance/static/src/components/attendance_analysis/attendance_analysis.js',
+            'teacher_attendance/static/src/components/attendance_analysis/attendance_analysis.xml',
+            'teacher_attendance/static/src/components/attendance_analysis/attendance_analysis.scss',
+            # Carga horaria
+            'teacher_attendance/static/src/components/schedule_manager/schedule_manager.js',
+            'teacher_attendance/static/src/components/schedule_manager/schedule_manager.xml',
+            'teacher_attendance/static/src/components/schedule_manager/schedule_manager.scss',
             # Widgets
             'teacher_attendance/static/src/widgets/location_picker/location_picker.js',
             'teacher_attendance/static/src/widgets/location_picker/location_picker.xml',
@@ -71,4 +93,5 @@
     'installable': True,
     'application': True,
     'license': 'LGPL-3',
+    'post_migrate': 'odoo.addons.teacher_attendance.hooks.post_migrate',
 }

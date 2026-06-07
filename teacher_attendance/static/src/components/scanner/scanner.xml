@@ -113,6 +113,9 @@
                                     <t t-if="state.status === 'error'">
                                         <i class="fa fa-times-circle fa-4x error-animation"/>
                                         <p class="status-msg" t-out="state.statusMessage || 'Error'"/>
+                                        <button class="btn-retry" t-on-click="retryScanner">
+                                            <i class="fa fa-refresh"/> Reintentar
+                                        </button>
                                     </t>
                                     <t t-if="state.status === 'loading'">
                                         <i class="fa fa-spinner fa-spin fa-4x status-spinner"/>

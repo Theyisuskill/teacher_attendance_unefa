@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+<t t-name="teacher_attendance.ScheduleManager">
+<div class="o_schedule_manager">
+
+    <!-- ── Header ── -->
+    <div class="unefa-page-header">
+        <div class="unefa-flag-top"/>
+        <div class="unefa-page-header-main">
+            <div class="unefa-page-header-left">
+                <button class="unefa-btn-back" t-on-click="goBack"><i class="fa fa-arrow-left"/></button>
+                <div class="unefa-page-header-info">
+                    <h1 class="unefa-page-title"><i class="fa fa-calendar"/> Carga Horaria</h1>
+                    <p class="unefa-page-subtitle">Asignación y visualización de horarios académicos por docente y aula</p>
+                </div>
+            </div>
+            <button class="unefa-btn-primary" t-if="state.currentView === 'list'" t-on-click="() => this.showCreateForm(null)">
+                <i class="fa fa-plus"/> Nuevo Horario
+            </button>
+        </div>
+    </div>
+
+    <div class="unefa-page-content">
+
+        <!-- ══════════ VISTA LISTA ══════════ -->
+        <t t-if="state.currentView === 'list'">
+
+            <!-- Filtros -->
+            <div class="sch-filter-bar">
+                <div class="sch-filter-group">
+                    <label class="unefa-label">Docente</label>
+                    <select class="unefa-input sch-select"
+                            t-model="state.filterTeacherId"
+                            t-on-change="onFilterTeacher">
+                        <option value="">Todos</option>
+                        <t t-foreach="state.teachers" t-as="t" t-key="t.id">
+                            <option t-att-value="t.id" t-out="t.name"/>
+                        </t>
+                    </select>
+                </div>
+                <div class="sch-filter-group">
+                    <label class="unefa-label">Aula</label>
+                    <select class="unefa-input sch-select"
+                            t-model="state.filterClassroomId"
+                            t-on-change="onFilterClassroom">
+                        <option value="">Todas</option>
+                        <t t-foreach="state.classrooms" t-as="c" t-key="c.id">
+                            <option t-att-value="c.id" t-out="c.name + (c.code ? ' (' + c.code + ')' : '')"/>
+                        </t>
+                    </select>
+                </div>
+                <div class="sch-filter-group">
+                    <label class="unefa-label">Día</label>
+                    <select class="unefa-input sch-select"
+                            t-model="state.filterDay"
+                            t-on-change="onFilterDay">
+                        <option value="">Todos</option>
+                        <t t-foreach="dayOrder" t-as="d" t-key="d">
+                            <option t-att-value="d" t-out="dayLabels[d]"/>
+                        </t>
+                    </select>
+                </div>
+                <button class="unefa-btn-secondary sch-clear-btn"
+                        t-if="state.filterTeacherId || state.filterClassroomId || state.filterDay"
+                        t-on-click="clearFilters">
+                    <i class="fa fa-times"/> Limpiar
+                </button>
+            </div>
+
+            <!-- Loading -->
+            <div t-if="state.isLoading" class="unefa-loading">
+                <i class="fa fa-spinner fa-spin fa-2x"/>
+                <p>Cargando horarios...</p>
+            </div>
+
+            <!-- Sin resultados -->
+            <div t-elif="groupedByTeacher.length === 0" class="unefa-empty-state">
+                <i class="fa fa-calendar fa-3x"/>
+                <h4>No hay horarios registrados</h4>
+                <p>Cree el primer bloque horario usando el botón "Nuevo Horario"</p>
+            </div>
+
+            <!-- Bloques por docente -->
+            <div t-else="" class="sch-teacher-list">
+                <t t-foreach="groupedByTeacher" t-as="grp" t-key="grp.teacher_id">
+                    <div class="sch-teacher-card">
+
+                        <!-- Cabecera del docente -->
+                        <div class="sch-teacher-head">
+                            <div class="sch-teacher-avatar" t-out="grp.teacher_name.charAt(0).toUpperCase()"/>
+                            <div class="sch-teacher-info">
+                                <span class="sch-teacher-name" t-out="grp.teacher_name"/>
+                                <span class="sch-teacher-load">
+                                    <i class="fa fa-clock-o"/>
+                                    <t t-set="loadInfo" t-value="loadInfoFor(grp.teacher_id)"/>
+                                    <span t-att-class="'sch-load-indicator ' + loadStatusClass(loadInfo)"
+                                          t-att-title="loadStatusText(loadInfo)">
+                                        <i class="fa" t-att-class="loadStatusIcon(loadInfo)"/>
+                                        <t t-out="loadStatusText(loadInfo)"/>
+                                    </span>
+                                </span>
+                            </div>
+                            <button class="unefa-btn-primary sch-add-btn"
+                                    t-on-click="() => this.showCreateForm(grp.teacher_id)">
+                                <i class="fa fa-plus"/> Agregar
+                            </button>
+                        </div>
+
+                        <!-- Tabla de horarios del docente, agrupados por día -->
+                        <div class="sch-day-grid">
+                            <t t-foreach="dayOrder" t-as="day" t-key="day">
+                                <t t-if="grp.byDay[day] and grp.byDay[day].length">
+                                    <div class="sch-day-section">
+                                        <div class="sch-day-label" t-out="dayLabels[day]"/>
+                                        <div class="sch-slots">
+                                            <t t-foreach="grp.byDay[day]" t-as="slot" t-key="slot.id">
+                                                <div class="sch-slot">
+                                                    <div class="sch-slot-time">
+                                                        <i class="fa fa-clock-o"/>
+                                                        <t t-out="formatHour(slot.start_hour)"/>–<t t-out="formatHour(slot.end_hour)"/>
+                                                        <span class="sch-slot-dur">(<t t-out="formatTotalHours(slot.duration)"/>)</span>
+                                                    </div>
+                                                    <div class="sch-slot-subject" t-out="slot.subject_id[1]"/>
+                                                    <div class="sch-slot-meta">
+                                                        <span class="sch-meta-item"><i class="fa fa-building"/> <t t-out="slot.classroom_id[1]"/></span>
+                                                        <span class="sch-meta-item" t-if="slot.section"><i class="fa fa-users"/> <t t-out="slot.section"/></span>
+                                                    </div>
+                                                    <div class="sch-slot-actions">
+                                                        <button class="unefa-btn-icon btn-qr"
+                                                                t-on-click="() => this.showQrCard(slot.id)"
+                                                                title="Ver / Imprimir QR del bloque">
+                                                            <i class="fa fa-qrcode"/>
+                                                        </button>
+                                                        <button class="unefa-btn-icon btn-edit"
+                                                                t-on-click="() => this.showEditForm(slot.id)"
+                                                                title="Editar">
+                                                            <i class="fa fa-pencil"/>
+                                                        </button>
+                                                        <button class="unefa-btn-icon btn-delete"
+                                                                t-on-click="() => this.deleteSchedule(slot.id)"
+                                                                title="Eliminar">
+                                                            <i class="fa fa-trash"/>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </t>
+                            </t>
+                        </div>
+
+                    </div>
+                </t>
+            </div>
+
+        </t><!-- /list -->
+
+        <!-- ══════════ VISTA FORMULARIO ══════════ -->
+        <t t-if="state.currentView === 'form'">
+            <div class="unefa-form-container">
+
+                <div class="unefa-form-header">
+                    <h2>
+                        <i class="fa" t-att-class="state.editingSchedule ? 'fa-pencil' : 'fa-plus-circle'"/>
+                        <t t-if="state.editingSchedule">Editar Bloque Horario</t>
+                        <t t-else="">Nuevo Bloque Horario</t>
+                    </h2>
+                </div>
+
+                <div class="unefa-form-body">
+                    <div class="unefa-form-section">
+                        <h3 class="unefa-form-section-title"><i class="fa fa-user"/> Docente y Materia</h3>
+                        <div class="unefa-form-grid">
+                            <div class="unefa-form-group">
+                                <label class="unefa-label">Docente *</label>
+                                <select class="unefa-input" t-model="state.formData.teacher_id">
+                                    <option value="">-- Seleccione --</option>
+                                    <t t-foreach="state.teachers" t-as="t" t-key="t.id">
+                                        <option t-att-value="t.id" t-out="t.name"/>
+                                    </t>
+                                </select>
+                            </div>
+                            <div class="unefa-form-group">
+                                <label class="unefa-label">Materia *</label>
+                                <select class="unefa-input" t-model="state.formData.subject_id">
+                                    <option value="">-- Seleccione --</option>
+                                    <t t-foreach="state.subjects" t-as="s" t-key="s.id">
+                                        <option t-att-value="s.id"
+                                                t-out="s.name + (s.code ? ' (' + s.code + ')' : '')"/>
+                                    </t>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="unefa-form-section">
+                        <h3 class="unefa-form-section-title"><i class="fa fa-building"/> Aula y Sección</h3>
+                        <div class="unefa-form-grid">
+                            <div class="unefa-form-group">
+                                <label class="unefa-label">Aula *</label>
+                                <select class="unefa-input" t-model="state.formData.classroom_id">
+                                    <option value="">-- Seleccione --</option>
+                                    <t t-foreach="state.classrooms" t-as="c" t-key="c.id">
+                                        <option t-att-value="c.id"
+                                                t-out="c.name + (c.code ? ' (' + c.code + ')' : '')"/>
+                                    </t>
+                                </select>
+                            </div>
+                            <div class="unefa-form-group">
+                                <label class="unefa-label">Sección</label>
+                                <input type="text"
+                                       class="unefa-input"
+                                       placeholder="Ej: Sección A, 2do Año Secc. 02"
+                                       t-model="state.formData.section"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="unefa-form-section">
+                        <h3 class="unefa-form-section-title"><i class="fa fa-clock-o"/> Horario</h3>
+                        <div class="unefa-form-grid">
+                            <div class="unefa-form-group">
+                                <label class="unefa-label">Día *</label>
+                                <select class="unefa-input" t-model="state.formData.day_of_week">
+                                    <t t-foreach="dayOrder" t-as="d" t-key="d">
+                                        <option t-att-value="d" t-out="dayLabels[d]"/>
+                                    </t>
+                                </select>
+                            </div>
+                            <div class="unefa-form-group"/>
+                            <div class="unefa-form-group">
+                                <label class="unefa-label">Hora Inicio *</label>
+                                <input type="time" class="unefa-input"
+                                       t-model="state.formData.start_hour"/>
+                            </div>
+                            <div class="unefa-form-group">
+                                <label class="unefa-label">Hora Fin *</label>
+                                <input type="time" class="unefa-input"
+                                       t-model="state.formData.end_hour"/>
+                            </div>
+                            <div class="unefa-form-group sch-time-preview">
+                                <label class="unefa-label">Bloque</label>
+                                <span class="sch-time-badge">
+                                    <t t-out="previewStart"/>
+                                    –
+                                    <t t-out="previewEnd"/>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="unefa-form-footer">
+                    <button class="unefa-btn-secondary" t-on-click="cancelForm">
+                        <i class="fa fa-times"/> Cancelar
+                    </button>
+                    <button class="unefa-btn-primary" t-on-click="saveSchedule">
+                        <i class="fa fa-check"/>
+                        <t t-if="state.editingSchedule">Guardar Cambios</t>
+                        <t t-else="">Crear Horario</t>
+                    </button>
+                </div>
+            </div>
+        </t><!-- /form -->
+
+    </div><!-- /content -->
+
+    <div class="unefa-page-footer">
+        <div class="unefa-flag-stripe"/>
+        <span>UNEFA · Carga Horaria Docente</span>
+    </div>
+</div>
+</t>
+</templates>

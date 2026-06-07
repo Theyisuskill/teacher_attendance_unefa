@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+<t t-name="teacher_attendance.AttendanceAnalysis">
+<div class="o_attendance_analysis">
+
+    <!-- Header -->
+    <div class="unefa-page-header">
+        <div class="unefa-flag-top"/>
+        <div class="unefa-page-header-main">
+            <div class="unefa-page-header-left">
+                <button class="unefa-btn-back" t-on-click="goBack"><i class="fa fa-arrow-left"/></button>
+                <div class="unefa-page-header-info">
+                    <h1 class="unefa-page-title"><i class="fa fa-bar-chart"/> Análisis de Asistencia</h1>
+                    <p class="unefa-page-subtitle">Estadísticas y métricas del período seleccionado</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="unefa-page-content">
+
+        <!-- Selector de período -->
+        <div class="ana-period-bar">
+            <div class="ana-period-tabs">
+                <button class="ana-period-tab" t-att-class="{'active': state.period === 'week'}"
+                        t-on-click="() => this.setPeriod('week')">Esta semana</button>
+                <button class="ana-period-tab" t-att-class="{'active': state.period === 'month'}"
+                        t-on-click="() => this.setPeriod('month')">Este mes</button>
+                <button class="ana-period-tab" t-att-class="{'active': state.period === 'custom'}"
+                        t-on-click="() => this.setPeriod('custom')">Personalizado</button>
+            </div>
+            <div class="ana-date-inputs" t-if="state.period === 'custom'">
+                <input type="date" class="unefa-input" t-model="state.dateFrom" t-on-change="onDateChange"/>
+                <span>—</span>
+                <input type="date" class="unefa-input" t-model="state.dateTo"   t-on-change="onDateChange"/>
+            </div>
+            <span class="ana-period-label" t-else="">
+                <i class="fa fa-calendar"/> <t t-out="state.dateFrom"/> → <t t-out="state.dateTo"/>
+            </span>
+        </div>
+
+        <div t-if="state.isLoading" class="unefa-loading">
+            <i class="fa fa-spinner fa-spin fa-2x"/>
+            <p>Calculando estadísticas...</p>
+        </div>
+
+        <t t-else="">
+            <!-- KPI cards -->
+            <div class="ana-kpi-grid">
+                <div class="ana-kpi ana-ok">
+                    <div class="ana-kpi-icon"><i class="fa fa-check-circle"/></div>
+                    <div class="ana-kpi-body">
+                        <span class="ana-kpi-num" t-out="state.totals.valid"/>
+                        <span class="ana-kpi-lbl">Asistió</span>
+                    </div>
+                </div>
+                <div class="ana-kpi ana-late">
+                    <div class="ana-kpi-icon"><i class="fa fa-clock-o"/></div>
+                    <div class="ana-kpi-body">
+                        <span class="ana-kpi-num" t-out="state.totals.late"/>
+                        <span class="ana-kpi-lbl">Retardos</span>
+                    </div>
+                </div>
+                <div class="ana-kpi ana-absent">
+                    <div class="ana-kpi-icon"><i class="fa fa-times-circle"/></div>
+                    <div class="ana-kpi-body">
+                        <span class="ana-kpi-num" t-out="state.totals.absent"/>
+                        <span class="ana-kpi-lbl">Inasistencias</span>
+                    </div>
+                </div>
+                <div class="ana-kpi ana-hours">
+                    <div class="ana-kpi-icon"><i class="fa fa-hourglass-half"/></div>
+                    <div class="ana-kpi-body">
+                        <span class="ana-kpi-num" t-out="state.totals.totalHours.toFixed(1)"/>
+                        <span class="ana-kpi-lbl">Horas totales</span>
+                    </div>
+                </div>
+                <div class="ana-kpi ana-punctuality">
+                    <div class="ana-kpi-icon"><i class="fa fa-bullseye"/></div>
+                    <div class="ana-kpi-body">
+                        <span class="ana-kpi-num" t-out="punctuality + '%'"/>
+                        <span class="ana-kpi-lbl">Puntualidad global</span>
+                    </div>
+                </div>
+                <div class="ana-kpi ana-total">
+                    <div class="ana-kpi-icon"><i class="fa fa-list"/></div>
+                    <div class="ana-kpi-body">
+                        <span class="ana-kpi-num" t-out="state.totals.totalLogs"/>
+                        <span class="ana-kpi-lbl">Total registros</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Barra de distribución -->
+            <div class="ana-dist-bar-wrap" t-if="state.totals.totalLogs > 0">
+                <div class="ana-dist-label">Distribución de estatus</div>
+                <div class="ana-dist-bar">
+                    <div class="ana-dist-seg seg-ok"
+                         t-att-style="'width:' + Math.round(state.totals.valid / state.totals.totalLogs * 100) + '%'"
+                         t-att-title="'Asistió: ' + state.totals.valid"/>
+                    <div class="ana-dist-seg seg-late"
+                         t-att-style="'width:' + Math.round(state.totals.late / state.totals.totalLogs * 100) + '%'"
+                         t-att-title="'Retardo: ' + state.totals.late"/>
+                    <div class="ana-dist-seg seg-absent"
+                         t-att-style="'width:' + Math.round(state.totals.absent / state.totals.totalLogs * 100) + '%'"
+                         t-att-title="'Inasistencia: ' + state.totals.absent"/>
+                </div>
+                <div class="ana-dist-legend">
+                    <span class="leg-ok">■ Asistió</span>
+                    <span class="leg-late">■ Retardo</span>
+                    <span class="leg-absent">■ Inasistencia</span>
+                </div>
+            </div>
+
+            <!-- Tabla por docente (solo coordinadores) -->
+            <div class="ana-teacher-table-wrap" t-if="state.isCoordinator and state.teacherRows.length > 0">
+                <h3 class="ana-section-title"><i class="fa fa-users"/> Resumen por Docente</h3>
+                <div class="av-table-wrap">
+                    <table class="av-table">
+                        <thead>
+                            <tr>
+                                <th>Docente</th>
+                                <th>Asistió</th>
+                                <th>Retardos</th>
+                                <th>Inasistencias</th>
+                                <th>Horas</th>
+                                <th>Puntualidad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="state.teacherRows" t-as="row" t-key="row.name">
+                                <tr>
+                                    <td class="av-teacher-cell">
+                                        <span class="av-initial" t-out="row.name.charAt(0).toUpperCase()"/>
+                                        <span t-out="row.name"/>
+                                    </td>
+                                    <td><span class="av-status-badge av-badge-ok" t-out="row.valid"/></td>
+                                    <td><span class="av-status-badge av-badge-late" t-out="row.late || 0"/></td>
+                                    <td><span class="av-status-badge av-badge-absent" t-out="row.absent || 0"/></td>
+                                    <td t-out="row.hours + 'h'"/>
+                                    <td>
+                                        <div class="ana-pct-bar">
+                                            <div class="ana-pct-fill"
+                                                 t-att-class="row.punctuality >= 80 ? 'pct-good' : 'pct-bad'"
+                                                 t-att-style="'width:' + row.punctuality + '%'"/>
+                                        </div>
+                                        <span class="ana-pct-text" t-out="row.punctuality + '%'"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div t-elif="state.totals.totalLogs === 0" class="unefa-empty-state">
+                <i class="fa fa-bar-chart fa-3x"/>
+                <h4>Sin datos en el período seleccionado</h4>
+                <p>No hay registros de asistencia para este rango de fechas</p>
+            </div>
+        </t>
+    </div>
+
+    <div class="unefa-page-footer">
+        <div class="unefa-flag-stripe"/>
+        <span>UNEFA · Análisis de Asistencia</span>
+    </div>
+</div>
+</t>
+</templates>

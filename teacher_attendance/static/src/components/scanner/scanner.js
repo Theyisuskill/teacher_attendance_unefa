@@ -20,6 +20,8 @@ export class AttendanceScanner extends Component {
         this.action = useService("action");
         this.historyComponent = null;
         this.clockInterval = null;
+        // Caché de GPS: evita esperar cada vez que se registra asistencia
+        this._gpsCache = null;   // { coords: {latitude, longitude}, ts: Date.now() }
         this.state = useState({
             isScanning: false,
             lastResult: null,
@@ -47,6 +49,8 @@ export class AttendanceScanner extends Component {
         onMounted(() => {
             this.clockInterval = setInterval(() => this.updateClock(), 1000);
             document.body.classList.add(FULLSCREEN_CLASS);
+            // Pre-fetch GPS en background para que el primer escaneo sea instantáneo
+            this._prefetchGPS();
         });
 
         onWillUnmount(() => {
@@ -101,20 +105,33 @@ export class AttendanceScanner extends Component {
     }
 
     _detectQrType(text) {
+        // 1. ¿Es UUID de aula?
         const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
         if (uuidRegex.test(text)) {
             return 'classroom';
         }
-        const cedulaRegex = /(\d{6,10})/;
-        if (cedulaRegex.test(text)) {
+        // 2. ¿Contiene cédula venezolana?
+        // Normalizar primero (puntos/guiones/espacios) para cubrir:
+        //   "12345678", "V-12345678", "12.345.678", "V-12.345.678 JUAN PÉREZ"
+        const digits = this._extractCedula(text);
+        if (digits) {
             return 'teacher';
         }
         return 'classroom';
     }
 
     _extractCedula(text) {
-        const match = text.match(/(\d{6,10})/);
-        return match ? match[1] : null;
+        // Normalizar: quitar puntos, guiones y espacios para manejar
+        // todos los formatos comunes de cédula venezolana en QR de carnet.
+        // Ejemplos soportados:
+        //   "12345678"          → "12345678"
+        //   "V-12345678"        → "12345678"
+        //   "V-12.345.678"      → "12345678"
+        //   "12.345.678 JUAN"   → "12345678"
+        //   "CI:12345678"       → "12345678"
+        const normalized = text.replace(/[-.\s]/g, '');
+        const match = normalized.match(/\d{6,10}/);
+        return match ? match[0] : null;
     }
 
     async onResult(result) {
@@ -134,6 +151,20 @@ export class AttendanceScanner extends Component {
     }
 
     async _handleTeacherCardQr(qrText) {
+        // Validación de red: el método carnet requiere conexión activa al servidor
+        if (!navigator.onLine) {
+            this.state.status = 'error';
+            this.state.statusMessage =
+                'Sin conexión a la red. El lector de carnet requiere conectividad. ' +
+                'Use el registro manual de contingencia o intente de nuevo.';
+            this.notification.add(
+                "Sin conexión. Use la Contingencia Manual si el problema persiste.",
+                { type: "danger", sticky: true }
+            );
+            setTimeout(() => { this.state.status = 'idle'; this.state.statusMessage = ''; }, 5000);
+            return;
+        }
+
         try {
             const cedula = this._extractCedula(qrText);
             if (!cedula) {
@@ -143,7 +174,20 @@ export class AttendanceScanner extends Component {
                 return;
             }
 
-            const position = await this._getCurrentPosition().catch(() => null);
+            const cached = this._getCachedGPS();
+            let gpsLat = 0, gpsLng = 0;
+            if (cached) {
+                gpsLat = cached.latitude;
+                gpsLng = cached.longitude;
+                this._prefetchGPS();
+            } else {
+                const position = await this._getCurrentPosition(1500).catch(() => null);
+                if (position) {
+                    gpsLat = position.coords.latitude;
+                    gpsLng = position.coords.longitude;
+                    this._saveGPSCache(position.coords);
+                }
+            }
 
             const response = await this.orm.call(
                 "attendance.log",
@@ -151,8 +195,8 @@ export class AttendanceScanner extends Component {
                 [],
                 {
                     cedula: cedula,
-                    latitude: position ? position.coords.latitude : 0,
-                    longitude: position ? position.coords.longitude : 0,
+                    latitude: gpsLat,
+                    longitude: gpsLng,
                 }
             );
 
@@ -183,46 +227,88 @@ export class AttendanceScanner extends Component {
 
     async onSignatureSave(signature) {
         this.state.status = 'loading';
+
+        // GPS optimizado: usar caché si está disponible (< 90s), sino esperar máx 1.5s
+        const cached = this._getCachedGPS();
+        let lat = 0, lng = 0;
+
+        if (cached) {
+            // Caché disponible → instantáneo, actualizar en background
+            lat = cached.latitude;
+            lng = cached.longitude;
+            this.state.statusMessage = 'Registrando asistencia...';
+            this._prefetchGPS();   // actualiza la caché sin bloquear
+        } else {
+            this.state.statusMessage = 'Obteniendo ubicación...';
+            const position = await this._getCurrentPosition(1500);  // max 1.5s
+            if (position) {
+                lat = position.coords.latitude;
+                lng = position.coords.longitude;
+                this._saveGPSCache(position.coords);
+            } else {
+                this.state.statusMessage = 'GPS no disponible — registrando sin coordenadas...';
+            }
+        }
+
         this.state.statusMessage = 'Registrando asistencia...';
-        
+
         try {
-            const position = await this._getCurrentPosition();
-            
             const response = await this.orm.call(
                 "attendance.log",
                 "action_log_attendance",
                 [],
                 {
                     secret_key: this.state.lastResult,
-                    latitude: position.coords.latitude,
-                    longitude: position.coords.longitude,
+                    latitude: lat,
+                    longitude: lng,
                     signature: signature,
+                    device_id: this._getDeviceId(),
                 }
             );
 
-            if (response.status === 'valid') {
+            // 'valid'   → entrada/salida dentro del radio ✅
+            // 'outside' → asistencia registrada pero fuera del radio ⚠️ (no es un error)
+            // 'checkout'→ salida registrada ✅
+            if (['valid', 'checkout'].includes(response.status)) {
                 this.state.status = 'success';
-                this.state.statusMessage = response.message || 'Asistencia Registrada';
+                // Mostrar la hora CONFIRMADA por el servidor (no la del dispositivo)
+                const serverTime = response.server_time
+                    ? this._formatServerTime(response.server_time)
+                    : null;
+                this.state.statusMessage = serverTime
+                    ? `${response.message || 'Asistencia Registrada'} — ${serverTime} (hora servidor)`
+                    : response.message || 'Asistencia Registrada';
                 this.notification.add("Asistencia marcada correctamente!", { type: "success" });
                 await this.loadKPIs();
-                if (this.historyComponent) {
-                    await this.historyComponent.loadLogs();
-                }
+                if (this.historyComponent) await this.historyComponent.loadLogs();
+
+            } else if (response.status === 'outside') {
+                // Asistencia registrada pero fuera del radio GPS → mostrar advertencia
+                this.state.status = 'success';
+                this.state.statusMessage = response.message
+                    || 'Asistencia registrada. Estás fuera del radio del aula — será revisada por el coordinador.';
+                this.notification.add(
+                    this.state.statusMessage,
+                    { type: "warning" }
+                );
+                await this.loadKPIs();
+                if (this.historyComponent) await this.historyComponent.loadLogs();
+
             } else {
                 this.state.status = 'error';
-                this.state.statusMessage = response.message || 'Error';
+                this.state.statusMessage = response.message || 'No se pudo registrar la asistencia';
                 this.notification.add(response.message || "Error en el registro.", { type: "danger" });
             }
         } catch (error) {
             this.state.status = 'error';
-            this.state.statusMessage = 'Error de conexion';
-            this.notification.add("Ocurrio un error durante el escaneo.", { type: "danger" });
+            this.state.statusMessage = 'Error de comunicación con el servidor. Verifique su conexión.';
+            this.notification.add("Error al registrar la asistencia.", { type: "danger" });
         }
 
         setTimeout(() => {
             this.state.status = 'idle';
             this.state.statusMessage = '';
-        }, 3000);
+        }, 4000);
     }
 
     onSignatureCancel() {
@@ -234,8 +320,21 @@ export class AttendanceScanner extends Component {
     onError(error) {
         this.state.isScanning = false;
         this.state.status = 'error';
-        this.state.statusMessage = error.message || 'Error de camara';
-        this.notification.add(error.message, { type: "danger" });
+
+        let msg = error.message || 'Error de camara';
+        const isLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+        if (window.location.protocol !== 'https:' && !isLocal) {
+            // getUserMedia solo funciona en contextos seguros
+            msg = 'La cámara requiere una conexión segura (HTTPS). '
+                + 'Acceda al sistema mediante una URL https:// para poder escanear.';
+        } else if (error.name === 'NotAllowedError') {
+            msg = 'Permiso de cámara denegado. Habilite el acceso a la cámara en su navegador.';
+        } else if (error.name === 'NotFoundError') {
+            msg = 'No se encontró ninguna cámara en este dispositivo.';
+        }
+
+        this.state.statusMessage = msg;
+        this.notification.add(msg, { type: "danger" });
     }
 
     toggleScanner() {
@@ -244,14 +343,81 @@ export class AttendanceScanner extends Component {
         this.state.lastQrType = null;
     }
 
-    _getCurrentPosition() {
-        return new Promise((resolve, reject) => {
+    retryScanner() {
+        this.state.status = 'idle';
+        this.state.statusMessage = '';
+        this.state.lastResult = null;
+        this.state.lastQrType = null;
+        this.state.isScanning = true;   // reinicia la cámara automáticamente
+    }
+
+    /**
+     * Obtiene la posición GPS del dispositivo.
+     * Nunca rechaza — devuelve null si GPS no está disponible o tarda demasiado.
+     * @param {number} timeoutMs - Tiempo máximo de espera en ms (default 8000)
+     * @returns {Promise<GeolocationPosition|null>}
+     */
+    _getCurrentPosition(timeoutMs = 8000) {
+        return new Promise((resolve) => {
             if (!navigator.geolocation) {
-                reject(new Error("Geolocalizacion no soportada."));
-            } else {
-                navigator.geolocation.getCurrentPosition(resolve, reject);
+                resolve(null);
+                return;
             }
+            const timer = setTimeout(() => resolve(null), timeoutMs);
+            navigator.geolocation.getCurrentPosition(
+                (pos) => { clearTimeout(timer); resolve(pos); },
+                ()    => { clearTimeout(timer); resolve(null); },  // error → null, no lanza
+                { enableHighAccuracy: true, timeout: timeoutMs, maximumAge: 60000 }
+            );
         });
+    }
+
+    /**
+     * Convierte una fecha UTC de Odoo ("2026-06-07 18:30:00") a hora local
+     * del dispositivo en formato HH:MM para mostrarla como confirmación del servidor.
+     */
+    _formatServerTime(serverUtcStr) {
+        try {
+            const d = new Date(serverUtcStr.replace(' ', 'T') + 'Z');
+            return d.toLocaleTimeString('es-VE', { hour: '2-digit', minute: '2-digit' });
+        } catch (_) {
+            return null;
+        }
+    }
+
+    // ── Gestión de caché GPS ──────────────────────────────
+
+    _saveGPSCache(coords) {
+        this._gpsCache = { latitude: coords.latitude, longitude: coords.longitude, ts: Date.now() };
+    }
+
+    _getCachedGPS(maxAgeMs = 90_000) {
+        if (!this._gpsCache) return null;
+        if (Date.now() - this._gpsCache.ts > maxAgeMs) return null;
+        return { latitude: this._gpsCache.latitude, longitude: this._gpsCache.longitude };
+    }
+
+    /** Pre-obtiene GPS en background sin bloquear la UI. */
+    _prefetchGPS() {
+        this._getCurrentPosition(6000).then(pos => {
+            if (pos) this._saveGPSCache(pos.coords);
+        });
+    }
+
+    /**
+     * Identificador persistente del dispositivo (localStorage).
+     * Usado para la validación de dispositivo vinculado: evita que
+     * un docente registre asistencia desde el equipo de otro.
+     */
+    _getDeviceId() {
+        let deviceId = localStorage.getItem("unefa_device_id");
+        if (!deviceId) {
+            deviceId = (window.crypto && crypto.randomUUID)
+                ? crypto.randomUUID()
+                : `dev-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+            localStorage.setItem("unefa_device_id", deviceId);
+        }
+        return deviceId;
     }
 }
 

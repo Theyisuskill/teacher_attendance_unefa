@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+<t t-name="teacher_attendance.AttendanceViewer">
+<div class="o_attendance_viewer">
+
+    <!-- Header -->
+    <div class="unefa-page-header">
+        <div class="unefa-flag-top"/>
+        <div class="unefa-page-header-main">
+            <div class="unefa-page-header-left">
+                <button class="unefa-btn-back" t-on-click="goBack"><i class="fa fa-arrow-left"/></button>
+                <div class="unefa-page-header-info">
+                    <h1 class="unefa-page-title">
+                        <i class="fa fa-list-alt"/>
+                        <t t-if="viewMode === 'mine'">Mis Registros de Asistencia</t>
+                        <t t-else="">Todos los Registros</t>
+                    </h1>
+                    <p class="unefa-page-subtitle">Historial de asistencia con estatus automático del motor de reglas</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="unefa-page-content av-content">
+
+        <div t-if="state.isLoading and state.logs.length === 0" class="unefa-loading">
+            <i class="fa fa-spinner fa-spin fa-2x"/>
+            <p>Cargando registros...</p>
+        </div>
+
+        <t t-else="">
+            <!-- Resumen KPIs -->
+            <div class="av-kpi-row">
+                <div class="av-kpi av-kpi-ok">
+                    <i class="fa fa-check-circle"/>
+                    <div>
+                        <span class="av-kpi-num" t-out="state.summary.valid"/>
+                        <span class="av-kpi-lbl">Asistió</span>
+                    </div>
+                </div>
+                <div class="av-kpi av-kpi-late">
+                    <i class="fa fa-clock-o"/>
+                    <div>
+                        <span class="av-kpi-num" t-out="state.summary.late"/>
+                        <span class="av-kpi-lbl">Retardos</span>
+                    </div>
+                </div>
+                <div class="av-kpi av-kpi-absent">
+                    <i class="fa fa-times-circle"/>
+                    <div>
+                        <span class="av-kpi-num" t-out="state.summary.absent"/>
+                        <span class="av-kpi-lbl">Inasistencias</span>
+                    </div>
+                </div>
+                <div class="av-kpi av-kpi-outside">
+                    <i class="fa fa-map-marker"/>
+                    <div>
+                        <span class="av-kpi-num" t-out="state.summary.outside"/>
+                        <span class="av-kpi-lbl">Fuera del Radio</span>
+                    </div>
+                </div>
+                <div class="av-kpi av-kpi-hours">
+                    <i class="fa fa-hourglass-half"/>
+                    <div>
+                        <span class="av-kpi-num" t-out="state.summary.totalHours.toFixed(1)"/>
+                        <span class="av-kpi-lbl">Horas Totales</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filtros -->
+            <div class="av-filter-bar">
+                <div class="av-filter-group">
+                    <label class="unefa-label">Desde</label>
+                    <input type="date" class="unefa-input"
+                           t-model="state.filterDateFrom"
+                           t-on-change="onFilterFrom"/>
+                </div>
+                <div class="av-filter-group">
+                    <label class="unefa-label">Hasta</label>
+                    <input type="date" class="unefa-input"
+                           t-model="state.filterDateTo"
+                           t-on-change="onFilterTo"/>
+                </div>
+                <div class="av-filter-group">
+                    <label class="unefa-label">Estatus</label>
+                    <select class="unefa-input" t-model="state.filterStatus" t-on-change="onFilterStatus">
+                        <option value="">Todos</option>
+                        <option value="valid">Asistió</option>
+                        <option value="late">Retardo</option>
+                        <option value="absent">Inasistencia</option>
+                        <option value="outside">Fuera del Radio</option>
+                        <option value="manual">Validado Manual</option>
+                    </select>
+                </div>
+                <div class="av-filter-group" t-if="state.isCoordinator and viewMode === 'all'">
+                    <label class="unefa-label">Docente</label>
+                    <select class="unefa-input" t-model="state.filterTeacher" t-on-change="onFilterTeacher">
+                        <option value="">Todos</option>
+                        <t t-foreach="state.teachers" t-as="t" t-key="t.id">
+                            <option t-att-value="t.id" t-out="t.name"/>
+                        </t>
+                    </select>
+                </div>
+                <button class="unefa-btn-secondary av-clear-btn" t-on-click="clearFilters">
+                    <i class="fa fa-times"/> Limpiar
+                </button>
+            </div>
+
+            <!-- Tabla -->
+            <div class="av-table-wrap">
+                <div t-if="state.logs.length === 0" class="unefa-empty-state">
+                    <i class="fa fa-list-alt fa-3x"/>
+                    <h4>Sin registros en el período</h4>
+                    <p>Ajuste los filtros o amplíe el rango de fechas</p>
+                </div>
+
+                <table t-else="" class="av-table">
+                    <thead>
+                        <tr>
+                            <th t-if="viewMode === 'all'">Docente</th>
+                            <th>Aula</th>
+                            <th>Materia</th>
+                            <th>Entrada</th>
+                            <th>Salida</th>
+                            <th>Duración</th>
+                            <th>Método</th>
+                            <th>Estatus</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="state.logs" t-as="log" t-key="log.id">
+                            <tr t-att-class="'av-row-' + log.status">
+                                <td t-if="viewMode === 'all'" class="av-teacher-cell">
+                                    <span class="av-initial" t-out="log.teacher_id[1] ? log.teacher_id[1].charAt(0).toUpperCase() : '?'"/>
+                                    <span t-out="log.teacher_id[1]"/>
+                                </td>
+                                <td>
+                                    <span t-out="log.classroom_id[1]"/>
+                                </td>
+                                <td>
+                                    <t t-if="log.subject_id">
+                                        <span t-out="log.subject_id[1]"/>
+                                        <span class="av-section" t-if="log.section" t-out="'· ' + log.section"/>
+                                    </t>
+                                    <t t-else=""><span class="av-dash">—</span></t>
+                                </td>
+                                <td class="av-time" t-out="formatDT(log.check_in)"/>
+                                <td class="av-time" t-out="formatDT(log.check_out)"/>
+                                <td t-out="formatDur(log.duration)"/>
+                                <td>
+                                    <span class="av-method-chip" t-out="METHOD_LABELS[log.method] || log.method"/>
+                                </td>
+                                <td>
+                                    <span class="av-status-badge"
+                                          t-att-class="STATUS_CLASS[log.status]"
+                                          t-out="STATUS_LABELS[log.status] || log.status"/>
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Paginación -->
+            <div class="av-pagination" t-if="state.totalCount > 0">
+                <span class="av-page-info">
+                    Mostrando <t t-out="showingFrom"/>–<t t-out="showingTo"/> de <t t-out="state.totalCount"/> registros
+                </span>
+                <div class="av-page-controls">
+                    <button class="av-page-btn" t-on-click="() => this.goToPage(state.currentPage - 1)"
+                            t-att-disabled="state.currentPage === 1">
+                        <i class="fa fa-chevron-left"/>
+                    </button>
+                    <t t-foreach="pageNumbers" t-as="p" t-key="p">
+                        <button class="av-page-btn"
+                                t-att-class="{'av-page-active': p === state.currentPage}"
+                                t-on-click="() => this.goToPage(p)"
+                                t-out="p"/>
+                    </t>
+                    <button class="av-page-btn" t-on-click="() => this.goToPage(state.currentPage + 1)"
+                            t-att-disabled="state.currentPage === totalPages">
+                        <i class="fa fa-chevron-right"/>
+                    </button>
+                </div>
+            </div>
+        </t>
+    </div>
+
+    <div class="unefa-page-footer">
+        <div class="unefa-flag-stripe"/>
+        <span>UNEFA · Registros de Asistencia</span>
+    </div>
+</div>
+</t>
+</templates>

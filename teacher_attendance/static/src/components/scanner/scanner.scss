@@ -694,3 +694,24 @@ body.attendance-scanner-fullscreen {
     .kpi-card, .scanner-card, .info-card,
     .history-section { box-shadow: none; border: 1px solid #dee2e6; }
 }
+
+.btn-retry {
+    margin-top: 14px;
+    padding: 8px 20px;
+    border: 2px solid rgba(255,255,255,0.5);
+    border-radius: 20px;
+    background: transparent;
+    color: #fff;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.15s;
+
+    &:hover {
+        background: rgba(255,255,255,0.15);
+        border-color: rgba(255,255,255,0.8);
+    }
+}

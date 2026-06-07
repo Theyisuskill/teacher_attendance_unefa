@@ -31,6 +31,7 @@ export class OccupancyMap extends Component {
         });
 
         onWillUnmount(() => {
+            if (this._onResize) window.removeEventListener('resize', this._onResize);
             if (this.map) this.map.remove();
         });
     }
@@ -44,10 +45,15 @@ export class OccupancyMap extends Component {
             await new Promise(resolve => setTimeout(resolve, 100));
         }
         try {
-            // UNEFA coordinates (Venezuela)
+            // UNEFA coordinates (Caracas, Venezuela)
             this.map = L.map(this.mapContainer.el, {
-                preferCanvas: true
-            }).setView([-12.046, -77.042], 13);
+                preferCanvas: true,
+                dragging: true,
+                scrollWheelZoom: true,
+                doubleClickZoom: true,
+                touchZoom: true,
+                zoomControl: true,
+            }).setView([10.4806, -66.9036], 13);
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© OpenStreetMap',
@@ -60,6 +66,10 @@ export class OccupancyMap extends Component {
                     this.map.invalidateSize();
                 }
             }, 500);
+
+            // Recalcular tamaño cuando cambia la ventana
+            this._onResize = () => this.map && this.map.invalidateSize();
+            window.addEventListener('resize', this._onResize);
         } catch (error) {
             console.error('Error initializing map:', error);
         }

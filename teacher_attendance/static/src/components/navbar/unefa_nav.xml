@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
     <t t-name="teacher_attendance.UnefaNav">
-        <div class="unefa-globalnav">
+        <!-- Solo renderizar para usuarios con acceso al módulo de asistencia -->
+        <div t-if="state.hasAttendanceAccess" class="unefa-globalnav">
 
             <!-- Botón hamburguesa -->
             <button class="unefa-fab" t-if="!state.open" t-on-click="toggle" aria-label="Abrir menú">
@@ -28,14 +29,16 @@
                     </button>
                 </div>
 
-                <!-- Usuario -->
-                <div class="unefa-sidebar-user">
+                <!-- Usuario — clickeable abre Mi Perfil -->
+                <button class="unefa-sidebar-user unefa-sidebar-user-btn" t-on-click="navigateToProfile"
+                        title="Ver mi perfil">
                     <div class="unefa-sidebar-avatar" t-out="state.userInitial"/>
                     <div class="unefa-sidebar-user-meta">
                         <span class="unefa-sidebar-username" t-out="state.userName"/>
                         <span class="unefa-sidebar-userrole" t-out="userRoleLabel"/>
                     </div>
-                </div>
+                    <i class="fa fa-pencil unefa-profile-hint"/>
+                </button>
 
                 <!-- Navegación -->
                 <nav class="unefa-sidebar-nav">
@@ -66,6 +69,11 @@
 
                 <!-- Footer -->
                 <div class="unefa-sidebar-foot">
+                    <button class="nav-link nav-link-profile" t-on-click="navigateToProfile">
+                        <i class="fa fa-user-circle"/>
+                        <span>Mi Perfil</span>
+                        <span class="unefa-profile-sub">Contraseña · Dispositivos</span>
+                    </button>
                     <button class="nav-link nav-link-logout" t-on-click="logout">
                         <i class="fa fa-power-off"/>
                         <span>Cerrar sesión</span>

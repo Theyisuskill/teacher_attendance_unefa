@@ -1,0 +1,261 @@
+/* ═══════════════════════════════════════════
+   SCHEDULE MANAGER — Carga Horaria UNEFA
+   ═══════════════════════════════════════════ */
+
+.o_schedule_manager {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: var(--unefa-light);
+    overflow-y: auto;
+}
+
+/* ── Barra de filtros ── */
+.sch-filter-bar {
+    display: flex;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding: 16px 20px;
+    background: #fff;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--unefa-border);
+    box-shadow: var(--shadow-xs);
+}
+
+.sch-filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 180px;
+    flex: 1;
+}
+
+.sch-select { min-width: 160px; }
+
+.sch-clear-btn { align-self: flex-end; white-space: nowrap; }
+
+/* ── Lista de docentes ── */
+.sch-teacher-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.sch-teacher-card {
+    background: #fff;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--unefa-border);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+
+.sch-teacher-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 20px;
+    background: linear-gradient(135deg, #3b5998 0%, #4a73b0 100%);
+}
+
+.sch-teacher-avatar {
+    width: 40px; height: 40px;
+    border-radius: var(--radius-md);
+    background: rgba(241, 216, 139, 0.25);
+    display: grid;
+    place-items: center;
+    color: var(--unefa-yellow);
+    font-weight: 800;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    border: 2px solid rgba(241, 216, 139, 0.4);
+}
+
+.sch-teacher-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.sch-teacher-name {
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.sch-teacher-load {
+    color: rgba(255,255,255,0.65);
+    font-size: 0.72rem;
+    margin-top: 2px;
+    i { margin-right: 4px; }
+}
+
+.sch-add-btn {
+    font-size: 0.75rem;
+    padding: 6px 14px;
+    white-space: nowrap;
+}
+
+/* ── Grilla de días ── */
+.sch-day-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.sch-day-section {
+    display: flex;
+    border-top: 1px solid var(--unefa-border);
+
+    &:first-child { border-top: none; }
+}
+
+.sch-day-label {
+    width: 90px;
+    flex-shrink: 0;
+    padding: 12px 14px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--unefa-blue-dark);
+    background: rgba(110, 143, 199, 0.06);
+    display: flex;
+    align-items: flex-start;
+    padding-top: 16px;
+    border-right: 1px solid var(--unefa-border);
+}
+
+.sch-slots {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px 14px;
+}
+
+.sch-slot {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px;
+    background: var(--unefa-light);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--unefa-border);
+    flex-wrap: wrap;
+}
+
+.sch-slot-time {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--unefa-blue-dark);
+    white-space: nowrap;
+    min-width: 110px;
+
+    i { color: var(--unefa-blue); font-size: 0.72rem; }
+}
+
+.sch-slot-dur {
+    font-size: 0.65rem;
+    color: var(--unefa-gray);
+    font-weight: 400;
+    margin-left: 2px;
+}
+
+.sch-slot-subject {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--unefa-dark);
+    flex: 1;
+    min-width: 120px;
+}
+
+.sch-slot-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.sch-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.72rem;
+    color: var(--unefa-gray);
+    white-space: nowrap;
+
+    i { font-size: 0.68rem; }
+}
+
+.sch-slot-actions {
+    display: flex;
+    gap: 6px;
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+/* ── Formulario: vista previa de hora ── */
+.sch-time-preview { justify-content: center; }
+
+.sch-time-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 16px;
+    background: rgba(110, 143, 199, 0.12);
+    color: var(--unefa-blue-dark);
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-top: 4px;
+    min-width: 120px;
+    justify-content: center;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+    .sch-filter-bar { flex-direction: column; align-items: stretch; }
+    .sch-filter-group { min-width: unset; }
+    .sch-day-label { width: 70px; font-size: 0.65rem; }
+    .sch-slot { flex-direction: column; align-items: flex-start; gap: 6px; }
+    .sch-slot-actions { margin-left: 0; }
+}
+
+/* ── Indicador de carga horaria vs dedicación ── */
+.sch-load-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 10px;
+
+    &.load-ok {
+        background: rgba(72, 187, 120, 0.15);
+        color: #276749;
+        i { color: #38a169; }
+    }
+    &.load-under {
+        background: rgba(241, 216, 139, 0.2);
+        color: #7a5c1a;
+        i { color: #d69e2e; }
+    }
+    &.load-over {
+        background: rgba(222, 151, 157, 0.2);
+        color: #8b2a32;
+        i { color: #c53030; }
+    }
+}
+
+.btn-qr {
+    color: var(--unefa-blue-dark);
+    &:hover { background: rgba(110, 143, 199, 0.12); border-color: var(--unefa-blue); }
+}

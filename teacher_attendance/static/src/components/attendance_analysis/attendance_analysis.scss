@@ -1,0 +1,166 @@
+/* ═══════════════════════════════════════════
+   ATTENDANCE ANALYSIS — Análisis UNEFA
+   ═══════════════════════════════════════════ */
+
+.o_attendance_analysis {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: var(--unefa-light);
+    overflow-y: auto;
+}
+
+/* ── Selector de período ── */
+.ana-period-bar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    padding: 14px 16px;
+    background: #fff;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--unefa-border);
+    margin-bottom: 18px;
+    box-shadow: var(--shadow-xs);
+}
+
+.ana-period-tabs { display: flex; gap: 6px; }
+
+.ana-period-tab {
+    padding: 7px 16px;
+    border: 1px solid var(--unefa-border);
+    border-radius: 20px;
+    background: #fff;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--unefa-gray);
+    cursor: pointer;
+    transition: 0.15s;
+    &:hover { border-color: var(--unefa-blue); color: var(--unefa-blue); }
+    &.active {
+        background: var(--unefa-blue);
+        border-color: var(--unefa-blue);
+        color: #fff;
+    }
+}
+
+.ana-date-inputs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    span { color: var(--unefa-gray); }
+    .unefa-input { width: 140px; }
+}
+
+.ana-period-label { font-size: 0.78rem; color: var(--unefa-gray); margin-left: auto; }
+
+/* ── KPI cards ── */
+.ana-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.ana-kpi {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    background: #fff;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--unefa-border);
+    box-shadow: var(--shadow-xs);
+}
+
+.ana-kpi-icon {
+    width: 44px; height: 44px;
+    border-radius: var(--radius-md);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    font-size: 1.2rem;
+}
+
+.ana-kpi-body { display: flex; flex-direction: column; }
+.ana-kpi-num { font-size: 1.5rem; font-weight: 800; line-height: 1; }
+.ana-kpi-lbl { font-size: 0.65rem; color: var(--unefa-gray); font-weight: 600; text-transform: uppercase; margin-top: 2px; }
+
+.ana-ok         .ana-kpi-icon { background: rgba(72,187,120,0.12); i { color: #38a169; } }
+.ana-ok         .ana-kpi-num  { color: #276749; }
+.ana-late       .ana-kpi-icon { background: rgba(241,216,139,0.2); i { color: #d69e2e; } }
+.ana-late       .ana-kpi-num  { color: #7a5c1a; }
+.ana-absent     .ana-kpi-icon { background: rgba(222,151,157,0.15); i { color: #c53030; } }
+.ana-absent     .ana-kpi-num  { color: #8b2a32; }
+.ana-hours      .ana-kpi-icon { background: rgba(110,143,199,0.12); i { color: var(--unefa-blue); } }
+.ana-hours      .ana-kpi-num  { color: var(--unefa-blue-dark); }
+.ana-punctuality .ana-kpi-icon { background: rgba(72,187,120,0.1); i { color: #48bb78; } }
+.ana-punctuality .ana-kpi-num  { color: #276749; }
+.ana-total      .ana-kpi-icon { background: rgba(113,128,150,0.1); i { color: var(--unefa-gray); } }
+.ana-total      .ana-kpi-num  { color: var(--unefa-dark); }
+
+/* ── Barra de distribución ── */
+.ana-dist-bar-wrap {
+    padding: 16px;
+    background: #fff;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--unefa-border);
+    margin-bottom: 20px;
+}
+
+.ana-dist-label { font-size: 0.78rem; font-weight: 700; color: var(--unefa-dark); margin-bottom: 10px; }
+
+.ana-dist-bar {
+    display: flex;
+    height: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--unefa-border);
+}
+
+.ana-dist-seg { height: 100%; transition: width 0.4s ease; min-width: 2px; }
+.seg-ok     { background: #48bb78; }
+.seg-late   { background: #ecc94b; }
+.seg-absent { background: var(--unefa-red); }
+
+.ana-dist-legend {
+    display: flex;
+    gap: 16px;
+    margin-top: 8px;
+    font-size: 0.7rem;
+    color: var(--unefa-gray);
+    span { display: flex; align-items: center; gap: 4px; }
+}
+.leg-ok     { color: #276749; }
+.leg-late   { color: #7a5c1a; }
+.leg-absent { color: #8b2a32; }
+
+/* ── Tabla por docente ── */
+.ana-teacher-table-wrap { margin-top: 4px; }
+
+.ana-section-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--unefa-dark);
+    margin: 0 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    i { color: var(--unefa-blue); }
+}
+
+/* ── Barra de puntualidad ── */
+.ana-pct-bar {
+    width: 80px;
+    height: 6px;
+    background: var(--unefa-border);
+    border-radius: 3px;
+    overflow: hidden;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 6px;
+}
+.ana-pct-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+.pct-good { background: #48bb78; }
+.pct-bad  { background: var(--unefa-red); }
+.ana-pct-text { font-size: 0.75rem; font-weight: 700; color: var(--unefa-dark); }

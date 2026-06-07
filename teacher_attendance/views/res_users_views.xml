@@ -6,14 +6,21 @@
         <field name="inherit_id" ref="base.view_users_form"/>
         <field name="arch" type="xml">
             <xpath expr="//notebook" position="inside">
-                <page string="Attendance" name="attendance">
+                <page string="Asistencia UNEFA" name="attendance">
                     <group>
-                        <group string="Rol en Asistencia">
+                        <group string="Rol y Perfil Docente">
                             <field name="attendance_role"/>
+                            <field name="teacher_category"/>
+                            <field name="teacher_dedication"/>
                         </group>
-                        <group string="Kiosk Mode">
+                        <group string="Acceso al Sistema">
                             <field name="attendance_pin" password="True" placeholder="PIN de 4 dígitos"/>
+                            <field name="attendance_device_id" readonly="1"/>
                         </group>
+                    </group>
+                    <group string="Estado de Seguridad" col="2">
+                        <field name="failed_login_attempts" readonly="1"/>
+                        <field name="lockout_until" readonly="1"/>
                     </group>
                 </page>
             </xpath>

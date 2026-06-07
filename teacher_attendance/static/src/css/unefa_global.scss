@@ -505,3 +505,19 @@ select.unefa-input {
     .unefa-form-grid { grid-template-columns: 1fr; }
     .unefa-search-bar { flex-direction: column; align-items: stretch; }
 }
+
+/* ── Scroll en páginas de gestión ──
+   Las client actions OWL no scrollean por defecto si el contenido
+   sobrepasa la pantalla. Garantizar scroll vertical en todas. */
+.o_user_manager,
+.o_classroom_manager,
+.o_subject_manager,
+.o_substitution_manager,
+.o_attendance_config {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: var(--unefa-light);
+}

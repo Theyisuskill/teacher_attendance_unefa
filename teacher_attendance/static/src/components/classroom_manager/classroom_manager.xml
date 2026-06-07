@@ -71,7 +71,8 @@
                                         <span class="unefa-classroom-code" t-out="cr.code"/>
                                     </div>
                                     <div class="unefa-classroom-qr" t-if="cr.secret_key">
-                                        <i class="fa fa-qrcode"/>
+                                        <img t-att-src="'/web/image?model=attendance.classroom&amp;id=' + cr.id + '&amp;field=qr_code&amp;width=72&amp;height=72'"
+                                             class="unefa-qr-thumb" alt="QR"/>
                                     </div>
                                 </div>
 

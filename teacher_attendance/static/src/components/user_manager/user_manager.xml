@@ -40,6 +40,33 @@
                                    t-model="state.searchQuery"
                                    t-on-input="onSearchInput"/>
                         </div>
+                        <select class="unefa-input sch-select"
+                                t-model="state.filterRole"
+                                t-on-change="onFilterRole">
+                            <option value="">Todos los roles</option>
+                            <option value="admin">Administrador</option>
+                            <option value="coordinator">Coordinador</option>
+                            <option value="teacher">Docente</option>
+                            <option value="none">Sin rol</option>
+                        </select>
+                        <select class="unefa-input sch-select"
+                                t-model="state.filterCategory"
+                                t-on-change="onFilterCategory">
+                            <option value="">Categoría</option>
+                            <option value="instructor">Instructor</option>
+                            <option value="asistente">Asistente</option>
+                            <option value="agregado">Agregado</option>
+                            <option value="asociado">Asociado</option>
+                            <option value="titular">Titular</option>
+                        </select>
+                        <select class="unefa-input sch-select"
+                                t-model="state.filterDedication"
+                                t-on-change="onFilterDedication">
+                            <option value="">Dedicación</option>
+                            <option value="completo">T. Completo</option>
+                            <option value="medio">Medio Tiempo</option>
+                            <option value="variable">T. Variable</option>
+                        </select>
                         <div class="unefa-search-count">
                             <t t-out="state.filteredUsers.length"/> usuarios
                         </div>
@@ -60,7 +87,8 @@
 
                     <div t-else="" class="unefa-user-grid">
                         <t t-foreach="state.filteredUsers" t-as="u" t-key="u.id">
-                            <div class="unefa-user-card" t-att-class="{'is-inactive': !u.active}">
+                            <div class="unefa-user-card"
+                                 t-att-class="{'is-inactive': !u.active, 'is-locked': isLocked(u)}">
                                 <div class="unefa-user-card-header">
                                     <div class="unefa-user-avatar">
                                         <t t-out="u.name ? u.name.charAt(0).toUpperCase() : '?'"/>
@@ -69,6 +97,12 @@
                                         <h3 class="unefa-user-name" t-out="u.name"/>
                                         <span class="unefa-user-login" t-out="'@' + u.login"/>
                                         <span class="unefa-user-vat" t-if="u.vat" t-out="u.vat"/>
+                                        <div class="unefa-teacher-meta" t-if="u.teacher_category or u.teacher_dedication">
+                                            <span class="unefa-cat-badge" t-if="u.teacher_category"
+                                                  t-out="categoryLabels[u.teacher_category]"/>
+                                            <span class="unefa-ded-badge" t-if="u.teacher_dedication"
+                                                  t-out="dedicationLabels[u.teacher_dedication]"/>
+                                        </div>
                                     </div>
                                     <div class="unefa-user-badges">
                                         <span class="unefa-role-badge"
@@ -84,6 +118,30 @@
                                 </div>
 
                                 <div class="unefa-user-card-actions">
+                                    <!-- Indicador de bloqueo -->
+                                    <span class="unefa-lock-chip" t-if="isLocked(u)"
+                                          t-att-title="'Bloqueado por ' + u.failed_login_attempts + ' intentos fallidos'">
+                                        <i class="fa fa-lock"/> Bloqueado
+                                        <span t-if="lockRemainingText(u)"
+                                              t-out="'(' + lockRemainingText(u) + ')'"/>
+                                    </span>
+                                    <button class="unefa-btn-icon btn-unlock"
+                                            t-if="isLocked(u)"
+                                            t-on-click="() => this.unlockUser(u.id)"
+                                            title="Desbloquear cuenta">
+                                        <i class="fa fa-unlock"/>
+                                    </button>
+                                    <!-- Dispositivo vinculado -->
+                                    <span class="unefa-device-chip" t-if="u.attendance_device_id"
+                                          title="Tiene un dispositivo vinculado para registrar asistencia">
+                                        <i class="fa fa-mobile"/> Dispositivo vinculado
+                                    </span>
+                                    <button class="unefa-btn-icon btn-toggle"
+                                            t-if="u.attendance_device_id"
+                                            t-on-click="() => this.releaseDevice(u.id)"
+                                            title="Liberar dispositivo vinculado">
+                                        <i class="fa fa-unlink"/>
+                                    </button>
                                     <button class="unefa-btn-icon btn-edit"
                                             t-on-click="() => this.showEditForm(u.id)"
                                             title="Editar">
@@ -158,6 +216,34 @@
                                 </div>
                             </div>
 
+                            <!-- Categoría y Dedicación (solo para roles docentes) -->
+                            <div class="unefa-form-section"
+                                 t-if="state.formData.attendance_role === 'teacher' or state.formData.attendance_role === 'coordinator'">
+                                <h3 class="unefa-form-section-title"><i class="fa fa-graduation-cap"/> Perfil Académico</h3>
+                                <div class="unefa-form-grid">
+                                    <div class="unefa-form-group">
+                                        <label class="unefa-label">Categoría Docente</label>
+                                        <select class="unefa-input" t-model="state.formData.teacher_category">
+                                            <option value="">— Seleccione —</option>
+                                            <option value="instructor">Instructor</option>
+                                            <option value="asistente">Asistente</option>
+                                            <option value="agregado">Agregado</option>
+                                            <option value="asociado">Asociado</option>
+                                            <option value="titular">Titular</option>
+                                        </select>
+                                    </div>
+                                    <div class="unefa-form-group">
+                                        <label class="unefa-label">Dedicación</label>
+                                        <select class="unefa-input" t-model="state.formData.teacher_dedication">
+                                            <option value="">— Seleccione —</option>
+                                            <option value="completo">Tiempo Completo</option>
+                                            <option value="medio">Medio Tiempo</option>
+                                            <option value="variable">Tiempo Variable</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="unefa-form-section">
                                 <h3 class="unefa-form-section-title">Acceso y Rol</h3>
                                 <div class="unefa-form-grid">
@@ -179,7 +265,7 @@
                                         <label class="unefa-label">Rol de Asistencia</label>
                                         <select class="unefa-input" t-model="state.formData.attendance_role">
                                             <option value="none">Sin rol</option>
-                                            <option value="employee">Empleado</option>
+                                            <option value="admin">Administrador</option>
                                             <option value="teacher">Docente</option>
                                             <option value="coordinator">Coordinador</option>
                                         </select>
@@ -207,12 +293,19 @@
                                 </div>
                             </div>
 
-                            <div class="unefa-form-section" t-if="state.editingUser">
-                                <h3 class="unefa-form-section-title">Cambiar Contraseña</h3>
-                                <p class="unefa-form-section-help">Dejar en blanco si no desea cambiar la contraseña</p>
+                            <div class="unefa-form-section">
+                                <h3 class="unefa-form-section-title">
+                                    <t t-if="state.editingUser">Cambiar Contraseña</t>
+                                    <t t-else="">Contraseña *</t>
+                                </h3>
+                                <p class="unefa-form-section-help" t-if="state.editingUser">Dejar en blanco si no desea cambiar la contraseña</p>
+                                <p class="unefa-form-section-help" t-else="">Obligatoria — el usuario la necesita para iniciar sesión</p>
                                 <div class="unefa-form-grid">
                                     <div class="unefa-form-group">
-                                        <label class="unefa-label">Nueva contraseña</label>
+                                        <label class="unefa-label">
+                                            <t t-if="state.editingUser">Nueva contraseña</t>
+                                            <t t-else="">Contraseña</t>
+                                        </label>
                                         <input type="password"
                                                class="unefa-input"
                                                placeholder="••••••••"

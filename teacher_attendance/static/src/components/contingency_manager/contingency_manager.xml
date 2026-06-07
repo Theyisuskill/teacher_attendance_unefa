@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+<t t-name="teacher_attendance.ContingencyManager">
+<div class="o_contingency_manager">
+
+    <!-- ── Header ── -->
+    <div class="unefa-page-header">
+        <div class="unefa-flag-top"/>
+        <div class="unefa-page-header-main">
+            <div class="unefa-page-header-left">
+                <button class="unefa-btn-back" t-on-click="goBack"><i class="fa fa-arrow-left"/></button>
+                <div class="unefa-page-header-info">
+                    <h1 class="unefa-page-title"><i class="fa fa-exclamation-triangle"/> Contingencia Manual</h1>
+                    <p class="unefa-page-subtitle">Registro de asistencia por coordinación cuando los métodos automáticos fallan</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="unefa-page-content">
+        <div t-if="state.isLoading" class="unefa-loading">
+            <i class="fa fa-spinner fa-spin fa-2x"/>
+            <p>Cargando...</p>
+        </div>
+
+        <div t-else="" class="ctg-layout">
+
+            <!-- ══ Panel izquierdo: Formulario ══ -->
+            <div class="ctg-form-panel">
+
+                <!-- Aviso de método de emergencia -->
+                <div class="ctg-alert-banner">
+                    <i class="fa fa-info-circle"/>
+                    <span>Este registro queda auditado como <strong>manual</strong>. Use solo cuando los métodos de captura automática (carnet, QR, kiosko) no estén disponibles. La justificación es <strong>obligatoria</strong>.</span>
+                </div>
+
+                <!-- Resultado del último registro -->
+                <div t-if="state.lastResult" class="ctg-result"
+                     t-att-class="state.lastResult.success ? 'ctg-result-ok' : 'ctg-result-err'">
+                    <i t-att-class="state.lastResult.success
+                        ? (state.lastResult.entry_type === 'checkin' ? 'fa fa-sign-in' : 'fa fa-sign-out')
+                        : 'fa fa-times-circle'"/>
+                    <span t-out="state.lastResult.message"/>
+                    <button class="ctg-result-close" t-on-click="resetForm">
+                        <i class="fa fa-times"/>
+                    </button>
+                </div>
+
+                <div class="unefa-form-container">
+                    <div class="unefa-form-header">
+                        <h2><i class="fa fa-pencil-square-o"/> Registrar Asistencia</h2>
+                    </div>
+                    <div class="unefa-form-body">
+
+                        <!-- Tipo de registro -->
+                        <div class="unefa-form-section">
+                            <h3 class="unefa-form-section-title"><i class="fa fa-exchange"/> Tipo de Registro</h3>
+                            <div class="ctg-entry-type-row">
+                                <label class="ctg-radio-card"
+                                       t-att-class="{'selected': state.formData.entry_type === 'checkin'}">
+                                    <input type="radio" value="checkin"
+                                           t-model="state.formData.entry_type"/>
+                                    <i class="fa fa-sign-in"/>
+                                    <span>Entrada</span>
+                                </label>
+                                <label class="ctg-radio-card"
+                                       t-att-class="{'selected': state.formData.entry_type === 'checkout'}">
+                                    <input type="radio" value="checkout"
+                                           t-model="state.formData.entry_type"/>
+                                    <i class="fa fa-sign-out"/>
+                                    <span>Salida</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Docente y Aula -->
+                        <div class="unefa-form-section">
+                            <h3 class="unefa-form-section-title"><i class="fa fa-user"/> Docente y Aula</h3>
+                            <div class="unefa-form-grid">
+                                <div class="unefa-form-group">
+                                    <label class="unefa-label">Docente *</label>
+                                    <select class="unefa-input" t-model="state.formData.teacher_id">
+                                        <option value="">— Seleccione —</option>
+                                        <t t-foreach="state.teachers" t-as="t" t-key="t.id">
+                                            <option t-att-value="t.id" t-out="t.name"/>
+                                        </t>
+                                    </select>
+                                </div>
+                                <div class="unefa-form-group">
+                                    <label class="unefa-label">Aula *</label>
+                                    <select class="unefa-input" t-model="state.formData.classroom_id">
+                                        <option value="">— Seleccione —</option>
+                                        <t t-foreach="state.classrooms" t-as="c" t-key="c.id">
+                                            <option t-att-value="c.id"
+                                                    t-out="c.name + (c.code ? ' (' + c.code + ')' : '')"/>
+                                        </t>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Fecha y hora -->
+                        <div class="unefa-form-section">
+                            <h3 class="unefa-form-section-title"><i class="fa fa-clock-o"/> Fecha y Hora</h3>
+                            <div class="unefa-form-grid">
+                                <div class="unefa-form-group">
+                                    <label class="unefa-label">Fecha/Hora del registro *</label>
+                                    <input type="datetime-local"
+                                           class="unefa-input"
+                                           t-model="state.formData.entry_datetime"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Justificación -->
+                        <div class="unefa-form-section">
+                            <h3 class="unefa-form-section-title"><i class="fa fa-file-text-o"/> Justificación *</h3>
+                            <p class="unefa-form-section-help">
+                                Explique por qué se usa el registro manual (falla de red, cámara averiada, etc.)
+                            </p>
+                            <textarea class="unefa-input ctg-textarea"
+                                      placeholder="Ej: Falla en la red del piso 3, cámara de carnet sin conectividad desde las 08:00. Docente presente en aula 305 verificado personalmente."
+                                      rows="4"
+                                      t-model="state.formData.justification"/>
+                            <div class="ctg-char-count"
+                                 t-att-class="{'ctg-char-warn': state.formData.justification.length &lt; 20}">
+                                <t t-out="state.formData.justification.length"/> caracteres
+                                <t t-if="state.formData.justification.length &lt; 20"> (mínimo 20)</t>
+                            </div>
+                        </div>
+
+                    </div><!-- /form-body -->
+
+                    <div class="unefa-form-footer">
+                        <button class="unefa-btn-secondary" t-on-click="resetForm">
+                            <i class="fa fa-times"/> Limpiar
+                        </button>
+                        <button class="unefa-btn-primary ctg-submit-btn"
+                                t-on-click="submitContingency"
+                                t-att-disabled="state.isSaving">
+                            <i t-att-class="state.isSaving ? 'fa fa-spinner fa-spin' : 'fa fa-check'"/>
+                            <t t-if="state.formData.entry_type === 'checkout'">Registrar Salida</t>
+                            <t t-else="">Registrar Entrada</t>
+                        </button>
+                    </div>
+                </div><!-- /form-container -->
+
+            </div><!-- /form-panel -->
+
+            <!-- ══ Panel derecho: Auditoría ══ -->
+            <div class="ctg-audit-panel">
+                <div class="ctg-audit-header">
+                    <i class="fa fa-history"/>
+                    <span>Registros manuales recientes</span>
+                </div>
+
+                <div t-if="state.recentLogs.length === 0" class="ctg-audit-empty">
+                    <i class="fa fa-check-circle"/>
+                    <p>No hay registros manuales. Los métodos automáticos están funcionando.</p>
+                </div>
+
+                <div t-else="" class="ctg-audit-list">
+                    <t t-foreach="state.recentLogs" t-as="log" t-key="log.id">
+                        <div class="ctg-audit-item">
+                            <div class="ctg-audit-teacher" t-out="log.teacher_id[1]"/>
+                            <div class="ctg-audit-detail">
+                                <span class="ctg-audit-room" t-out="log.classroom_id[1]"/>
+                                <span class="ctg-audit-time">
+                                    <i class="fa fa-sign-in"/> <t t-out="formatDatetime(log.check_in)"/>
+                                    <t t-if="log.check_out">
+                                        &amp;nbsp;<i class="fa fa-sign-out"/> <t t-out="formatDatetime(log.check_out)"/>
+                                        <t t-if="log.duration">
+                                            · <t t-out="formatDuration(log.duration)"/>
+                                        </t>
+                                    </t>
+                                </span>
+                                <span class="ctg-audit-reason" t-if="log.justification" t-out="log.justification"/>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </div><!-- /audit-panel -->
+
+        </div><!-- /layout -->
+    </div><!-- /content -->
+
+    <div class="unefa-page-footer">
+        <div class="unefa-flag-stripe"/>
+        <span>UNEFA · Contingencia Manual · Registro Auditado</span>
+    </div>
+</div>
+</t>
+</templates>

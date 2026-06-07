@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="teacher_attendance.ConfigManager">
+        <div class="o_attendance_config">
+
+            <!-- Header institucional -->
+            <div class="unefa-page-header">
+                <div class="unefa-flag-top"/>
+                <div class="unefa-page-header-main">
+                    <div class="unefa-page-header-left">
+                        <button class="unefa-btn-back" t-on-click="goBack">
+                            <i class="fa fa-arrow-left"/>
+                        </button>
+                        <div class="unefa-page-header-info">
+                            <h1 class="unefa-page-title">
+                                <i class="fa fa-sliders"/>
+                                Configuración de Asistencia
+                            </h1>
+                            <p class="unefa-page-subtitle">Habilitar o deshabilitar métodos de registro</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="unefa-page-content">
+
+                <div t-if="state.isLoading" class="unefa-loading">
+                    <i class="fa fa-spinner fa-spin fa-2x"/>
+                    <p>Cargando configuración...</p>
+                </div>
+
+                <div t-else="" class="unefa-config-list">
+                    <t t-foreach="methodOptions" t-as="opt" t-key="opt.key">
+                        <div class="unefa-config-card"
+                             t-att-class="{'is-disabled': !state.config[opt.key]}">
+                            <div class="unefa-config-icon">
+                                <i class="fa" t-att-class="opt.icon"/>
+                            </div>
+                            <div class="unefa-config-info">
+                                <h3 class="unefa-config-label" t-out="opt.label"/>
+                                <p class="unefa-config-desc" t-out="opt.description"/>
+                            </div>
+                            <div class="unefa-toggle-wrap">
+                                <label class="unefa-toggle">
+                                    <input type="checkbox"
+                                           t-att-checked="state.config[opt.key]"
+                                           t-on-change="() => this.toggleMethod(opt.key)"/>
+                                    <span class="unefa-toggle-slider"/>
+                                </label>
+                                <span class="unefa-toggle-label"
+                                      t-out="state.config[opt.key] ? 'Activo' : 'Inactivo'"/>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+
+            </div>
+
+            <!-- Footer -->
+            <div class="unefa-page-footer">
+                <div class="unefa-flag-stripe"/>
+                <span>UNEFA · Sistema de Asistencia Docente</span>
+            </div>
+        </div>
+    </t>
+</templates>

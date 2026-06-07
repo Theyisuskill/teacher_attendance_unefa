@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Configura el rate-limiting nativo de Odoo (por IP) en 3 intentos / 30 min.
+         Se usa set_param para hacer upsert en lugar de INSERT, evitando el error
+         de clave duplicada cuando el parámetro ya existe. -->
+    <function model="ir.config_parameter" name="set_param">
+        <value>base.login_cooldown_after</value>
+        <value>3</value>
+    </function>
+    <function model="ir.config_parameter" name="set_param">
+        <value>base.login_cooldown_duration</value>
+        <value>1800</value>
+    </function>
+</odoo>
