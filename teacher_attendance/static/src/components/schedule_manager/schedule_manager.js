@@ -59,6 +59,7 @@ export class ScheduleManager extends Component {
             classroom_id: "",
             subject_id: "",
             section: "",
+            activity_type: "clase",
             day_of_week: "0",
             start_hour: "07:00",   // string HH:MM para input type=time
             end_hour:   "09:00",
@@ -72,7 +73,7 @@ export class ScheduleManager extends Component {
             const [schedules, teacherProfiles, classrooms, subjects, loadSummary] = await Promise.all([
                 this.orm.searchRead("attendance.schedule", [], [
                     "teacher_id", "classroom_id", "subject_id",
-                    "section", "day_of_week", "start_hour", "end_hour", "duration",
+                    "section", "activity_type", "day_of_week", "start_hour", "end_hour", "duration",
                 ], { order: "teacher_id, day_of_week, start_hour" }),
                 this.orm.searchRead("res.users",
                     [["attendance_role", "in", ["teacher", "coordinator", "admin"]]],
@@ -189,6 +190,7 @@ export class ScheduleManager extends Component {
             classroom_id: s.classroom_id[0],
             subject_id: s.subject_id[0],
             section: s.section || "",
+            activity_type: s.activity_type || "clase",
             day_of_week: s.day_of_week,
             start_hour: floatToHHMM(s.start_hour),   // float → HH:MM para el input
             end_hour:   floatToHHMM(s.end_hour),
@@ -220,6 +222,7 @@ export class ScheduleManager extends Component {
             classroom_id: parseInt(formData.classroom_id),
             subject_id: parseInt(formData.subject_id),
             section: formData.section || false,
+            activity_type: formData.activity_type || "clase",
             day_of_week: formData.day_of_week,
             start_hour: sh,
             end_hour: eh,

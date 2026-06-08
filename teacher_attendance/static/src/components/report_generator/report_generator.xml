@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+<t t-name="teacher_attendance.ReportGenerator">
+<div class="o_report_generator">
+
+    <!-- Header -->
+    <div class="unefa-page-header">
+        <div class="unefa-flag-top"/>
+        <div class="unefa-page-header-main">
+            <div class="unefa-page-header-left">
+                <button class="unefa-btn-back" t-on-click="goBack"><i class="fa fa-arrow-left"/></button>
+                <div class="unefa-page-header-info">
+                    <h1 class="unefa-page-title"><i class="fa fa-table"/> Generador de Reportes</h1>
+                    <p class="unefa-page-subtitle">Estadísticas estructurables y filtrables de asistencia</p>
+                </div>
+            </div>
+            <div class="rg-header-actions">
+                <div class="rg-export-group">
+                    <span class="rg-export-label">Resumen</span>
+                    <button class="rg-btn-pdf" t-on-click="() => this.exportFile('summary','pdf')" t-att-disabled="!hasData">
+                        <i class="fa fa-file-pdf-o"/> PDF
+                    </button>
+                    <button class="rg-btn-xls" t-on-click="() => this.exportFile('summary','xlsx')" t-att-disabled="!hasData">
+                        <i class="fa fa-file-excel-o"/> Excel
+                    </button>
+                </div>
+                <div class="rg-export-group">
+                    <span class="rg-export-label">Detalle</span>
+                    <button class="rg-btn-pdf" t-on-click="() => this.exportFile('detail','pdf')" t-att-disabled="!hasData">
+                        <i class="fa fa-file-pdf-o"/> PDF
+                    </button>
+                    <button class="rg-btn-xls" t-on-click="() => this.exportFile('detail','xlsx')" t-att-disabled="!hasData">
+                        <i class="fa fa-file-excel-o"/> Excel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="unefa-page-content">
+
+        <!-- Panel de configuración -->
+        <div class="rg-config">
+            <div class="rg-config-row">
+                <div class="rg-field rg-field-group">
+                    <label class="unefa-label"><i class="fa fa-sitemap"/> Agrupar por</label>
+                    <select class="unefa-input" t-model="state.groupBy" t-on-change="onParamChange">
+                        <t t-foreach="GROUP_OPTIONS" t-as="g" t-key="g.v">
+                            <option t-att-value="g.v" t-out="g.label"/>
+                        </t>
+                    </select>
+                </div>
+                <div class="rg-field">
+                    <label class="unefa-label">Desde</label>
+                    <input type="date" class="unefa-input" t-model="state.dateFrom" t-on-change="onParamChange"/>
+                </div>
+                <div class="rg-field">
+                    <label class="unefa-label">Hasta</label>
+                    <input type="date" class="unefa-input" t-model="state.dateTo" t-on-change="onParamChange"/>
+                </div>
+            </div>
+
+            <div class="rg-config-row">
+                <div class="rg-field">
+                    <label class="unefa-label">Docente</label>
+                    <select class="unefa-input" t-model="state.filters.teacher_id" t-on-change="onParamChange">
+                        <option value="">Todos</option>
+                        <t t-foreach="state.options.teachers" t-as="t" t-key="t.id">
+                            <option t-att-value="t.id" t-out="t.name"/>
+                        </t>
+                    </select>
+                </div>
+                <div class="rg-field">
+                    <label class="unefa-label">Asignatura</label>
+                    <select class="unefa-input" t-model="state.filters.subject_id" t-on-change="onParamChange">
+                        <option value="">Todas</option>
+                        <t t-foreach="state.options.subjects" t-as="s" t-key="s.id">
+                            <option t-att-value="s.id" t-out="s.name + (s.code ? ' (' + s.code + ')' : '')"/>
+                        </t>
+                    </select>
+                </div>
+                <div class="rg-field">
+                    <label class="unefa-label">Sección</label>
+                    <select class="unefa-input" t-model="state.filters.section" t-on-change="onParamChange">
+                        <option value="">Todas</option>
+                        <t t-foreach="state.options.sections" t-as="sec" t-key="sec">
+                            <option t-att-value="sec" t-out="sec"/>
+                        </t>
+                    </select>
+                </div>
+                <button class="rg-clear-btn" t-on-click="clearFilters">
+                    <i class="fa fa-eraser"/> Limpiar
+                </button>
+            </div>
+
+            <div class="rg-status-row">
+                <label class="unefa-label">Estatus:</label>
+                <t t-foreach="state.options.statuses" t-as="st" t-key="st.value">
+                    <button class="rg-status-chip" t-att-class="{'active': isStatusOn(st.value)}"
+                            t-on-click="() => this.toggleStatus(st.value)" t-out="st.label"/>
+                </t>
+                <span class="rg-status-hint" t-if="state.filters.statuses.length === 0">(todos)</span>
+            </div>
+        </div>
+
+        <div t-if="state.isLoading" class="unefa-loading">
+            <i class="fa fa-spinner fa-spin fa-2x"/>
+            <p>Generando reporte...</p>
+        </div>
+
+        <t t-else="">
+            <div t-if="!hasData" class="unefa-empty-state">
+                <i class="fa fa-table fa-3x"/>
+                <h4>Sin datos</h4>
+                <p>No hay registros para los filtros y el rango seleccionados</p>
+            </div>
+
+            <t t-else="">
+                <!-- Gráfico de distribución global -->
+                <div class="rg-chart">
+                    <div class="rg-chart-title">Distribución global por estatus</div>
+                    <t t-foreach="COLS" t-as="c" t-key="c.key">
+                        <div class="rg-bar-row">
+                            <span class="rg-bar-label" t-out="c.label"/>
+                            <div class="rg-bar-track">
+                                <div class="rg-bar-fill" t-att-class="c.cls"
+                                     t-att-style="'width:' + barWidth(c.key) + '%'"/>
+                            </div>
+                            <span class="rg-bar-val" t-out="cellValue(state.totals.counts, c.key)"/>
+                        </div>
+                    </t>
+                </div>
+
+                <!-- Tabla -->
+                <div class="rg-table-wrap">
+                    <table class="rg-table">
+                        <thead>
+                            <tr>
+                                <th t-out="groupLabel"/>
+                                <t t-foreach="COLS" t-as="c" t-key="c.key">
+                                    <th class="rg-num" t-out="c.label"/>
+                                </t>
+                                <th class="rg-num">Horas</th>
+                                <th class="rg-num">Total</th>
+                                <th class="rg-num">Punt. %</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="state.rows" t-as="row" t-key="row.key">
+                                <tr>
+                                    <td class="rg-group-cell" t-out="row.label"/>
+                                    <t t-foreach="COLS" t-as="c" t-key="c.key">
+                                        <td class="rg-num" t-out="cellValue(row.counts, c.key)"/>
+                                    </t>
+                                    <td class="rg-num" t-out="fmtHours(row.hours)"/>
+                                    <td class="rg-num rg-total-col" t-out="row.total"/>
+                                    <td class="rg-num">
+                                        <span class="rg-punct" t-att-class="row.punctuality >= 80 ? 'rg-pct-good' : 'rg-pct-bad'"
+                                              t-out="row.punctuality + '%'"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                        <tfoot>
+                            <tr class="rg-foot">
+                                <td>TOTAL</td>
+                                <t t-foreach="COLS" t-as="c" t-key="c.key">
+                                    <td class="rg-num" t-out="cellValue(state.totals.counts, c.key)"/>
+                                </t>
+                                <td class="rg-num" t-out="fmtHours(state.totals.hours)"/>
+                                <td class="rg-num rg-total-col" t-out="state.totals.total"/>
+                                <td class="rg-num" t-out="state.totals.punctuality + '%'"/>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </t>
+        </t>
+    </div>
+
+    <div class="unefa-page-footer">
+        <div class="unefa-flag-stripe"/>
+        <span>UNEFA · Generador de Reportes</span>
+    </div>
+</div>
+</t>
+</templates>

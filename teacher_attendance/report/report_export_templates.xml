@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Formato horizontal para el detalle (muchas columnas) -->
+    <record id="paperformat_attendance_landscape" model="report.paperformat">
+        <field name="name">Asistencia A4 Horizontal</field>
+        <field name="format">A4</field>
+        <field name="orientation">Landscape</field>
+        <field name="margin_top">12</field>
+        <field name="margin_bottom">12</field>
+        <field name="margin_left">7</field>
+        <field name="margin_right">7</field>
+        <field name="header_spacing">8</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <!-- ══════════════ Estilos comunes (PDF) ══════════════ -->
+    <template id="report_attendance_styles">
+        <style>
+            .ta-doc { font-family: Arial, Helvetica, sans-serif; color: #2d3748; }
+            .ta-flag { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+            .ta-flag td { height: 6px; padding: 0; }
+            .ta-title { font-size: 18px; font-weight: bold; color: #43618f; margin: 0; }
+            .ta-sub { font-size: 11px; color: #718096; margin: 2px 0 0; }
+            .ta-meta { font-size: 10px; color: #94a3b8; margin: 2px 0 12px; }
+            table.ta-tbl { width: 100%; border-collapse: collapse; font-size: 10px; }
+            table.ta-tbl th { background: #5273A8; color: #fff; padding: 6px 7px; text-align: left;
+                              border: 1px solid #43618f; font-size: 9.5px; }
+            table.ta-tbl td { padding: 5px 7px; border: 1px solid #dfe6f0; }
+            table.ta-tbl tr:nth-child(even) td { background: #f3f6fc; }
+            .ta-num { text-align: right; }
+            .ta-foot td { background: #eef2fa !important; font-weight: bold; color: #43618f; border-color: #c9d6ec; }
+            .ta-bar-wrap { width: 100%; border-collapse: collapse; margin: 6px 0 14px; font-size: 10px; }
+            .ta-bar-wrap td { padding: 2px 4px; vertical-align: middle; }
+            .ta-bar-track { background: #f1f5f9; height: 12px; width: 100%; }
+            .ta-bar-fill { height: 12px; }
+        </style>
+    </template>
+
+    <!-- ══════════════ RESUMEN ESTADÍSTICO ══════════════ -->
+    <template id="report_attendance_summary_document">
+        <t t-call="web.html_container">
+            <t t-set="r" t-value="report or {}"/>
+            <t t-set="meta" t-value="meta or {}"/>
+            <t t-set="rows" t-value="r.get('rows', [])"/>
+            <t t-set="totals" t-value="r.get('totals', {})"/>
+            <t t-set="tc" t-value="totals.get('counts', {})"/>
+            <div class="article ta-doc">
+                <t t-call="teacher_attendance.report_attendance_styles"/>
+                <table class="ta-flag"><tr>
+                    <td style="background:#F1D88B; width:33.33%"/>
+                    <td style="background:#6E8FC7; width:33.34%"/>
+                    <td style="background:#DE979D; width:33.33%"/>
+                </tr></table>
+                <p class="ta-title">UNEFA · Reporte Estadístico de Asistencia</p>
+                <p class="ta-sub" t-out="meta.get('subtitle', '')"/>
+                <p class="ta-meta" t-out="meta.get('generated', '')"/>
+
+                <table class="ta-tbl">
+                    <thead>
+                        <tr>
+                            <th t-out="meta.get('group_label', 'Grupo')"/>
+                            <th class="ta-num">Asistió</th>
+                            <th class="ta-num">Retardo</th>
+                            <th class="ta-num">Inasistencia</th>
+                            <th class="ta-num">Fuera</th>
+                            <th class="ta-num">Manual</th>
+                            <th class="ta-num">Justificados</th>
+                            <th class="ta-num">Horas</th>
+                            <th class="ta-num">Total</th>
+                            <th class="ta-num">Punt. %</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="rows" t-as="row" t-key="row_index">
+                            <td t-out="row.get('label', '')"/>
+                            <td class="ta-num" t-out="row['counts'].get('valid', 0)"/>
+                            <td class="ta-num" t-out="row['counts'].get('late', 0)"/>
+                            <td class="ta-num" t-out="row['counts'].get('absent', 0)"/>
+                            <td class="ta-num" t-out="row['counts'].get('outside', 0)"/>
+                            <td class="ta-num" t-out="row['counts'].get('manual', 0)"/>
+                            <td class="ta-num"
+                                t-out="row['counts'].get('late_justified', 0) + row['counts'].get('absent_justified', 0)"/>
+                            <td class="ta-num" t-out="'%.1f' % row.get('hours', 0)"/>
+                            <td class="ta-num" t-out="row.get('total', 0)"/>
+                            <td class="ta-num"><t t-out="'%.1f' % row.get('punctuality', 0)"/>%</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr class="ta-foot">
+                            <td>TOTAL</td>
+                            <td class="ta-num" t-out="tc.get('valid', 0)"/>
+                            <td class="ta-num" t-out="tc.get('late', 0)"/>
+                            <td class="ta-num" t-out="tc.get('absent', 0)"/>
+                            <td class="ta-num" t-out="tc.get('outside', 0)"/>
+                            <td class="ta-num" t-out="tc.get('manual', 0)"/>
+                            <td class="ta-num" t-out="tc.get('late_justified', 0) + tc.get('absent_justified', 0)"/>
+                            <td class="ta-num" t-out="'%.1f' % totals.get('hours', 0)"/>
+                            <td class="ta-num" t-out="totals.get('total', 0)"/>
+                            <td class="ta-num"><t t-out="'%.1f' % totals.get('punctuality', 0)"/>%</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </t>
+    </template>
+
+    <record id="action_report_attendance_summary" model="ir.actions.report">
+        <field name="name">Reporte Estadístico de Asistencia</field>
+        <field name="model">attendance.log</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">teacher_attendance.report_attendance_summary_document</field>
+        <field name="report_file">teacher_attendance.report_attendance_summary_document</field>
+        <field name="print_report_name">'Reporte_Asistencia_Resumen'</field>
+    </record>
+
+    <!-- ══════════════ DETALLE DE REGISTROS ══════════════ -->
+    <template id="report_attendance_detail_document">
+        <t t-call="web.html_container">
+            <t t-set="r" t-value="report or {}"/>
+            <t t-set="meta" t-value="meta or {}"/>
+            <t t-set="rows" t-value="r.get('rows', [])"/>
+            <div class="article ta-doc">
+                <t t-call="teacher_attendance.report_attendance_styles"/>
+                <table class="ta-flag"><tr>
+                    <td style="background:#F1D88B; width:33.33%"/>
+                    <td style="background:#6E8FC7; width:33.34%"/>
+                    <td style="background:#DE979D; width:33.33%"/>
+                </tr></table>
+                <p class="ta-title">UNEFA · Detalle de Registros de Asistencia</p>
+                <p class="ta-sub" t-out="meta.get('subtitle', '')"/>
+                <p class="ta-meta">
+                    <span t-out="meta.get('generated', '')"/> · <span t-out="len(rows)"/> registro(s)
+                </p>
+
+                <table class="ta-tbl">
+                    <thead>
+                        <tr>
+                            <th>Docente</th>
+                            <th>Asignatura</th>
+                            <th>Sección</th>
+                            <th>Tipo</th>
+                            <th>Fecha</th>
+                            <th>Entrada</th>
+                            <th>Salida</th>
+                            <th class="ta-num">Horas</th>
+                            <th>Método</th>
+                            <th>Estatus</th>
+                            <th>Aval</th>
+                            <th>Aprobó</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="rows" t-as="row" t-key="row_index">
+                            <td t-out="row.get('teacher', '')"/>
+                            <td t-out="row.get('subject', '')"/>
+                            <td t-out="row.get('section', '')"/>
+                            <td t-out="row.get('activity_type', '')"/>
+                            <td t-out="row.get('date', '')"/>
+                            <td t-out="row.get('check_in', '')"/>
+                            <td t-out="row.get('check_out', '')"/>
+                            <td class="ta-num" t-out="'%.1f' % row.get('hours', 0)"/>
+                            <td t-out="row.get('method', '')"/>
+                            <td t-out="row.get('status', '')"/>
+                            <td t-out="row.get('aval', '')"/>
+                            <td t-out="row.get('approver', '')"/>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </t>
+    </template>
+
+    <record id="action_report_attendance_detail" model="ir.actions.report">
+        <field name="name">Detalle de Registros de Asistencia</field>
+        <field name="model">attendance.log</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">teacher_attendance.report_attendance_detail_document</field>
+        <field name="report_file">teacher_attendance.report_attendance_detail_document</field>
+        <field name="print_report_name">'Detalle_Asistencia'</field>
+        <field name="paperformat_id" ref="paperformat_attendance_landscape"/>
+    </record>
+
+    <!-- ══════════════ HORAS EJECUTADAS ══════════════ -->
+    <template id="report_attendance_executed_document">
+        <t t-call="web.html_container">
+            <t t-set="r" t-value="report or {}"/>
+            <t t-set="meta" t-value="meta or {}"/>
+            <t t-set="rows" t-value="r.get('rows', [])"/>
+            <t t-set="totals" t-value="r.get('totals', {})"/>
+            <div class="article ta-doc">
+                <t t-call="teacher_attendance.report_attendance_styles"/>
+                <table class="ta-flag"><tr>
+                    <td style="background:#F1D88B; width:33.33%"/>
+                    <td style="background:#6E8FC7; width:33.34%"/>
+                    <td style="background:#DE979D; width:33.33%"/>
+                </tr></table>
+                <p class="ta-title">UNEFA · Horas Acumuladas Ejecutadas</p>
+                <p class="ta-sub" t-out="meta.get('subtitle', '')"/>
+                <p class="ta-meta" t-out="meta.get('generated', '')"/>
+
+                <table class="ta-tbl">
+                    <thead>
+                        <tr>
+                            <th>Docente</th>
+                            <th class="ta-num">Clase</th>
+                            <th class="ta-num">Asesoría</th>
+                            <th class="ta-num">Defensa</th>
+                            <th class="ta-num">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="rows" t-as="row" t-key="row_index">
+                            <td t-out="row.get('teacher_name', '')"/>
+                            <td class="ta-num" t-out="'%.1f' % row.get('clase', 0)"/>
+                            <td class="ta-num" t-out="'%.1f' % row.get('asesoria', 0)"/>
+                            <td class="ta-num" t-out="'%.1f' % row.get('defensa', 0)"/>
+                            <td class="ta-num" t-out="'%.1f' % row.get('total', 0)"/>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr class="ta-foot">
+                            <td>TOTAL</td>
+                            <td class="ta-num" t-out="'%.1f' % totals.get('clase', 0)"/>
+                            <td class="ta-num" t-out="'%.1f' % totals.get('asesoria', 0)"/>
+                            <td class="ta-num" t-out="'%.1f' % totals.get('defensa', 0)"/>
+                            <td class="ta-num" t-out="'%.1f' % totals.get('total', 0)"/>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </t>
+    </template>
+
+    <record id="action_report_attendance_executed" model="ir.actions.report">
+        <field name="name">Horas Acumuladas Ejecutadas</field>
+        <field name="model">attendance.log</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">teacher_attendance.report_attendance_executed_document</field>
+        <field name="report_file">teacher_attendance.report_attendance_executed_document</field>
+        <field name="print_report_name">'Horas_Ejecutadas'</field>
+    </record>
+
+</odoo>

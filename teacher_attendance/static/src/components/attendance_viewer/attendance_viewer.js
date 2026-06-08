@@ -12,6 +12,8 @@ const STATUS_LABELS = {
     outside: 'Fuera del Radio',
     manual:  'Validado Manual',
     invalid: 'Inválido',
+    late_justified:   'Retardo Justificado',
+    absent_justified: 'Falta Justificada',
 };
 const STATUS_CLASS = {
     valid:   'av-badge-ok',
@@ -20,6 +22,8 @@ const STATUS_CLASS = {
     outside: 'av-badge-outside',
     manual:  'av-badge-manual',
     invalid: 'av-badge-invalid',
+    late_justified:   'av-badge-manual',
+    absent_justified: 'av-badge-ok',
 };
 const METHOD_LABELS = {
     qr:     'QR Aula',
@@ -170,6 +174,21 @@ export class AttendanceViewer extends Component {
     formatDT(val)  { return fmtDT(val); }
     formatDur(val) { return fmtDur(val); }
     formatDist(m)  { return m ? `${Math.round(m)}m` : '—'; }
+
+    get canExport() {
+        return this.state.isCoordinator && this.viewMode === 'all';
+    }
+
+    /** Exporta el detalle filtrado (PDF/XLSX) server-side desde la BD. */
+    exportFile(fmt) {
+        const p = new URLSearchParams({
+            kind: "detail", format: fmt,
+            date_from: this.state.filterDateFrom, date_to: this.state.filterDateTo,
+        });
+        if (this.state.filterTeacher) p.set("teacher_id", this.state.filterTeacher);
+        if (this.state.filterStatus) p.set("statuses", this.state.filterStatus);
+        window.open(`/teacher_attendance/report/export?${p.toString()}`, "_blank");
+    }
 
     goBack() {
         this.action.doAction("teacher_attendance.action_attendance_dashboard", { clearBreadcrumbs: true });

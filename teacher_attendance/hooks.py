@@ -1,30 +1,19 @@
 # -*- coding: utf-8 -*-
-"""Post-migrate hook: configura la acción de inicio (action_id) para todos
-los usuarios existentes que tengan un rol de asistencia asignado, de modo
-que al iniciar sesión sean redirigidos directamente al dashboard QR."""
+"""Post-init hook: configura la acción de inicio (action_id = dashboard QR)
+para los usuarios con rol de asistencia que aún no la tengan, de modo que el
+botón de inicio del web client también apunte al escáner."""
 
 
-def post_migrate(cr, registry):
-    from odoo import api, SUPERUSER_ID
-    env = api.Environment(cr, SUPERUSER_ID, {})
-
-    action = env.ref(
-        'teacher_attendance.action_attendance_dashboard',
-        raise_if_not_found=False,
-    )
-    if not action:
-        return
-
+def post_init_hook(env):
+    action = env.ref('teacher_attendance.action_attendance_dashboard', raise_if_not_found=False)
     teacher_grp = env.ref('teacher_attendance.group_teacher', raise_if_not_found=False)
-    if not teacher_grp:
+    if not action or not teacher_grp:
         return
 
-    # Todos los usuarios con algún rol de asistencia (teacher/coordinator/admin
-    # todos implican group_teacher) que aún no tienen action_id configurado
-    users_without_action = env['res.users'].with_context(active_test=False).search([
-        ('groups_id', 'in', [teacher_grp.id]),
+    # teacher/coordinator/admin implican todos group_teacher (implied_ids)
+    users = env['res.users'].with_context(active_test=False).search([
+        ('group_ids', 'in', [teacher_grp.id]),
         ('action_id', '=', False),
     ])
-
-    if users_without_action:
-        users_without_action.write({'action_id': action.id})
+    if users:
+        users.write({'action_id': action.id})

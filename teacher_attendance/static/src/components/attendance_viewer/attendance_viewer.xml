@@ -18,6 +18,14 @@
                     <p class="unefa-page-subtitle">Historial de asistencia con estatus automático del motor de reglas</p>
                 </div>
             </div>
+            <div class="av-export" t-if="canExport">
+                <button class="av-btn-pdf" t-on-click="() => this.exportFile('pdf')">
+                    <i class="fa fa-file-pdf-o"/> PDF
+                </button>
+                <button class="av-btn-xls" t-on-click="() => this.exportFile('xlsx')">
+                    <i class="fa fa-file-excel-o"/> Excel
+                </button>
+            </div>
         </div>
     </div>
 

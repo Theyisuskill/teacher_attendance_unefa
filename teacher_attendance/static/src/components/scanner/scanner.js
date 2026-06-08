@@ -31,6 +31,9 @@ export class AttendanceScanner extends Component {
             currentTime: '--:--',
             currentDate: '--',
             teacherName: 'Profesor',
+            // Tipo de actividad para el próximo registro por QR de aula.
+            // 'auto' = heredar del bloque de horario; o clase/asesoria/defensa.
+            activityType: 'auto',
             kpis: {
                 todayCount: 0,
                 activeAulas: 0,
@@ -105,6 +108,10 @@ export class AttendanceScanner extends Component {
     }
 
     _detectQrType(text) {
+        // 0. ¿Es token de bloque temporal? (prefijo TMPB-)
+        if (typeof text === 'string' && text.startsWith('TMPB-')) {
+            return 'temp_block';
+        }
         // 1. ¿Es UUID de aula?
         const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
         if (uuidRegex.test(text)) {
@@ -253,18 +260,36 @@ export class AttendanceScanner extends Component {
         this.state.statusMessage = 'Registrando asistencia...';
 
         try {
-            const response = await this.orm.call(
-                "attendance.log",
-                "action_log_attendance",
-                [],
-                {
+            const isTempBlock = this.state.lastQrType === 'temp_block';
+            let method, kwargs;
+            if (isTempBlock) {
+                // Bloque temporal: el QR lleva el token; el tipo de actividad
+                // lo define el bloque (renglón correspondiente).
+                method = "action_log_temp_block";
+                kwargs = {
+                    token: this.state.lastResult,
+                    latitude: lat,
+                    longitude: lng,
+                    signature: signature,
+                    device_id: this._getDeviceId(),
+                };
+            } else {
+                method = "action_log_attendance";
+                kwargs = {
                     secret_key: this.state.lastResult,
                     latitude: lat,
                     longitude: lng,
                     signature: signature,
                     device_id: this._getDeviceId(),
+                };
+                // Solo enviar el tipo si el docente lo eligió explícitamente.
+                // 'auto' → el backend lo hereda del bloque de horario casado.
+                if (this.state.activityType && this.state.activityType !== 'auto') {
+                    kwargs.activity_type = this.state.activityType;
                 }
-            );
+            }
+
+            const response = await this.orm.call("attendance.log", method, [], kwargs);
 
             // 'valid'   → entrada/salida dentro del radio ✅
             // 'outside' → asistencia registrada pero fuera del radio ⚠️ (no es un error)
@@ -305,6 +330,8 @@ export class AttendanceScanner extends Component {
             this.notification.add("Error al registrar la asistencia.", { type: "danger" });
         }
 
+        this.state.activityType = 'auto';   // reiniciar para el siguiente registro
+
         setTimeout(() => {
             this.state.status = 'idle';
             this.state.statusMessage = '';
@@ -315,6 +342,7 @@ export class AttendanceScanner extends Component {
         this.state.status = 'idle';
         this.state.lastResult = null;
         this.state.lastQrType = null;
+        this.state.activityType = 'auto';
     }
 
     onError(error) {

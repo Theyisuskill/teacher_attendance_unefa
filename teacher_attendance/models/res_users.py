@@ -184,6 +184,17 @@ class ResUsers(models.Model):
         )
         return True
 
+    def _has_attendance_access(self):
+        """True si el usuario pertenece a algún grupo del módulo de asistencia."""
+        self.ensure_one()
+        for xmlid in ('teacher_attendance.group_teacher',
+                      'teacher_attendance.group_coordinator',
+                      'teacher_attendance.group_admin'):
+            grp = self.env.ref(xmlid, raise_if_not_found=False)
+            if grp and grp in self.group_ids:
+                return True
+        return False
+
     @api.depends('group_ids')
     def _compute_attendance_role(self):
         admin_grp = self.env.ref('teacher_attendance.group_admin', raise_if_not_found=False)

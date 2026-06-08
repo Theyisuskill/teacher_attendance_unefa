@@ -72,10 +72,12 @@
                                     <span class="qr-type-badge"
                                           t-att-class="{
                                               'qr-badge-classroom': state.lastQrType === 'classroom',
-                                              'qr-badge-teacher':   state.lastQrType === 'teacher'
+                                              'qr-badge-teacher':   state.lastQrType === 'teacher',
+                                              'qr-badge-temp':      state.lastQrType === 'temp_block'
                                           }">
                                         <t t-if="state.lastQrType === 'classroom'">QR Aula</t>
                                         <t t-if="state.lastQrType === 'teacher'">QR Carnet</t>
+                                        <t t-if="state.lastQrType === 'temp_block'">QR Actividad</t>
                                     </span>
                                 </t>
                             </div>
@@ -128,6 +130,36 @@
                             <t t-if="state.status === 'signing'">
                                 <div class="signature-modal-backdrop"/>
                                 <div class="signature-modal-content">
+                                    <div class="activity-type-picker" t-if="state.lastQrType !== 'temp_block'">
+                                        <label class="activity-type-label">
+                                            <i class="fa fa-tag"/> Tipo de actividad
+                                        </label>
+                                        <div class="activity-type-options">
+                                            <button class="activity-type-btn"
+                                                    t-att-class="{'active': state.activityType === 'auto'}"
+                                                    t-on-click="() => state.activityType = 'auto'">
+                                                <i class="fa fa-magic"/> Automático
+                                            </button>
+                                            <button class="activity-type-btn"
+                                                    t-att-class="{'active': state.activityType === 'clase'}"
+                                                    t-on-click="() => state.activityType = 'clase'">
+                                                <i class="fa fa-book"/> Clase
+                                            </button>
+                                            <button class="activity-type-btn"
+                                                    t-att-class="{'active': state.activityType === 'asesoria'}"
+                                                    t-on-click="() => state.activityType = 'asesoria'">
+                                                <i class="fa fa-comments"/> Asesoría
+                                            </button>
+                                            <button class="activity-type-btn"
+                                                    t-att-class="{'active': state.activityType === 'defensa'}"
+                                                    t-on-click="() => state.activityType = 'defensa'">
+                                                <i class="fa fa-graduation-cap"/> Defensa
+                                            </button>
+                                        </div>
+                                        <small class="activity-type-hint">
+                                            «Automático» usa el tipo del bloque de tu horario.
+                                        </small>
+                                    </div>
                                     <SignaturePad onSave.bind="onSignatureSave" onCancel.bind="onSignatureCancel"/>
                                 </div>
                             </t>

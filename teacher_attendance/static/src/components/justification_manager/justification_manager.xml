@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+<t t-name="teacher_attendance.JustificationManager">
+<div class="o_justification_manager">
+
+    <!-- Header -->
+    <div class="unefa-page-header">
+        <div class="unefa-flag-top"/>
+        <div class="unefa-page-header-main">
+            <div class="unefa-page-header-left">
+                <button class="unefa-btn-back" t-on-click="goBack"><i class="fa fa-arrow-left"/></button>
+                <div class="unefa-page-header-info">
+                    <h1 class="unefa-page-title"><i class="fa fa-gavel"/> Justificación de Asistencias</h1>
+                    <p class="unefa-page-subtitle">Aprueba retardos y faltas con su aval y motivo</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="unefa-page-content">
+
+        <!-- Tabs de estatus -->
+        <div class="jm-status-tabs">
+            <button class="jm-status-tab" t-att-class="{'active': state.statusGroup === 'pending'}"
+                    t-on-click="() => this.setStatusGroup('pending')">
+                <i class="fa fa-clock-o"/> Por justificar
+            </button>
+            <button class="jm-status-tab" t-att-class="{'active': state.statusGroup === 'justified'}"
+                    t-on-click="() => this.setStatusGroup('justified')">
+                <i class="fa fa-check-circle"/> Justificados
+            </button>
+            <button class="jm-status-tab" t-att-class="{'active': state.statusGroup === 'all'}"
+                    t-on-click="() => this.setStatusGroup('all')">
+                <i class="fa fa-list"/> Todos
+            </button>
+        </div>
+
+        <!-- Filtros de búsqueda -->
+        <div class="jm-filters">
+            <div class="jm-filter">
+                <label class="unefa-label">Docente</label>
+                <select class="unefa-input" t-model="state.filterTeacher" t-on-change="onFilterChange">
+                    <option value="">Todos</option>
+                    <t t-foreach="state.teachers" t-as="t" t-key="t.id">
+                        <option t-att-value="t.id" t-out="t.name"/>
+                    </t>
+                </select>
+            </div>
+            <div class="jm-filter">
+                <label class="unefa-label">Aula</label>
+                <select class="unefa-input" t-model="state.filterClassroom" t-on-change="onFilterChange">
+                    <option value="">Todas</option>
+                    <t t-foreach="state.classrooms" t-as="c" t-key="c.id">
+                        <option t-att-value="c.id" t-out="c.name + (c.code ? ' (' + c.code + ')' : '')"/>
+                    </t>
+                </select>
+            </div>
+            <div class="jm-filter">
+                <label class="unefa-label">Desde</label>
+                <input type="date" class="unefa-input" t-model="state.filterDateFrom" t-on-change="onFilterChange"/>
+            </div>
+            <div class="jm-filter">
+                <label class="unefa-label">Hasta</label>
+                <input type="date" class="unefa-input" t-model="state.filterDateTo" t-on-change="onFilterChange"/>
+            </div>
+            <button class="jm-clear-btn" t-on-click="clearFilters">
+                <i class="fa fa-eraser"/> Limpiar
+            </button>
+        </div>
+
+        <div t-if="state.isLoading" class="unefa-loading">
+            <i class="fa fa-spinner fa-spin fa-2x"/>
+            <p>Cargando registros...</p>
+        </div>
+
+        <t t-else="">
+            <div t-if="state.logs.length === 0" class="unefa-empty-state">
+                <i class="fa fa-gavel fa-3x"/>
+                <h4>Sin registros</h4>
+                <p>No hay registros que coincidan con los filtros seleccionados</p>
+            </div>
+
+            <div t-else="" class="jm-table-wrap">
+                <table class="jm-table">
+                    <thead>
+                        <tr>
+                            <th class="jm-check-col">
+                                <input type="checkbox" t-att-checked="allVisibleSelected"
+                                       t-on-change="toggleSelectAll"/>
+                            </th>
+                            <th>Docente</th>
+                            <th>Aula</th>
+                            <th>Materia</th>
+                            <th>Fecha</th>
+                            <th>Estatus</th>
+                            <th>Aval</th>
+                            <th>Aprobó</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="state.logs" t-as="log" t-key="log.id">
+                            <tr t-att-class="{'jm-row-selected': isSelected(log.id)}">
+                                <td class="jm-check-col">
+                                    <input type="checkbox" t-att-checked="isSelected(log.id)"
+                                           t-on-change="() => this.toggleRow(log.id)"/>
+                                </td>
+                                <td class="jm-teacher-cell">
+                                    <span class="jm-initial" t-out="log.teacher_id[1].charAt(0).toUpperCase()"/>
+                                    <span t-out="log.teacher_id[1]"/>
+                                </td>
+                                <td t-out="log.classroom_id ? log.classroom_id[1] : '—'"/>
+                                <td t-out="log.subject_id ? log.subject_id[1] : '—'"/>
+                                <td t-out="formatDT(log.check_in)"/>
+                                <td>
+                                    <span class="jm-badge" t-att-class="statusClass(log.status)"
+                                          t-out="statusLabel(log.status)"/>
+                                </td>
+                                <td>
+                                    <span t-if="log.justification_aval" class="jm-aval" t-out="log.justification_aval"/>
+                                    <span t-else="" class="jm-muted">—</span>
+                                </td>
+                                <td>
+                                    <span class="jm-muted" t-out="approverName(log)"/>
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </div>
+        </t>
+    </div>
+
+    <!-- Barra de acción (aparece con selección) -->
+    <div class="jm-action-bar" t-if="selectedCount > 0">
+        <div class="jm-action-count">
+            <i class="fa fa-check-square"/> <t t-out="selectedCount"/> seleccionado(s)
+        </div>
+        <div class="jm-action-inputs">
+            <input type="text" class="jm-aval-input" placeholder="N° de Aval *"
+                   t-model="state.avalNumber"/>
+            <input type="text" class="jm-reason-input" placeholder="Motivo de la justificación *"
+                   t-model="state.reason"/>
+        </div>
+        <div class="jm-action-buttons">
+            <button class="jm-btn-justify" t-on-click="justifySelected"
+                    t-att-disabled="state.isSaving">
+                <i class="fa fa-gavel"/> Justificar
+            </button>
+            <button class="jm-btn-revert" t-on-click="revertSelected"
+                    t-att-disabled="state.isSaving or !selectionHasJustified"
+                    title="Revierte a Retardo / Inasistencia">
+                <i class="fa fa-undo"/> Revertir
+            </button>
+        </div>
+    </div>
+
+    <div class="unefa-page-footer">
+        <div class="unefa-flag-stripe"/>
+        <span>UNEFA · Justificación de Asistencias</span>
+    </div>
+</div>
+</t>
+</templates>

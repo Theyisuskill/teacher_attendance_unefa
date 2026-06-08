@@ -1,0 +1,106 @@
+/* ═══════════════════════════════════════════
+   CAPA GLOBAL DE RESPONSIVIDAD — UNEFA
+   Se carga al final para poder ajustar todas las interfaces
+   en dispositivos de uso común (teléfonos y tabletas).
+   Breakpoints: ≤1024 tablet · ≤768 tablet pequeña / móvil grande · ≤480 teléfono
+   ═══════════════════════════════════════════ */
+
+/* ── Scroll vertical garantizado en TODAS las client actions OWL ──
+   Sin esto, en pantallas bajas el contenido que excede el alto queda
+   inaccesible (las acciones cliente no scrollean por defecto). */
+.o_user_manager,
+.o_classroom_manager,
+.o_subject_manager,
+.o_substitution_manager,
+.o_attendance_config,
+.o_contingency_manager,
+.o_schedule_manager,
+.o_report_generator,
+.o_executed_hours,
+.o_justification_manager,
+.o_temp_block_manager,
+.o_calendar_manager,
+.o_attendance_viewer,
+.o_attendance_analysis {
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Evitar desbordes horizontales por contenido ancho (palabras largas) */
+.unefa-page-content {
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+/* ════════════ ≤ 1024px (tabletas) ════════════ */
+@media (max-width: 1024px) {
+    .unefa-page-content { padding: 18px; }
+}
+
+/* ════════════ ≤ 768px (tableta pequeña / móvil grande) ════════════ */
+@media (max-width: 768px) {
+    .unefa-page-content { padding: 14px; }
+
+    .unefa-page-title { font-size: 1rem; }
+    .unefa-page-title i { font-size: 0.9rem; }
+    .unefa-page-subtitle { font-size: 0.68rem; }
+
+    /* Barras de acciones / exportación al ancho completo y con envoltura */
+    .rg-header-actions,
+    .eh-header-actions,
+    .av-export {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+    .rg-header-actions { gap: 8px; }
+
+    /* Botón primario del header que no quepa al lado del título → ancho cómodo */
+    .unefa-page-header-main > .unefa-btn-primary { align-self: stretch; justify-content: center; }
+
+    /* Filtros y formularios a una columna */
+    .rg-config-row { flex-direction: column; align-items: stretch; }
+    .rg-field { min-width: 0; width: 100%; }
+    .jm-filters { flex-direction: column; align-items: stretch; }
+    .jm-filter { min-width: 0; width: 100%; }
+    .tb-filters { flex-direction: column; align-items: stretch; }
+
+    /* Tablas: asegurar scroll horizontal aunque el componente no lo declare */
+    .rg-table-wrap, .eh-table-wrap, .jm-table-wrap,
+    .av-table-wrap, .ana-teacher-table-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* ════════════ ≤ 480px (teléfonos) ════════════ */
+@media (max-width: 480px) {
+    .unefa-page-content { padding: 10px; }
+
+    /* Recuperar alto vertical ocultando subtítulos decorativos */
+    .unefa-page-subtitle { display: none; }
+    .unefa-page-title { font-size: 0.92rem; }
+
+    /* Footer institucional más compacto */
+    .unefa-page-footer { padding: 10px; span { font-size: 0.58rem; } }
+
+    /* Grupos de exportación del generador: ocupar la fila */
+    .rg-export-group { width: 100%; justify-content: space-between; }
+
+    /* Chips de estatus más compactos */
+    .rg-status-chip { padding: 5px 10px; font-size: 0.7rem; }
+
+    /* Botón hamburguesa un poco más pequeño para liberar pantalla */
+    .unefa-fab { width: 40px; height: 40px; font-size: 1.05rem; }
+}
+
+/* ── Barra de acción fija de Justificaciones ──
+   En móvil envuelve a varias líneas; ampliar el espacio inferior del
+   contenedor para que la barra no tape los últimos registros. */
+@media (max-width: 600px) {
+    .o_justification_manager { padding-bottom: 170px; }
+    .jm-action-bar { padding: 12px 14px; }
+    .jm-action-inputs { flex-direction: column; }
+    .jm-aval-input { width: 100%; }
+}

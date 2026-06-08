@@ -10,6 +10,7 @@
                 <field name="teacher_id"/>
                 <field name="classroom_id"/>
                 <field name="subject_id"/>
+                <field name="activity_type"/>
                 <field name="check_in"/>
                 <field name="check_out"/>
                 <field name="duration"/>
@@ -45,6 +46,8 @@
                                         <t t-if="record.status.raw_value === 'outside'">Fuera del Radio</t>
                                         <t t-if="record.status.raw_value === 'manual'">Validado Manual</t>
                                         <t t-if="record.status.raw_value === 'invalid'">Inválido</t>
+                                        <t t-if="record.status.raw_value === 'late_justified'">Retardo Justificado</t>
+                                        <t t-if="record.status.raw_value === 'absent_justified'">Falta Justificada</t>
                                     </span>
                                 </div>
 
@@ -128,6 +131,10 @@
                 <field name="teacher_id"/>
                 <field name="classroom_id"/>
                 <field name="subject_id"/>
+                <field name="activity_type" widget="badge" optional="show"
+                       decoration-info="activity_type == 'clase'"
+                       decoration-warning="activity_type == 'asesoria'"
+                       decoration-danger="activity_type == 'defensa'"/>
                 <field name="is_substitution" optional="show"/>
                 <field name="check_in"/>
                 <field name="check_out"/>
@@ -138,8 +145,8 @@
                        decoration-success="method == 'carnet'"
                        decoration-warning="method == 'kiosk'"/>
                 <field name="status" widget="badge"
-                       decoration-success="status == 'valid'"
-                       decoration-info="status == 'manual'"
+                       decoration-success="status in ('valid', 'absent_justified')"
+                       decoration-info="status in ('manual', 'late_justified')"
                        decoration-danger="status in ('outside', 'absent')"
                        decoration-warning="status == 'late'"/>
             </list>
@@ -190,6 +197,7 @@
                             <field name="check_out" readonly="1"/>
                             <field name="duration" widget="float_time" readonly="1"/>
                             <field name="distance" readonly="1"/>
+                            <field name="activity_type"/>
                             <field name="is_substitution" readonly="1"/>
                             <field name="method" readonly="1"/>
                         </group>
@@ -207,6 +215,23 @@
                             </group>
                             <div class="alert alert-warning" invisible="method != 'manual'">
                                 <i class="fa fa-lock"/> Esta justificación fue registrada por contingencia manual y es inalterable.
+                            </div>
+                        </page>
+                        <page string="Aval / Justificación" name="aval_justification">
+                            <group>
+                                <group string="Justificación de Coordinación">
+                                    <field name="justification_aval"/>
+                                    <field name="justification_reason"/>
+                                </group>
+                                <group string="Aprobación">
+                                    <field name="justification_approver_id" readonly="1"/>
+                                    <field name="justification_date" readonly="1"/>
+                                </group>
+                            </group>
+                            <div class="alert alert-info" role="status"
+                                 invisible="status in ('late_justified', 'absent_justified')">
+                                <i class="fa fa-info-circle"/> Este registro no está justificado. Use la interfaz
+                                «Justificaciones» para aprobar retardos o faltas en lote.
                             </div>
                         </page>
                         <page string="Evidence" name="evidence">

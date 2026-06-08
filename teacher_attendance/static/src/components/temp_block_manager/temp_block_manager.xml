@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+<t t-name="teacher_attendance.TempBlockManager">
+<div class="o_temp_block_manager">
+
+    <!-- Header -->
+    <div class="unefa-page-header">
+        <div class="unefa-flag-top"/>
+        <div class="unefa-page-header-main">
+            <div class="unefa-page-header-left">
+                <button class="unefa-btn-back" t-on-click="goBack"><i class="fa fa-arrow-left"/></button>
+                <div class="unefa-page-header-info">
+                    <h1 class="unefa-page-title"><i class="fa fa-qrcode"/> Bloques de Actividad Temporal</h1>
+                    <p class="unefa-page-subtitle">Actividades no rutinarias con QR temporal (defensas, asesorías, eventos)</p>
+                </div>
+            </div>
+            <button t-if="state.currentView === 'list'" class="unefa-btn-primary" t-on-click="showCreateForm">
+                <i class="fa fa-plus"/> Nuevo Bloque
+            </button>
+        </div>
+    </div>
+
+    <div class="unefa-page-content">
+
+        <div t-if="state.isLoading" class="unefa-loading">
+            <i class="fa fa-spinner fa-spin fa-2x"/>
+            <p>Cargando bloques...</p>
+        </div>
+
+        <!-- ════════ LISTA ════════ -->
+        <t t-elif="state.currentView === 'list'">
+            <div class="tb-filters">
+                <div class="unefa-search-input-wrap">
+                    <i class="fa fa-search"/>
+                    <input type="text" class="unefa-input" placeholder="Buscar actividad..."
+                           t-model="state.search"/>
+                </div>
+                <select class="unefa-input tb-type-filter" t-model="state.filterType">
+                    <option value="">Todos los tipos</option>
+                    <option value="clase">Clase</option>
+                    <option value="asesoria">Asesoría</option>
+                    <option value="defensa">Defensa</option>
+                </select>
+            </div>
+
+            <div t-if="filteredBlocks.length === 0" class="unefa-empty-state">
+                <i class="fa fa-qrcode fa-3x"/>
+                <h4>Sin bloques temporales</h4>
+                <p>Crea un bloque para generar un QR temporal de una actividad no rutinaria</p>
+            </div>
+
+            <div t-else="" class="tb-grid">
+                <t t-foreach="filteredBlocks" t-as="b" t-key="b.id">
+                    <div class="tb-card" t-att-class="'tb-state-' + b.state">
+                        <div class="tb-card-top">
+                            <span class="tb-type-badge" t-att-class="'tb-type-' + b.activity_type"
+                                  t-out="activityLabel(b.activity_type)"/>
+                            <span class="tb-state-badge" t-att-class="'tb-sb-' + b.state"
+                                  t-out="stateLabel(b.state)"/>
+                        </div>
+                        <h3 class="tb-card-title" t-out="b.name"/>
+                        <div class="tb-card-meta">
+                            <div><i class="fa fa-building"/> <t t-out="classroomName(b)"/>
+                                <span t-if="b.require_gps" class="tb-gps"><i class="fa fa-map-marker"/> GPS</span>
+                            </div>
+                            <div t-if="subjectName(b)"><i class="fa fa-book"/> <t t-out="subjectName(b)"/></div>
+                            <div><i class="fa fa-clock-o"/> <t t-out="fmtDT(b.date_start)"/> → <t t-out="fmtDT(b.date_end)"/></div>
+                        </div>
+                        <div class="tb-card-stats">
+                            <span><i class="fa fa-users"/> <t t-out="b.registration_count"/> registros</span>
+                            <span><i class="fa fa-hourglass-half"/> <t t-out="b.total_hours.toFixed(1)"/> h</span>
+                        </div>
+                        <div class="tb-card-actions">
+                            <button class="tb-act tb-act-qr" t-on-click="() => this.showQrCard(b.id)" title="Ver/Imprimir QR">
+                                <i class="fa fa-qrcode"/> QR
+                            </button>
+                            <button class="tb-act tb-act-edit" t-on-click="() => this.showEditForm(b.id)" title="Editar">
+                                <i class="fa fa-pencil"/>
+                            </button>
+                            <button class="tb-act tb-act-regen" t-on-click="() => this.regenerateToken(b.id)" title="Regenerar QR">
+                                <i class="fa fa-refresh"/>
+                            </button>
+                            <button class="tb-act tb-act-toggle" t-on-click="() => this.toggleActive(b.id)"
+                                    t-att-title="b.active ? 'Cancelar' : 'Reactivar'">
+                                <i class="fa" t-att-class="b.active ? 'fa-ban' : 'fa-check'"/>
+                            </button>
+                            <button class="tb-act tb-act-del" t-on-click="() => this.deleteBlock(b.id)" title="Eliminar">
+                                <i class="fa fa-trash"/>
+                            </button>
+                        </div>
+                    </div>
+                </t>
+            </div>
+        </t>
+
+        <!-- ════════ FORMULARIO ════════ -->
+        <t t-elif="state.currentView === 'form'">
+            <div class="tb-form">
+                <div class="unefa-form-section">
+                    <h3 class="unefa-form-section-title"><i class="fa fa-info-circle"/> Actividad</h3>
+                    <div class="unefa-form-grid">
+                        <div class="unefa-form-group tb-col-span">
+                            <label class="unefa-label">Nombre de la actividad *</label>
+                            <input type="text" class="unefa-input" t-model="state.formData.name"
+                                   placeholder="Ej: Defensa TEG - Juan Pérez"/>
+                        </div>
+                        <div class="unefa-form-group">
+                            <label class="unefa-label">Tipo (renglón) *</label>
+                            <select class="unefa-input" t-model="state.formData.activity_type">
+                                <option value="clase">Clase</option>
+                                <option value="asesoria">Asesoría</option>
+                                <option value="defensa">Defensa</option>
+                            </select>
+                        </div>
+                        <div class="unefa-form-group">
+                            <label class="unefa-label">Materia</label>
+                            <select class="unefa-input" t-model="state.formData.subject_id">
+                                <option value="">-- Ninguna --</option>
+                                <t t-foreach="state.subjects" t-as="s" t-key="s.id">
+                                    <option t-att-value="s.id" t-out="s.name + (s.code ? ' (' + s.code + ')' : '')"/>
+                                </t>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="unefa-form-section">
+                    <h3 class="unefa-form-section-title"><i class="fa fa-map-marker"/> Lugar y Validación</h3>
+                    <div class="unefa-form-grid">
+                        <div class="unefa-form-group">
+                            <label class="unefa-label">Aula / Lugar *</label>
+                            <select class="unefa-input" t-model="state.formData.classroom_id">
+                                <option value="">-- Seleccione --</option>
+                                <t t-foreach="state.classrooms" t-as="c" t-key="c.id">
+                                    <option t-att-value="c.id" t-out="c.name + (c.code ? ' (' + c.code + ')' : '')"/>
+                                </t>
+                            </select>
+                        </div>
+                        <div class="unefa-form-group tb-gps-toggle">
+                            <label class="unefa-label">Validación de ubicación</label>
+                            <label class="tb-checkbox">
+                                <input type="checkbox" t-model="state.formData.require_gps"/>
+                                <span>Exigir GPS dentro del radio del aula</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="unefa-form-section">
+                    <h3 class="unefa-form-section-title"><i class="fa fa-clock-o"/> Ventana de Tiempo</h3>
+                    <div class="unefa-form-grid">
+                        <div class="unefa-form-group">
+                            <label class="unefa-label">Inicio *</label>
+                            <input type="datetime-local" class="unefa-input" t-model="state.formData.date_start"/>
+                        </div>
+                        <div class="unefa-form-group">
+                            <label class="unefa-label">Fin *</label>
+                            <input type="datetime-local" class="unefa-input" t-model="state.formData.date_end"/>
+                        </div>
+                        <div class="unefa-form-group tb-col-span">
+                            <label class="unefa-label">Notas</label>
+                            <textarea class="unefa-input" rows="2" t-model="state.formData.note"
+                                      placeholder="Información adicional (opcional)"/>
+                        </div>
+                    </div>
+                    <p class="tb-window-hint">
+                        <i class="fa fa-info-circle"/>
+                        El QR solo permitirá registrar desde 15 min antes del inicio hasta 30 min después del fin.
+                    </p>
+                </div>
+
+                <div class="tb-form-actions">
+                    <button class="unefa-btn-secondary" t-on-click="cancelForm">Cancelar</button>
+                    <button class="unefa-btn-primary" t-on-click="saveBlock">
+                        <i class="fa fa-save"/> <t t-out="state.editing ? 'Actualizar' : 'Crear bloque'"/>
+                    </button>
+                </div>
+            </div>
+        </t>
+    </div>
+
+    <div class="unefa-page-footer">
+        <div class="unefa-flag-stripe"/>
+        <span>UNEFA · Bloques de Actividad Temporal</span>
+    </div>
+</div>
+</t>
+</templates>

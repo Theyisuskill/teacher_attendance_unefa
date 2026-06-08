@@ -1,0 +1,279 @@
+/* ═══════════════════════════════════════════
+   HORAS ACUMULADAS EJECUTADAS — Branding UNEFA
+   Paleta pastel: azul #6E8FC7 · amarillo #F1D88B · rosa #DE979D
+   ═══════════════════════════════════════════ */
+.o_executed_hours {
+    --eh-blue:   #6E8FC7;
+    --eh-blue-d: #5273A8;
+    --eh-yellow: #F1D88B;
+    --eh-yellow-ink: #8A7430;
+    --eh-rose:   #DE979D;
+    --eh-dark:   #2d3748;
+
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    background: #f7f8fc;
+
+    /* ── Acciones del header ── */
+    .eh-header-actions {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+    .eh-btn-pdf, .eh-btn-xls {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border: none;
+        border-radius: 9px;
+        padding: 9px 16px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        background: #fff;
+
+        &:disabled { opacity: 0.5; cursor: not-allowed; }
+    }
+    .eh-btn-pdf {
+        color: #c0392b;
+        &:not(:disabled):hover { background: #fdeceb; }
+    }
+    .eh-btn-xls {
+        color: #1e7e45;
+        &:not(:disabled):hover { background: #eafaf0; }
+    }
+
+    /* ── Barra de período ── */
+    .eh-period-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+    .eh-period-tabs {
+        display: inline-flex;
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 4px;
+        gap: 2px;
+    }
+    .eh-period-tab {
+        border: none;
+        background: transparent;
+        padding: 8px 16px;
+        border-radius: 7px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #64748b;
+        cursor: pointer;
+        transition: all 0.15s;
+
+        &:hover { color: var(--eh-blue-d); }
+        &.active {
+            background: linear-gradient(135deg, var(--eh-blue) 0%, var(--eh-blue-d) 100%);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(82,115,168,0.3);
+        }
+    }
+    .eh-date-inputs {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        .unefa-input { width: auto; }
+    }
+    .eh-period-label {
+        font-size: 0.8rem;
+        color: #64748b;
+        font-weight: 600;
+        i { color: var(--eh-blue); margin-right: 4px; }
+    }
+
+    /* ── Tarjetas resumen por tipo ── */
+    .eh-summary-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 22px;
+    }
+    .eh-summary {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        background: #fff;
+        border-radius: 14px;
+        padding: 18px 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        border: 1px solid #eef2fa;
+        border-left: 4px solid var(--eh-blue);
+    }
+    .eh-summary-icon {
+        width: 46px; height: 46px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        font-size: 1.2rem;
+        color: #fff;
+        background: var(--eh-blue);
+        flex-shrink: 0;
+    }
+    .eh-summary-body { display: flex; flex-direction: column; }
+    .eh-summary-num {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--eh-dark);
+        line-height: 1.1;
+        small { font-size: 0.8rem; font-weight: 600; color: #94a3b8; margin-left: 2px; }
+    }
+    .eh-summary-lbl {
+        font-size: 0.74rem;
+        font-weight: 600;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+    }
+
+    .eh-clase    { border-left-color: var(--eh-blue);   .eh-summary-icon { background: var(--eh-blue); } }
+    .eh-asesoria { border-left-color: var(--eh-yellow); .eh-summary-icon { background: var(--eh-yellow); color: var(--eh-yellow-ink); } }
+    .eh-defensa  { border-left-color: var(--eh-rose);   .eh-summary-icon { background: var(--eh-rose); } }
+    .eh-total    {
+        border-left-color: var(--eh-blue-d);
+        background: linear-gradient(135deg, #eef2fa 0%, #fff 100%);
+        .eh-summary-icon { background: linear-gradient(135deg, var(--eh-blue) 0%, var(--eh-blue-d) 100%); }
+        .eh-summary-num { color: var(--eh-blue-d); }
+    }
+
+    /* ── Barra de distribución ── */
+    .eh-dist-wrap {
+        background: #fff;
+        border: 1px solid #eef2fa;
+        border-radius: 14px;
+        padding: 18px 20px;
+        margin-bottom: 22px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .eh-dist-label {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--eh-dark);
+        margin-bottom: 12px;
+    }
+    .eh-dist-bar {
+        display: flex;
+        height: 22px;
+        border-radius: 11px;
+        overflow: hidden;
+        background: #f1f5f9;
+    }
+    .eh-dist-seg {
+        height: 100%;
+        transition: width 0.4s ease;
+        &.seg-clase    { background: var(--eh-blue); }
+        &.seg-asesoria { background: var(--eh-yellow); }
+        &.seg-defensa  { background: var(--eh-rose); }
+    }
+    .eh-dist-legend {
+        display: flex;
+        gap: 18px;
+        margin-top: 10px;
+        font-size: 0.74rem;
+        font-weight: 600;
+        flex-wrap: wrap;
+        .leg-clase    { color: var(--eh-blue-d); }
+        .leg-asesoria { color: var(--eh-yellow-ink); }
+        .leg-defensa  { color: #b45a61; }
+    }
+
+    /* ── Tabla por docente ── */
+    .eh-section-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--eh-blue-d);
+        margin: 0 0 14px;
+        i { color: var(--eh-blue); }
+    }
+    .eh-table-wrap {
+        background: #fff;
+        border: 1px solid #eef2fa;
+        border-radius: 14px;
+        padding: 18px 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        overflow-x: auto;
+    }
+    .eh-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85rem;
+
+        thead th {
+            text-align: left;
+            padding: 10px 12px;
+            color: var(--eh-blue-d);
+            font-weight: 700;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            border-bottom: 2px solid #eef2fa;
+        }
+        tbody td {
+            padding: 11px 12px;
+            border-bottom: 1px solid #f1f5f9;
+            color: var(--eh-dark);
+        }
+        tbody tr:hover { background: #f7f9fd; }
+
+        .eh-num { text-align: right; font-variant-numeric: tabular-nums; }
+        th.eh-num { text-align: right; }
+        .eh-total-col { color: var(--eh-blue-d); font-weight: 700; }
+    }
+    .eh-teacher-cell {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 600;
+    }
+    .eh-initial {
+        width: 28px; height: 28px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(135deg, var(--eh-blue) 0%, var(--eh-blue-d) 100%);
+        color: #fff;
+        font-size: 0.75rem;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+    .eh-foot-row td {
+        padding: 12px;
+        border-top: 2px solid #eef2fa;
+        font-weight: 800;
+        color: var(--eh-blue-d);
+        background: #f7f9fd;
+        text-transform: uppercase;
+        font-size: 0.78rem;
+        letter-spacing: 0.3px;
+    }
+
+    @media (max-width: 768px) {
+        .eh-summary-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 480px) {
+        .eh-summary-grid { grid-template-columns: 1fr; }
+    }
+}
+
+/* Impresión: ocultar navegación y dejar solo el reporte */
+@media print {
+    .unefa-fab, .unefa-sidebar, .unefa-sidebar-backdrop,
+    .o_executed_hours .unefa-btn-back,
+    .o_executed_hours .eh-header-actions,
+    .o_executed_hours .eh-period-tabs { display: none !important; }
+    .o_executed_hours { background: #fff; }
+}

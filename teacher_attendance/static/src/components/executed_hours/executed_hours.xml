@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+<t t-name="teacher_attendance.ExecutedHours">
+<div class="o_executed_hours">
+
+    <!-- Header -->
+    <div class="unefa-page-header">
+        <div class="unefa-flag-top"/>
+        <div class="unefa-page-header-main">
+            <div class="unefa-page-header-left">
+                <button class="unefa-btn-back" t-on-click="goBack"><i class="fa fa-arrow-left"/></button>
+                <div class="unefa-page-header-info">
+                    <h1 class="unefa-page-title"><i class="fa fa-hourglass-half"/> Horas Acumuladas Ejecutadas</h1>
+                    <p class="unefa-page-subtitle">Tiempo ejecutado por docente, discriminado por tipo de actividad</p>
+                </div>
+            </div>
+            <div class="eh-header-actions">
+                <button class="eh-btn-pdf" t-on-click="() => this.exportFile('pdf')" t-att-disabled="!hasData">
+                    <i class="fa fa-file-pdf-o"/> PDF
+                </button>
+                <button class="eh-btn-xls" t-on-click="() => this.exportFile('xlsx')" t-att-disabled="!hasData">
+                    <i class="fa fa-file-excel-o"/> Excel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="unefa-page-content">
+
+        <!-- Selector de período -->
+        <div class="eh-period-bar">
+            <div class="eh-period-tabs">
+                <button class="eh-period-tab" t-att-class="{'active': state.period === 'week'}"
+                        t-on-click="() => this.setPeriod('week')">Esta semana</button>
+                <button class="eh-period-tab" t-att-class="{'active': state.period === 'month'}"
+                        t-on-click="() => this.setPeriod('month')">Este mes</button>
+                <button class="eh-period-tab" t-att-class="{'active': state.period === 'custom'}"
+                        t-on-click="() => this.setPeriod('custom')">Personalizado</button>
+            </div>
+            <div class="eh-date-inputs" t-if="state.period === 'custom'">
+                <input type="date" class="unefa-input" t-model="state.dateFrom" t-on-change="onDateChange"/>
+                <span>—</span>
+                <input type="date" class="unefa-input" t-model="state.dateTo" t-on-change="onDateChange"/>
+            </div>
+            <span class="eh-period-label" t-else="">
+                <i class="fa fa-calendar"/> <t t-out="state.dateFrom"/> → <t t-out="state.dateTo"/>
+            </span>
+        </div>
+
+        <div t-if="state.isLoading" class="unefa-loading">
+            <i class="fa fa-spinner fa-spin fa-2x"/>
+            <p>Calculando horas ejecutadas...</p>
+        </div>
+
+        <t t-else="">
+            <!-- Resumen por tipo -->
+            <div class="eh-summary-grid">
+                <div class="eh-summary eh-clase">
+                    <div class="eh-summary-icon"><i class="fa fa-book"/></div>
+                    <div class="eh-summary-body">
+                        <span class="eh-summary-num"><t t-out="fmt(state.totals.clase)"/><small>h</small></span>
+                        <span class="eh-summary-lbl">Clase</span>
+                    </div>
+                </div>
+                <div class="eh-summary eh-asesoria">
+                    <div class="eh-summary-icon"><i class="fa fa-comments"/></div>
+                    <div class="eh-summary-body">
+                        <span class="eh-summary-num"><t t-out="fmt(state.totals.asesoria)"/><small>h</small></span>
+                        <span class="eh-summary-lbl">Asesoría</span>
+                    </div>
+                </div>
+                <div class="eh-summary eh-defensa">
+                    <div class="eh-summary-icon"><i class="fa fa-graduation-cap"/></div>
+                    <div class="eh-summary-body">
+                        <span class="eh-summary-num"><t t-out="fmt(state.totals.defensa)"/><small>h</small></span>
+                        <span class="eh-summary-lbl">Defensa</span>
+                    </div>
+                </div>
+                <div class="eh-summary eh-total">
+                    <div class="eh-summary-icon"><i class="fa fa-clock-o"/></div>
+                    <div class="eh-summary-body">
+                        <span class="eh-summary-num"><t t-out="fmt(state.totals.total)"/><small>h</small></span>
+                        <span class="eh-summary-lbl">Total Ejecutado</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Barra de distribución global -->
+            <div class="eh-dist-wrap" t-if="state.totals.total > 0">
+                <div class="eh-dist-label">Distribución del tiempo ejecutado</div>
+                <div class="eh-dist-bar">
+                    <div class="eh-dist-seg seg-clase" t-att-style="'width:' + pct(state.totals.clase) + '%'"
+                         t-att-title="'Clase: ' + fmt(state.totals.clase) + 'h'"/>
+                    <div class="eh-dist-seg seg-asesoria" t-att-style="'width:' + pct(state.totals.asesoria) + '%'"
+                         t-att-title="'Asesoría: ' + fmt(state.totals.asesoria) + 'h'"/>
+                    <div class="eh-dist-seg seg-defensa" t-att-style="'width:' + pct(state.totals.defensa) + '%'"
+                         t-att-title="'Defensa: ' + fmt(state.totals.defensa) + 'h'"/>
+                </div>
+                <div class="eh-dist-legend">
+                    <span class="leg-clase">■ Clase (<t t-out="pct(state.totals.clase)"/>%)</span>
+                    <span class="leg-asesoria">■ Asesoría (<t t-out="pct(state.totals.asesoria)"/>%)</span>
+                    <span class="leg-defensa">■ Defensa (<t t-out="pct(state.totals.defensa)"/>%)</span>
+                </div>
+            </div>
+
+            <!-- Tabla por docente -->
+            <div class="eh-table-wrap" t-if="hasData">
+                <h3 class="eh-section-title"><i class="fa fa-users"/> Detalle por Docente</h3>
+                <table class="eh-table">
+                    <thead>
+                        <tr>
+                            <th>Docente</th>
+                            <th class="eh-num">Clase</th>
+                            <th class="eh-num">Asesoría</th>
+                            <th class="eh-num">Defensa</th>
+                            <th class="eh-num eh-total-col">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="state.rows" t-as="row" t-key="row.teacher_id">
+                            <tr>
+                                <td class="eh-teacher-cell">
+                                    <span class="eh-initial" t-out="row.teacher_name.charAt(0).toUpperCase()"/>
+                                    <span t-out="row.teacher_name"/>
+                                </td>
+                                <td class="eh-num"><t t-out="fmt(row.clase)"/></td>
+                                <td class="eh-num"><t t-out="fmt(row.asesoria)"/></td>
+                                <td class="eh-num"><t t-out="fmt(row.defensa)"/></td>
+                                <td class="eh-num eh-total-col"><strong t-out="fmt(row.total)"/></td>
+                            </tr>
+                        </t>
+                    </tbody>
+                    <tfoot>
+                        <tr class="eh-foot-row">
+                            <td>TOTAL GENERAL</td>
+                            <td class="eh-num" t-out="fmt(state.totals.clase)"/>
+                            <td class="eh-num" t-out="fmt(state.totals.asesoria)"/>
+                            <td class="eh-num" t-out="fmt(state.totals.defensa)"/>
+                            <td class="eh-num eh-total-col" t-out="fmt(state.totals.total)"/>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div t-else="" class="unefa-empty-state">
+                <i class="fa fa-hourglass-o fa-3x"/>
+                <h4>Sin horas ejecutadas en el período</h4>
+                <p>No hay registros con salida (check-out) confirmada en este rango de fechas</p>
+            </div>
+        </t>
+    </div>
+
+    <div class="unefa-page-footer">
+        <div class="unefa-flag-stripe"/>
+        <span>UNEFA · Horas Acumuladas Ejecutadas</span>
+    </div>
+</div>
+</t>
+</templates>

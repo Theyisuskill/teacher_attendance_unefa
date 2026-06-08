@@ -1,0 +1,153 @@
+/* ═══════════════════════════════════════════
+   GENERADOR DE REPORTES — Branding UNEFA
+   azul #6E8FC7 · amarillo #F1D88B · rosa #DE979D
+   ═══════════════════════════════════════════ */
+.o_report_generator {
+    --rg-blue:   #6E8FC7;
+    --rg-blue-d: #5273A8;
+    --rg-yellow: #F1D88B;
+    --rg-yellow-ink: #8A7430;
+    --rg-rose:   #DE979D;
+    --rg-dark:   #2d3748;
+
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    background: #f7f8fc;
+
+    .rg-header-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+    .rg-export-group {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: rgba(255,255,255,0.12); border-radius: 10px; padding: 5px 8px 5px 12px;
+    }
+    .rg-export-label {
+        font-size: 0.68rem; font-weight: 700; color: rgba(255,255,255,0.85);
+        text-transform: uppercase; letter-spacing: 0.4px; margin-right: 2px;
+    }
+    .rg-btn-pdf, .rg-btn-xls {
+        display: inline-flex; align-items: center; gap: 5px;
+        border: none; border-radius: 8px; padding: 7px 12px;
+        font-size: 0.76rem; font-weight: 700; cursor: pointer; transition: all 0.15s;
+        &:disabled { opacity: 0.5; cursor: not-allowed; }
+    }
+    .rg-btn-pdf {
+        background: #fff; color: #c0392b;
+        &:not(:disabled):hover { background: #fdeceb; }
+    }
+    .rg-btn-xls {
+        background: #fff; color: #1e7e45;
+        &:not(:disabled):hover { background: #eafaf0; }
+    }
+
+    /* ── Panel de configuración ── */
+    .rg-config {
+        background: #fff;
+        border: 1px solid #eef2fa;
+        border-radius: 14px;
+        padding: 16px 18px;
+        margin-bottom: 18px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+    .rg-config-row {
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+        align-items: flex-end;
+    }
+    .rg-field {
+        display: flex; flex-direction: column; gap: 5px;
+        flex: 1; min-width: 150px;
+        .unefa-label { font-size: 0.72rem; font-weight: 700; color: var(--rg-blue-d); i { margin-right: 4px; } }
+    }
+    .rg-field-group .unefa-input { font-weight: 700; color: var(--rg-blue-d); }
+    .rg-clear-btn {
+        display: inline-flex; align-items: center; gap: 6px;
+        border: 1px solid #e2e8f0; background: #fff; color: #64748b;
+        border-radius: 9px; padding: 9px 16px; font-size: 0.8rem; font-weight: 600;
+        cursor: pointer; transition: all 0.15s; height: fit-content;
+        &:hover { border-color: var(--rg-rose); color: #b45a61; }
+    }
+    .rg-status-row {
+        display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+        padding-top: 12px; border-top: 1px solid #f1f5f9;
+        .unefa-label { font-size: 0.74rem; font-weight: 700; color: var(--rg-blue-d); margin: 0; }
+    }
+    .rg-status-chip {
+        border: 1.5px solid #e2e8f0; background: #fff; color: #5a6678;
+        border-radius: 20px; padding: 5px 13px; font-size: 0.74rem; font-weight: 600;
+        cursor: pointer; transition: all 0.15s;
+        &:hover { border-color: var(--rg-blue); }
+        &.active {
+            background: linear-gradient(135deg, var(--rg-blue) 0%, var(--rg-blue-d) 100%);
+            color: #fff; border-color: var(--rg-blue-d);
+        }
+    }
+    .rg-status-hint { font-size: 0.74rem; color: #94a3b8; font-style: italic; }
+
+    /* ── Gráfico ── */
+    .rg-chart {
+        background: #fff; border: 1px solid #eef2fa; border-radius: 14px;
+        padding: 18px 20px; margin-bottom: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .rg-chart-title { font-size: 0.8rem; font-weight: 700; color: var(--rg-dark); margin-bottom: 14px; }
+    .rg-bar-row {
+        display: flex; align-items: center; gap: 12px; margin-bottom: 8px;
+    }
+    .rg-bar-label { width: 110px; font-size: 0.76rem; font-weight: 600; color: #5a6678; text-align: right; flex-shrink: 0; }
+    .rg-bar-track { flex: 1; height: 18px; background: #f1f5f9; border-radius: 9px; overflow: hidden; }
+    .rg-bar-fill { height: 100%; border-radius: 9px; min-width: 2px; transition: width 0.4s ease; }
+    .rg-bar-val { width: 48px; font-size: 0.8rem; font-weight: 700; color: var(--rg-dark); flex-shrink: 0; }
+
+    .rg-c-valid   { background: #48a868; }
+    .rg-c-late    { background: var(--rg-yellow); }
+    .rg-c-absent  { background: var(--rg-rose); }
+    .rg-c-outside { background: #e0879d; }
+    .rg-c-manual  { background: var(--rg-blue); }
+    .rg-c-just    { background: #7fa3d8; }
+
+    /* ── Tabla ── */
+    .rg-table-wrap {
+        background: #fff; border: 1px solid #eef2fa; border-radius: 14px;
+        padding: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); overflow-x: auto;
+    }
+    .rg-table {
+        width: 100%; border-collapse: collapse; font-size: 0.83rem;
+        thead th {
+            text-align: left; padding: 11px 12px; color: var(--rg-blue-d);
+            font-weight: 700; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.3px;
+            border-bottom: 2px solid #eef2fa; white-space: nowrap;
+        }
+        tbody td { padding: 10px 12px; border-bottom: 1px solid #f1f5f9; color: var(--rg-dark); }
+        tbody tr:hover { background: #f7f9fd; }
+        .rg-num { text-align: right; font-variant-numeric: tabular-nums; }
+        th.rg-num { text-align: right; }
+        .rg-group-cell { font-weight: 600; }
+        .rg-total-col { font-weight: 700; color: var(--rg-blue-d); }
+    }
+    .rg-punct {
+        font-weight: 700; padding: 2px 8px; border-radius: 12px; font-size: 0.74rem;
+        &.rg-pct-good { background: #def0e4; color: #2f7d4f; }
+        &.rg-pct-bad  { background: #fdf3d7; color: var(--rg-yellow-ink); }
+    }
+    .rg-foot td {
+        padding: 12px; border-top: 2px solid #eef2fa; background: #f7f9fd;
+        font-weight: 800; color: var(--rg-blue-d); text-transform: uppercase;
+        font-size: 0.76rem; letter-spacing: 0.3px;
+    }
+
+    @media (max-width: 700px) {
+        .rg-field { min-width: 120px; }
+        .rg-bar-label { width: 80px; }
+    }
+}
+
+@media print {
+    .unefa-fab, .unefa-sidebar, .unefa-sidebar-backdrop,
+    .o_report_generator .unefa-btn-back,
+    .o_report_generator .rg-header-actions,
+    .o_report_generator .rg-config { display: none !important; }
+    .o_report_generator { background: #fff; }
+}

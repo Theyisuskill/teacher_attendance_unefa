@@ -15,3 +15,9 @@ access_subject_admin,attendance.subject.admin,model_attendance_subject,base.grou
 access_substitution_coordinator,attendance.substitution.coordinator,model_attendance_substitution,group_coordinator,1,1,1,1
 access_substitution_teacher,attendance.substitution.teacher,model_attendance_substitution,group_teacher,1,0,0,0
 access_substitution_admin,attendance.substitution.admin,model_attendance_substitution,base.group_system,1,1,1,1
+access_temp_block_coordinator,attendance.temp.block.coordinator,model_attendance_temp_block,group_coordinator,1,1,1,1
+access_temp_block_teacher,attendance.temp.block.teacher,model_attendance_temp_block,group_teacher,1,0,0,0
+access_temp_block_admin,attendance.temp.block.admin,model_attendance_temp_block,base.group_system,1,1,1,1
+access_calendar_day_coordinator,attendance.calendar.day.coordinator,model_attendance_calendar_day,group_coordinator,1,1,1,1
+access_calendar_day_teacher,attendance.calendar.day.teacher,model_attendance_calendar_day,group_teacher,1,0,0,0
+access_calendar_day_admin,attendance.calendar.day.admin,model_attendance_calendar_day,base.group_system,1,1,1,1

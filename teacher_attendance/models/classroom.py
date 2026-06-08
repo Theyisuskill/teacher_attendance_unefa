@@ -77,6 +77,14 @@ class AttendanceSchedule(models.Model):
     subject_id = fields.Many2one('attendance.subject', string='Subject', required=True)
     teacher_id = fields.Many2one('res.users', string='Teacher', required=True)
     section = fields.Char(string='Sección', help="Ej: Sección A, 2do Año Sección 02")
+    activity_type = fields.Selection([
+        ('clase',    'Clase'),
+        ('asesoria', 'Asesoría'),
+        ('defensa',  'Defensa'),
+    ], string='Tipo de Actividad', default='clase', required=True,
+       help="Naturaleza del bloque horario. Los registros de asistencia "
+            "heredan este tipo al casar con el bloque, salvo que el docente "
+            "elija otro al escanear (p. ej. una defensa no programada).")
     day_of_week = fields.Selection([
         ('0', 'Lunes'), ('1', 'Martes'), ('2', 'Miércoles'),
         ('3', 'Jueves'), ('4', 'Viernes'), ('5', 'Sábado'), ('6', 'Domingo'),
@@ -201,7 +209,7 @@ class AttendanceSchedule(models.Model):
 
         coordinators = self.env['res.users'].sudo().search([
             ('active', '=', True),
-            ('groups_id', 'in', group_ids),
+            ('group_ids', 'in', group_ids),
         ])
         if not coordinators:
             return

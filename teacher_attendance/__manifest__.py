@@ -13,6 +13,7 @@
         'data/security_params.xml',
         'data/cron.xml',
         'report/attendance_report_templates.xml',
+        'report/report_export_templates.xml',
         'views/academic_views.xml',
         'views/classroom_views.xml',
         'views/attendance_log_views.xml',
@@ -81,6 +82,26 @@
             'teacher_attendance/static/src/components/schedule_manager/schedule_manager.js',
             'teacher_attendance/static/src/components/schedule_manager/schedule_manager.xml',
             'teacher_attendance/static/src/components/schedule_manager/schedule_manager.scss',
+            # Horas acumuladas ejecutadas (reporte por tipo de actividad)
+            'teacher_attendance/static/src/components/executed_hours/executed_hours.js',
+            'teacher_attendance/static/src/components/executed_hours/executed_hours.xml',
+            'teacher_attendance/static/src/components/executed_hours/executed_hours.scss',
+            # Justificación de asistencias (Coordinación)
+            'teacher_attendance/static/src/components/justification_manager/justification_manager.js',
+            'teacher_attendance/static/src/components/justification_manager/justification_manager.xml',
+            'teacher_attendance/static/src/components/justification_manager/justification_manager.scss',
+            # Bloques de actividad temporal (QR para actividades no rutinarias)
+            'teacher_attendance/static/src/components/temp_block_manager/temp_block_manager.js',
+            'teacher_attendance/static/src/components/temp_block_manager/temp_block_manager.xml',
+            'teacher_attendance/static/src/components/temp_block_manager/temp_block_manager.scss',
+            # Calendario institucional (feriados y excepciones)
+            'teacher_attendance/static/src/components/calendar_manager/calendar_manager.js',
+            'teacher_attendance/static/src/components/calendar_manager/calendar_manager.xml',
+            'teacher_attendance/static/src/components/calendar_manager/calendar_manager.scss',
+            # Generador de reportes estadísticos estructurables
+            'teacher_attendance/static/src/components/report_generator/report_generator.js',
+            'teacher_attendance/static/src/components/report_generator/report_generator.xml',
+            'teacher_attendance/static/src/components/report_generator/report_generator.scss',
             # Widgets
             'teacher_attendance/static/src/widgets/location_picker/location_picker.js',
             'teacher_attendance/static/src/widgets/location_picker/location_picker.xml',
@@ -88,10 +109,12 @@
             'teacher_attendance/static/src/css/unefa_global.scss',
             'teacher_attendance/static/src/css/attendance_kanban.scss',
             'teacher_attendance/static/src/css/attendance_form.scss',
+            # Capa global de responsividad (se carga al final para ajustar todo)
+            'teacher_attendance/static/src/css/unefa_responsive.scss',
         ],
     },
     'installable': True,
     'application': True,
     'license': 'LGPL-3',
-    'post_migrate': 'odoo.addons.teacher_attendance.hooks.post_migrate',
+    'post_init_hook': 'post_init_hook',
 }

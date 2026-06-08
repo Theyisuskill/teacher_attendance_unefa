@@ -1,0 +1,209 @@
+/* ═══════════════════════════════════════════
+   CALENDARIO INSTITUCIONAL — Branding UNEFA
+   azul #6E8FC7 · amarillo #F1D88B · rosa #DE979D
+   ═══════════════════════════════════════════ */
+.o_calendar_manager {
+    --cal-blue:   #6E8FC7;
+    --cal-blue-d: #5273A8;
+    --cal-yellow: #F1D88B;
+    --cal-yellow-ink: #8A7430;
+    --cal-rose:   #DE979D;
+    --cal-dark:   #2d3748;
+
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    background: #f7f8fc;
+
+    /* ── Toolbar ── */
+    .cal-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin-bottom: 14px;
+    }
+    .cal-year-nav { display: flex; align-items: center; gap: 8px; }
+    .cal-nav-btn {
+        width: 36px; height: 36px;
+        border: 1px solid #e2e8f0;
+        background: #fff;
+        border-radius: 9px;
+        cursor: pointer;
+        color: var(--cal-blue-d);
+        transition: all 0.15s;
+        &:hover { border-color: var(--cal-blue); background: #f5f8ff; }
+    }
+    .cal-year-select { width: auto; font-weight: 700; color: var(--cal-blue-d); }
+    .cal-summary { display: flex; gap: 10px; flex-wrap: wrap; }
+    .cal-chip {
+        display: inline-flex; align-items: center; gap: 6px;
+        font-size: 0.78rem; font-weight: 600; padding: 6px 12px; border-radius: 20px;
+        i { font-size: 0.6rem; }
+        &.cal-chip-holiday   { background: #fbe3e5; color: #b45a61; }
+        &.cal-chip-exception { background: #fdf3d7; color: var(--cal-yellow-ink); }
+    }
+    .cal-dup-btn {
+        display: inline-flex; align-items: center; gap: 7px;
+        border: 1px solid #e2e8f0; background: #fff; color: var(--cal-blue-d);
+        border-radius: 9px; padding: 9px 16px; font-size: 0.8rem; font-weight: 600;
+        cursor: pointer; transition: all 0.15s;
+        &:hover { border-color: var(--cal-blue); background: #f5f8ff; }
+    }
+
+    /* ── Leyenda ── */
+    .cal-legend {
+        display: flex; gap: 18px; flex-wrap: wrap; align-items: center;
+        margin-bottom: 18px; font-size: 0.76rem; color: #5a6678;
+        span { display: inline-flex; align-items: center; gap: 6px; }
+        .cal-legend-hint { color: #94a3b8; font-style: italic; i { color: var(--cal-blue); } }
+    }
+    .cal-dot {
+        width: 12px; height: 12px; border-radius: 4px; display: inline-block;
+        &.cal-holiday   { background: var(--cal-rose); }
+        &.cal-exception { background: var(--cal-yellow); }
+    }
+
+    /* ── Cuadrícula anual ── */
+    .cal-year-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+    }
+    .cal-month {
+        background: #fff;
+        border: 1px solid #eef2fa;
+        border-radius: 12px;
+        padding: 12px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+    .cal-month-name {
+        text-align: center;
+        font-weight: 700;
+        color: var(--cal-blue-d);
+        font-size: 0.85rem;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+    }
+    .cal-weekdays {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        margin-bottom: 4px;
+        span {
+            text-align: center;
+            font-size: 0.62rem;
+            font-weight: 700;
+            color: #94a3b8;
+            padding: 2px 0;
+        }
+    }
+    .cal-days {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 2px;
+    }
+    .cal-day {
+        position: relative;
+        aspect-ratio: 1;
+        border: none;
+        background: transparent;
+        border-radius: 6px;
+        font-size: 0.72rem;
+        color: var(--cal-dark);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.12s;
+
+        &:hover:not(.cal-empty) { background: #eef3fb; outline: 1px solid var(--cal-blue); }
+        &.cal-empty { cursor: default; }
+
+        &.cal-holiday {
+            background: var(--cal-rose);
+            color: #fff;
+            font-weight: 700;
+            &:hover { background: #d4848b; outline-color: var(--cal-rose); }
+        }
+        &.cal-exception {
+            background: var(--cal-yellow);
+            color: var(--cal-yellow-ink);
+            font-weight: 700;
+            &:hover { background: #eccf78; outline-color: var(--cal-yellow); }
+        }
+    }
+    .cal-recur-dot {
+        position: absolute;
+        top: 2px; right: 2px;
+        width: 5px; height: 5px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.9);
+        box-shadow: 0 0 0 1px rgba(0,0,0,0.15);
+    }
+
+    /* ── Modal ── */
+    .cal-modal-backdrop {
+        position: fixed; inset: 0;
+        background: rgba(0,0,0,0.4);
+        backdrop-filter: blur(2px);
+        z-index: 1100;
+    }
+    .cal-modal {
+        position: fixed;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1101;
+        width: 420px;
+        max-width: 92vw;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+        overflow: hidden;
+    }
+    .cal-modal-head {
+        display: flex; align-items: center; justify-content: space-between;
+        background: linear-gradient(135deg, var(--cal-blue) 0%, var(--cal-blue-d) 100%);
+        color: #fff;
+        padding: 14px 18px;
+        h3 { margin: 0; font-size: 0.95rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    }
+    .cal-modal-close {
+        border: none; background: rgba(255,255,255,0.18); color: #fff;
+        width: 28px; height: 28px; border-radius: 7px; cursor: pointer;
+        &:hover { background: rgba(255,255,255,0.3); }
+    }
+    .cal-modal-body { padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+    .cal-type-options { display: flex; gap: 10px; }
+    .cal-type-btn {
+        flex: 1;
+        display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+        border: 1.5px solid #e2e8f0; background: #fff; color: #5a6678;
+        border-radius: 10px; padding: 10px; font-size: 0.82rem; font-weight: 600;
+        cursor: pointer; transition: all 0.15s;
+        &.cal-type-holiday.active   { background: var(--cal-rose); border-color: var(--cal-rose); color: #fff; }
+        &.cal-type-exception.active { background: var(--cal-yellow); border-color: var(--cal-yellow); color: var(--cal-yellow-ink); }
+    }
+    .cal-checkbox {
+        display: flex; align-items: center; gap: 8px;
+        font-size: 0.84rem; color: var(--cal-dark); cursor: pointer;
+        input { width: 17px; height: 17px; accent-color: var(--cal-blue-d); cursor: pointer; }
+    }
+    .cal-modal-actions {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 14px 18px; border-top: 1px solid #eef2fa; background: #fafbfe;
+    }
+    .cal-modal-actions-right { display: flex; gap: 10px; }
+    .cal-btn-delete {
+        display: inline-flex; align-items: center; gap: 6px;
+        border: 1.5px solid #f0c4c8; background: #fff; color: #b45a61;
+        border-radius: 9px; padding: 9px 16px; font-size: 0.82rem; font-weight: 700;
+        cursor: pointer; transition: all 0.15s;
+        &:hover { background: #fdf0f1; border-color: var(--cal-rose); }
+    }
+
+    @media (max-width: 1100px) { .cal-year-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 820px)  { .cal-year-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 520px)  { .cal-year-grid { grid-template-columns: 1fr; } }
+}

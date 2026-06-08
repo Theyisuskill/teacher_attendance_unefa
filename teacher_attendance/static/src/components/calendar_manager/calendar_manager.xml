@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+<t t-name="teacher_attendance.CalendarManager">
+<div class="o_calendar_manager">
+
+    <!-- Header -->
+    <div class="unefa-page-header">
+        <div class="unefa-flag-top"/>
+        <div class="unefa-page-header-main">
+            <div class="unefa-page-header-left">
+                <button class="unefa-btn-back" t-on-click="goBack"><i class="fa fa-arrow-left"/></button>
+                <div class="unefa-page-header-info">
+                    <h1 class="unefa-page-title"><i class="fa fa-calendar"/> Calendario Institucional</h1>
+                    <p class="unefa-page-subtitle">Feriados y excepciones no laborables del año</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="unefa-page-content">
+
+        <!-- Barra de año + acciones -->
+        <div class="cal-toolbar">
+            <div class="cal-year-nav">
+                <button class="cal-nav-btn" t-on-click="prevYear"><i class="fa fa-chevron-left"/></button>
+                <select class="unefa-input cal-year-select" t-on-change="onYearSelect">
+                    <t t-foreach="yearOptions" t-as="y" t-key="y">
+                        <option t-att-value="y" t-att-selected="y === state.year" t-out="y"/>
+                    </t>
+                </select>
+                <button class="cal-nav-btn" t-on-click="nextYear"><i class="fa fa-chevron-right"/></button>
+            </div>
+            <div class="cal-summary">
+                <span class="cal-chip cal-chip-holiday"><i class="fa fa-circle"/> Feriados: <t t-out="summary.holiday"/></span>
+                <span class="cal-chip cal-chip-exception"><i class="fa fa-circle"/> Excepciones: <t t-out="summary.exception"/></span>
+            </div>
+            <button class="cal-dup-btn" t-on-click="duplicatePrevYear">
+                <i class="fa fa-copy"/> Duplicar <t t-out="state.year - 1"/>
+            </button>
+        </div>
+
+        <div class="cal-legend">
+            <span><span class="cal-dot cal-holiday"/> Feriado</span>
+            <span><span class="cal-dot cal-exception"/> Excepción no laborable</span>
+            <span class="cal-legend-hint"><i class="fa fa-hand-pointer-o"/> Clic en un día para asignar, modificar o anular</span>
+        </div>
+
+        <div t-if="state.isLoading" class="unefa-loading">
+            <i class="fa fa-spinner fa-spin fa-2x"/>
+            <p>Cargando calendario...</p>
+        </div>
+
+        <!-- Cuadrícula anual: 12 meses -->
+        <div t-else="" class="cal-year-grid">
+            <t t-foreach="calendar" t-as="month" t-key="month.index">
+                <div class="cal-month">
+                    <div class="cal-month-name" t-out="month.name"/>
+                    <div class="cal-weekdays">
+                        <t t-foreach="WEEKDAYS" t-as="wd" t-key="wd_index">
+                            <span t-out="wd"/>
+                        </t>
+                    </div>
+                    <div class="cal-days">
+                        <t t-foreach="month.weeks" t-as="week" t-key="week_index">
+                            <t t-foreach="week" t-as="cell" t-key="cell_index">
+                                <t t-if="cell">
+                                    <button class="cal-day" t-att-class="dayClass(cell.dateStr)"
+                                            t-att-title="dayInfo(cell.dateStr) ? dayInfo(cell.dateStr).name : ''"
+                                            t-on-click="() => this.openDay(cell.dateStr)">
+                                        <t t-out="cell.day"/>
+                                        <span t-if="dayInfo(cell.dateStr) and dayInfo(cell.dateStr).is_recurring"
+                                              class="cal-recur-dot" title="Recurrente"/>
+                                    </button>
+                                </t>
+                                <t t-else="">
+                                    <span class="cal-day cal-empty"/>
+                                </t>
+                            </t>
+                        </t>
+                    </div>
+                </div>
+            </t>
+        </div>
+    </div>
+
+    <!-- Modal de día -->
+    <t t-if="state.modal.open">
+        <div class="cal-modal-backdrop" t-on-click="closeModal"/>
+        <div class="cal-modal">
+            <div class="cal-modal-head">
+                <h3><i class="fa fa-calendar-o"/> <t t-out="modalDateLabel"/></h3>
+                <button class="cal-modal-close" t-on-click="closeModal"><i class="fa fa-times"/></button>
+            </div>
+            <div class="cal-modal-body">
+                <div class="unefa-form-group">
+                    <label class="unefa-label">Descripción *</label>
+                    <input type="text" class="unefa-input" t-model="state.modal.name"
+                           placeholder="Ej: Día de la Independencia"/>
+                </div>
+                <div class="unefa-form-group">
+                    <label class="unefa-label">Tipo</label>
+                    <div class="cal-type-options">
+                        <button class="cal-type-btn cal-type-holiday"
+                                t-att-class="{'active': state.modal.day_type === 'holiday'}"
+                                t-on-click="() => state.modal.day_type = 'holiday'">
+                            <i class="fa fa-flag"/> Feriado
+                        </button>
+                        <button class="cal-type-btn cal-type-exception"
+                                t-att-class="{'active': state.modal.day_type === 'exception'}"
+                                t-on-click="() => state.modal.day_type = 'exception'">
+                            <i class="fa fa-exclamation-triangle"/> Excepción
+                        </button>
+                    </div>
+                </div>
+                <label class="cal-checkbox">
+                    <input type="checkbox" t-model="state.modal.is_recurring"/>
+                    <span>Se repite cada año (mismo día y mes)</span>
+                </label>
+                <div class="unefa-form-group">
+                    <label class="unefa-label">Notas</label>
+                    <textarea class="unefa-input" rows="2" t-model="state.modal.note"
+                              placeholder="Opcional"/>
+                </div>
+            </div>
+            <div class="cal-modal-actions">
+                <button t-if="state.modal.isExisting" class="cal-btn-delete" t-on-click="deleteDay">
+                    <i class="fa fa-trash"/> Anular
+                </button>
+                <div class="cal-modal-actions-right">
+                    <button class="unefa-btn-secondary" t-on-click="closeModal">Cancelar</button>
+                    <button class="unefa-btn-primary" t-on-click="saveDay">
+                        <i class="fa fa-save"/> <t t-out="state.modal.isExisting ? 'Guardar' : 'Agregar'"/>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <div class="unefa-page-footer">
+        <div class="unefa-flag-stripe"/>
+        <span>UNEFA · Calendario Institucional</span>
+    </div>
+</div>
+</t>
+</templates>

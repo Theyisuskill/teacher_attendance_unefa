@@ -3,7 +3,28 @@ import math
 import datetime
 import pytz
 from odoo import models, fields, api, _
-from odoo.exceptions import AccessError
+from odoo.exceptions import AccessError, UserError
+
+# Tipos de actividad académica para discriminar las horas ejecutadas
+ACTIVITY_TYPES = [
+    ('clase',    'Clase'),
+    ('asesoria', 'Asesoría'),
+    ('defensa',  'Defensa'),
+]
+
+# Mapeo inteligente de justificación: estatus origen → estatus justificado.
+# Incluye los justificados a sí mismos para permitir re-edición de la justificación.
+JUSTIFY_TARGET = {
+    'late':             'late_justified',
+    'absent':           'absent_justified',
+    'late_justified':   'late_justified',
+    'absent_justified': 'absent_justified',
+}
+# Reversión: estatus justificado → estatus original
+JUSTIFY_REVERT = {
+    'late_justified':   'late',
+    'absent_justified': 'absent',
+}
 
 # Parámetros de configuración de métodos de registro
 METHOD_PARAMS = {
@@ -30,7 +51,17 @@ class AttendanceLog(models.Model):
     teacher_id = fields.Many2one('res.users', string='Teacher', required=True, default=lambda self: self.env.user, tracking=True)
     classroom_id = fields.Many2one('attendance.classroom', string='Classroom', required=True, tracking=True)
     subject_id = fields.Many2one('attendance.subject', string='Subject', tracking=True)
+    section = fields.Char(string='Sección', help="Sección heredada del bloque de horario casado.")
     is_substitution = fields.Boolean(string='Is Substitution', default=False)
+    temp_block_id = fields.Many2one(
+        'attendance.temp.block', string='Bloque Temporal', readonly=True,
+        ondelete='set null', index=True,
+        help="Bloque de actividad no rutinaria desde el que se registró esta asistencia.")
+    activity_type = fields.Selection(
+        ACTIVITY_TYPES, string='Tipo de Actividad', default='clase',
+        required=True, tracking=True,
+        help="Clasifica el tiempo ejecutado. Se hereda del bloque de horario "
+             "casado; si el docente lo elige al escanear, prevalece su elección.")
 
     check_in = fields.Datetime(string='Check-in Time', default=fields.Datetime.now, readonly=True, tracking=True)
     check_out = fields.Datetime(string='Check-out Time', readonly=True, tracking=True)
@@ -60,7 +91,48 @@ class AttendanceLog(models.Model):
         ('outside', 'Fuera del Radio'),
         ('manual',  'Validado Manual'),
         ('invalid', 'Inválido'),
+        ('late_justified',   'Retardo Justificado'),
+        ('absent_justified', 'Falta Justificada'),
     ], string='Estatus', compute='_compute_status', store=True, readonly=False, tracking=True)
+
+    # ── Justificación aprobada por Coordinación ──────────
+    justification_aval = fields.Char(
+        string='Número de Aval', tracking=True,
+        help="Número del aval o soporte que respalda la justificación.")
+    justification_reason = fields.Text(
+        string='Motivo de Justificación', tracking=True,
+        help="Motivo por el cual la Coordinación justifica el retardo o la falta.")
+    justification_approver_id = fields.Many2one(
+        'res.users', string='Justificado por', readonly=True, tracking=True,
+        help="Usuario de Coordinación que aprobó la justificación.")
+    justification_date = fields.Datetime(
+        string='Fecha de Justificación', readonly=True, tracking=True)
+
+    def _match_teacher_schedule(self):
+        """Bloque de horario que casa con este registro (mismo aula, docente y
+        día de la semana), o un recordset vacío. Reutiliza la misma lógica de
+        casado que el motor de estatus, sin tocarla."""
+        self.ensure_one()
+        if not (self.check_in and self.classroom_id and self.teacher_id):
+            return self.env['attendance.schedule']
+        local_time = fields.Datetime.context_timestamp(self, self.check_in)
+        current_day = str(local_time.weekday())
+        return self.classroom_id.schedule_ids.filtered(
+            lambda s: s.day_of_week == current_day and s.teacher_id == self.teacher_id
+        )[:1]
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        """Modelo híbrido del tipo de actividad: si NO se especifica
+        explícitamente al crear (p. ej. el docente eligió un tipo en el scanner),
+        se hereda del bloque de horario casado. Sin bloque → queda en 'clase'."""
+        records = super().create(vals_list)
+        for rec, vals in zip(records, vals_list):
+            if 'activity_type' not in vals:
+                sched = rec._match_teacher_schedule()
+                if sched.activity_type:
+                    rec.activity_type = sched.activity_type
+        return records
 
     @api.depends('check_in', 'check_out')
     def _compute_duration(self):
@@ -86,7 +158,7 @@ class AttendanceLog(models.Model):
             else:
                 log.distance = 0.0
 
-    @api.depends('distance', 'classroom_id', 'check_in', 'teacher_id')
+    @api.depends('distance', 'classroom_id', 'check_in', 'teacher_id', 'temp_block_id')
     def _compute_status(self):
         """Motor de reglas de asistencia.
 
@@ -101,8 +173,18 @@ class AttendanceLog(models.Model):
         8. Llegó después del fin de clase → 'late' (Retardo tardío)
         """
         for log in self:
-            # Regla 0: No recalcular registros manuales o de ausencia
-            if log.status in ('manual', 'absent'):
+            # Regla 0: No recalcular registros manuales, de ausencia ni justificados
+            if log.status in ('manual', 'absent', 'late_justified', 'absent_justified'):
+                continue
+
+            # Regla 0.b: Bloque temporal (actividad no rutinaria).
+            # La ventana de tiempo ya se validó al escanear el QR; aquí solo
+            # se evalúa el GPS si el bloque lo exige. Nunca es 'retardo'.
+            if log.temp_block_id:
+                if log.temp_block_id.require_gps and log.distance > log.classroom_id.radius:
+                    log.status = 'outside'
+                else:
+                    log.status = 'valid'
                 continue
 
             # Regla 1: Distancia GPS
@@ -146,6 +228,7 @@ class AttendanceLog(models.Model):
 
             sched = teacher_schedule[0]
             log.subject_id = sched.subject_id
+            log.section = sched.section
 
             on_time_limit = sched.start_hour + tolerance_h  # hasta aquí = Asistió
 
@@ -187,7 +270,7 @@ class AttendanceLog(models.Model):
     # Registro por QR de aula (scanner del docente)
     # ─────────────────────────────────────────────
     @api.model
-    def action_log_attendance(self, secret_key, latitude, longitude, signature=None, device_id=None):
+    def action_log_attendance(self, secret_key, latitude, longitude, signature=None, device_id=None, activity_type=None):
         config = self.get_method_config()
         if not config['qr']:
             return self._method_disabled_response(_('QR de aula'))
@@ -238,6 +321,10 @@ class AttendanceLog(models.Model):
             'method': 'qr',
             'device_id': device_id or False,
         }
+        # Híbrido: solo si el docente eligió un tipo explícito en el scanner.
+        # Si no, create() lo hereda del bloque de horario casado.
+        if activity_type in dict(ACTIVITY_TYPES):
+            vals['activity_type'] = activity_type
         if signature:
             if ',' in signature: signature = signature.split(',')[1]
             vals['signature'] = signature
@@ -245,6 +332,80 @@ class AttendanceLog(models.Model):
         return {
             'status': log.status,
             'message': _('Check-in successful!') if log.status == 'valid' else _('Check-in outside of parameters.'),
+            'server_time': fields.Datetime.to_string(server_now),
+        }
+
+    # ─────────────────────────────────────────────
+    # Registro por QR de bloque temporal (no rutinario)
+    # ─────────────────────────────────────────────
+    @api.model
+    def action_log_temp_block(self, token, latitude=0, longitude=0, signature=None, device_id=None):
+        """Registra entrada/salida en un bloque de asistencia temporal.
+
+        El token del QR identifica el bloque. El registro es válido solo dentro
+        de la ventana del bloque (con margen). El tiempo se suma al renglón
+        (activity_type) del bloque. Abierto a cualquier docente autenticado.
+        """
+        if not self.get_method_config()['qr']:
+            return self._method_disabled_response(_('QR de aula'))
+
+        block = self.env['attendance.temp.block'].sudo().search(
+            [('token', '=', token), ('active', '=', True)], limit=1)
+        if not block:
+            return {'status': 'invalid',
+                    'message': _('Código QR de bloque temporal inválido o desactivado.')}
+
+        now = fields.Datetime.now()
+        lead = datetime.timedelta(minutes=15)
+        grace = datetime.timedelta(minutes=30)
+        if block.date_start and now < block.date_start - lead:
+            return {'status': 'invalid',
+                    'message': _('El bloque «%s» aún no está disponible para registro.') % block.name}
+        if block.date_end and now > block.date_end + grace:
+            return {'status': 'invalid',
+                    'message': _('El bloque «%s» ya finalizó. Registro cerrado.') % block.name}
+
+        active_log = self.search([
+            ('teacher_id', '=', self.env.uid),
+            ('temp_block_id', '=', block.id),
+            ('check_out', '=', False),
+            ('status', '!=', 'absent'),
+        ], limit=1)
+
+        server_now = now
+        if active_log:
+            active_log.write({'check_out': server_now})
+            return {
+                'status': 'checkout',
+                'message': _('Salida registrada de «%s».') % block.name,
+                'server_time': fields.Datetime.to_string(server_now),
+            }
+
+        vals = {
+            'teacher_id': self.env.uid,
+            'classroom_id': block.classroom_id.id,
+            'temp_block_id': block.id,
+            'subject_id': block.subject_id.id or False,
+            'activity_type': block.activity_type,   # explícito → no se hereda del horario
+            'check_in': server_now,
+            'latitude': latitude,
+            'longitude': longitude,
+            'method': 'qr',
+            'device_id': device_id or False,
+        }
+        if signature:
+            if ',' in signature:
+                signature = signature.split(',')[1]
+            vals['signature'] = signature
+        log = self.create(vals)
+        type_label = dict(ACTIVITY_TYPES).get(block.activity_type, '')
+        if log.status == 'outside':
+            msg = _('Registrado en «%s», pero fuera del radio del aula — será revisado.') % block.name
+        else:
+            msg = _('Entrada registrada en «%s» (%s).') % (block.name, type_label)
+        return {
+            'status': log.status,
+            'message': msg,
             'server_time': fields.Datetime.to_string(server_now),
         }
 
@@ -258,6 +419,348 @@ class AttendanceLog(models.Model):
         total_count = len(logs)
         punctuality = (valid_count / total_count * 100) if total_count > 0 else 100
         return {'total_hours': round(total_hours, 2), 'punctuality': round(punctuality, 1), 'total_logs': total_count}
+
+    # ─────────────────────────────────────────────
+    # Reporte: Horas Acumuladas Ejecutadas por tipo
+    # ─────────────────────────────────────────────
+    @api.model
+    def get_executed_hours_report(self, date_from, date_to):
+        """Horas ejecutadas (reales) por docente, discriminadas por tipo de
+        actividad: Clase, Asesoría y Defensa.
+
+        'Ejecutadas' = registros con duración real (check-out efectuado) y
+        estatus de presencia efectiva ('valid', 'late', 'manual'). Se excluyen
+        inasistencias, registros fuera de radio e inválidos.
+
+        Solo coordinadores/administradores.
+
+        Returns:
+            {
+              'rows': [ {teacher_id, teacher_name, clase, asesoria, defensa, total}, ... ],
+              'totals': {clase, asesoria, defensa, total},
+              'date_from': str, 'date_to': str,
+            }
+        """
+        if not (self.env.user.has_group('teacher_attendance.group_coordinator')
+                or self.env.user.has_group('base.group_system')):
+            raise AccessError(_('Solo los coordinadores pueden consultar el reporte de horas ejecutadas.'))
+
+        domain = [
+            ('check_in', '>=', '%s 00:00:00' % date_from),
+            ('check_in', '<=', '%s 23:59:59' % date_to),
+            ('check_out', '!=', False),
+            ('status', 'in', ['valid', 'late', 'manual', 'late_justified']),
+        ]
+        groups = self.read_group(
+            domain,
+            ['duration:sum'],
+            ['teacher_id', 'activity_type'],
+            lazy=False,
+        )
+
+        valid_types = dict(ACTIVITY_TYPES)
+        rows = {}
+        totals = {'clase': 0.0, 'asesoria': 0.0, 'defensa': 0.0, 'total': 0.0}
+
+        for g in groups:
+            if not g.get('teacher_id'):
+                continue
+            tid, tname = g['teacher_id']
+            atype = g.get('activity_type') or 'clase'
+            if atype not in valid_types:
+                atype = 'clase'
+            hours = g.get('duration') or 0.0
+            if tid not in rows:
+                rows[tid] = {
+                    'teacher_id': tid, 'teacher_name': tname,
+                    'clase': 0.0, 'asesoria': 0.0, 'defensa': 0.0, 'total': 0.0,
+                }
+            rows[tid][atype] += hours
+            rows[tid]['total'] += hours
+            totals[atype] += hours
+            totals['total'] += hours
+
+        result_rows = sorted(rows.values(), key=lambda r: r['teacher_name'].lower())
+        for r in result_rows:
+            for k in ('clase', 'asesoria', 'defensa', 'total'):
+                r[k] = round(r[k], 2)
+        for k in totals:
+            totals[k] = round(totals[k], 2)
+
+        return {
+            'rows': result_rows,
+            'totals': totals,
+            'date_from': date_from,
+            'date_to': date_to,
+        }
+
+    # ─────────────────────────────────────────────
+    # Generador de reportes estadísticos estructurables
+    # ─────────────────────────────────────────────
+    @api.model
+    def get_report_filter_options(self):
+        """Opciones para los filtros del generador de reportes."""
+        self._ensure_coordinator(_('generar reportes'))
+        teachers = self.env['res.users'].search_read(
+            [('attendance_role', 'in', ['teacher', 'coordinator', 'admin'])],
+            ['name'], order='name asc')
+        subjects = self.env['attendance.subject'].search_read([], ['name', 'code'], order='name asc')
+        # Secciones: unión de las definidas en horarios y las presentes en registros
+        sched_secs = self.env['attendance.schedule'].search([]).mapped('section')
+        log_secs = [g['section'] for g in self.read_group(
+            [('section', '!=', False)], ['section'], ['section']) if g.get('section')]
+        sections = sorted({s for s in (sched_secs + log_secs) if s})
+        statuses = [{'value': v, 'label': l} for v, l in self._fields['status'].selection]
+        return {'teachers': teachers, 'subjects': subjects, 'sections': sections, 'statuses': statuses}
+
+    @api.model
+    def generate_report(self, date_from, date_to, group_by='month', filters=None):
+        """Genera un reporte estadístico estructurable y filtrable.
+
+        Args:
+            date_from, date_to (str): rango 'YYYY-MM-DD'.
+            group_by (str): día/semana/mes/trimestre/año o docente/asignatura/sección/estatus.
+            filters (dict): teacher_id, subject_id, section, statuses (lista).
+
+        Returns: {group_by, status_labels, rows:[{key,label,counts,total,hours,punctuality}], totals}
+        """
+        self._ensure_coordinator(_('generar reportes'))
+        filters = filters or {}
+
+        domain = [
+            ('check_in', '>=', '%s 00:00:00' % date_from),
+            ('check_in', '<=', '%s 23:59:59' % date_to),
+        ]
+        if filters.get('teacher_id'):
+            domain.append(('teacher_id', '=', int(filters['teacher_id'])))
+        if filters.get('subject_id'):
+            domain.append(('subject_id', '=', int(filters['subject_id'])))
+        if filters.get('section'):
+            domain.append(('section', '=', filters['section']))
+        if filters.get('statuses'):
+            domain.append(('status', 'in', filters['statuses']))
+
+        logs = self.search(domain)
+
+        MESES = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
+                 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
+        STATUS_KEYS = ['valid', 'late', 'absent', 'outside', 'manual',
+                       'late_justified', 'absent_justified', 'invalid']
+        status_labels = dict(self._fields['status'].selection)
+        TIME_GROUPS = ('day', 'week', 'month', 'quarter', 'year')
+
+        groups = {}
+
+        def get_group(key, label, sk):
+            if key not in groups:
+                groups[key] = {'key': key, 'label': label, '_sk': sk,
+                               'counts': {k: 0 for k in STATUS_KEYS},
+                               'total': 0, 'hours': 0.0}
+            return groups[key]
+
+        for log in logs:
+            local = fields.Datetime.context_timestamp(self, log.check_in) if log.check_in else None
+            if group_by in TIME_GROUPS:
+                if not local:
+                    continue
+                if group_by == 'day':
+                    key = local.strftime('%Y-%m-%d'); label = local.strftime('%d/%m/%Y'); sk = key
+                elif group_by == 'week':
+                    iso = local.isocalendar()
+                    key = '%04d-W%02d' % (iso[0], iso[1])
+                    label = 'Sem %02d / %04d' % (iso[1], iso[0]); sk = key
+                elif group_by == 'month':
+                    key = '%04d-%02d' % (local.year, local.month)
+                    label = '%s %04d' % (MESES[local.month - 1], local.year); sk = key
+                elif group_by == 'quarter':
+                    q = (local.month - 1) // 3 + 1
+                    key = '%04d-Q%d' % (local.year, q)
+                    label = '%dº Trimestre %04d' % (q, local.year); sk = key
+                else:  # year
+                    key = '%04d' % local.year; label = key; sk = key
+            elif group_by == 'teacher':
+                key = 't-%s' % (log.teacher_id.id or 0)
+                label = log.teacher_id.name or '(Sin docente)'; sk = label.lower()
+            elif group_by == 'subject':
+                key = 's-%s' % (log.subject_id.id or 0)
+                label = log.subject_id.name or '(Sin asignatura)'; sk = label.lower()
+            elif group_by == 'section':
+                label = log.section or '(Sin sección)'; key = 'sec-%s' % (log.section or '∅'); sk = label.lower()
+            elif group_by == 'status':
+                key = log.status or 'invalid'
+                label = status_labels.get(log.status, log.status or '—'); sk = key
+            else:
+                key = 'all'; label = 'Total'; sk = ''
+
+            g = get_group(key, label, sk)
+            st = log.status or 'invalid'
+            g['counts'].setdefault(st, 0)
+            g['counts'][st] += 1
+            g['total'] += 1
+            g['hours'] += log.duration or 0.0
+
+        rows = sorted(groups.values(), key=lambda r: r['_sk'])
+        totals_counts = {k: 0 for k in STATUS_KEYS}
+        total_n, total_h = 0, 0.0
+        for r in rows:
+            for k, v in r['counts'].items():
+                totals_counts.setdefault(k, 0)
+                totals_counts[k] += v
+            total_n += r['total']
+            total_h += r['hours']
+            ok = r['counts'].get('valid', 0) + r['counts'].get('manual', 0)
+            r['punctuality'] = round(ok / r['total'] * 100, 1) if r['total'] else 0.0
+            r['hours'] = round(r['hours'], 2)
+            r.pop('_sk', None)
+
+        ok_t = totals_counts.get('valid', 0) + totals_counts.get('manual', 0)
+        totals = {
+            'counts': totals_counts,
+            'total': total_n,
+            'hours': round(total_h, 2),
+            'punctuality': round(ok_t / total_n * 100, 1) if total_n else 0.0,
+        }
+        return {'group_by': group_by, 'status_labels': status_labels,
+                'rows': rows, 'totals': totals}
+
+    @api.model
+    def get_report_detail(self, date_from, date_to, filters=None):
+        """Detalle fila-por-fila de los registros (la representación más fiel de
+        lo almacenado), con los mismos filtros del generador. Coordinación."""
+        self._ensure_coordinator(_('exportar reportes'))
+        filters = filters or {}
+        domain = [
+            ('check_in', '>=', '%s 00:00:00' % date_from),
+            ('check_in', '<=', '%s 23:59:59' % date_to),
+        ]
+        if filters.get('teacher_id'):
+            domain.append(('teacher_id', '=', int(filters['teacher_id'])))
+        if filters.get('subject_id'):
+            domain.append(('subject_id', '=', int(filters['subject_id'])))
+        if filters.get('section'):
+            domain.append(('section', '=', filters['section']))
+        if filters.get('statuses'):
+            domain.append(('status', 'in', filters['statuses']))
+
+        status_labels = dict(self._fields['status'].selection)
+        method_labels = dict(self._fields['method'].selection)
+        act_labels = dict(ACTIVITY_TYPES)
+
+        rows = []
+        for l in self.search(domain, order='check_in desc'):
+            ci = fields.Datetime.context_timestamp(self, l.check_in) if l.check_in else None
+            co = fields.Datetime.context_timestamp(self, l.check_out) if l.check_out else None
+            rows.append({
+                'teacher': l.teacher_id.name or '',
+                'subject': l.subject_id.name or '',
+                'section': l.section or '',
+                'activity_type': act_labels.get(l.activity_type, ''),
+                'date': ci.strftime('%d/%m/%Y') if ci else '',
+                'check_in': ci.strftime('%H:%M') if ci else '',
+                'check_out': co.strftime('%H:%M') if co else '',
+                'hours': round(l.duration or 0.0, 2),
+                'method': method_labels.get(l.method, l.method or ''),
+                'status': status_labels.get(l.status, l.status or ''),
+                'aval': l.justification_aval or '',
+                'approver': l.justification_approver_id.name or '',
+            })
+        return {'rows': rows, 'date_from': date_from, 'date_to': date_to}
+
+    # ─────────────────────────────────────────────
+    # Justificación de Retardos / Faltas (Coordinación)
+    # ─────────────────────────────────────────────
+    def _ensure_coordinator(self, action_label):
+        """Verifica que el usuario actual sea coordinador o administrador."""
+        if not (self.env.user.has_group('teacher_attendance.group_coordinator')
+                or self.env.user.has_group('base.group_system')):
+            raise AccessError(_('Solo la Coordinación puede %s.') % action_label)
+
+    @api.model
+    def action_justify_records(self, record_ids, reason, aval_number):
+        """Justifica en lote los registros seleccionados (Coordinación).
+
+        Mapeo inteligente del estatus:
+            Retardo (late)        → Retardo Justificado (late_justified)
+            Inasistencia (absent) → Falta Justificada  (absent_justified)
+        Los registros ya justificados se re-procesan (permite editar el aval/motivo).
+        Cualquier otro estatus se omite. Guarda motivo, número de aval, aprobador
+        y fecha; deja constancia en el historial (chatter).
+
+        Returns: {'justified': n, 'skipped': n}
+        """
+        self._ensure_coordinator(_('justificar registros'))
+
+        reason = (reason or '').strip()
+        aval_number = (aval_number or '').strip()
+        if not reason:
+            raise UserError(_('El motivo de la justificación es obligatorio.'))
+        if not aval_number:
+            raise UserError(_('El número de aval es obligatorio.'))
+        if not record_ids:
+            raise UserError(_('Debe seleccionar al menos un registro para justificar.'))
+
+        status_labels = dict(self._fields['status'].selection)
+        records = self.browse(record_ids).exists()
+        now = fields.Datetime.now()
+        justified, skipped = 0, 0
+
+        for rec in records:
+            target = JUSTIFY_TARGET.get(rec.status)
+            if not target:
+                skipped += 1
+                continue
+            rec.write({
+                'status': target,
+                'justification_reason': reason,
+                'justification_aval': aval_number,
+                'justification_approver_id': self.env.uid,
+                'justification_date': now,
+            })
+            rec.message_post(body=_(
+                'Justificado como «%s» por %s. Aval N° %s. Motivo: %s'
+            ) % (status_labels.get(target, target), self.env.user.name, aval_number, reason))
+            justified += 1
+
+        return {'justified': justified, 'skipped': skipped}
+
+    @api.model
+    def action_revert_justification(self, record_ids):
+        """Revierte la justificación de los registros seleccionados (Coordinación):
+            Retardo Justificado → Retardo
+            Falta Justificada   → Inasistencia
+        Limpia el aval, motivo, aprobador y fecha. Deja constancia en el historial.
+
+        Returns: {'reverted': n, 'skipped': n}
+        """
+        self._ensure_coordinator(_('revertir justificaciones'))
+
+        if not record_ids:
+            raise UserError(_('Debe seleccionar al menos un registro para revertir.'))
+
+        status_labels = dict(self._fields['status'].selection)
+        records = self.browse(record_ids).exists()
+        reverted, skipped = 0, 0
+
+        for rec in records:
+            target = JUSTIFY_REVERT.get(rec.status)
+            if not target:
+                skipped += 1
+                continue
+            prev_aval = rec.justification_aval or '—'
+            rec.write({
+                'status': target,
+                'justification_reason': False,
+                'justification_aval': False,
+                'justification_approver_id': False,
+                'justification_date': False,
+            })
+            rec.message_post(body=_(
+                'Justificación revertida por %s (aval previo: %s). '
+                'Estatus restablecido a «%s».'
+            ) % (self.env.user.name, prev_aval, status_labels.get(target, target)))
+            reverted += 1
+
+        return {'reverted': reverted, 'skipped': skipped}
 
     # ─────────────────────────────────────────────
     # Registro por carnet (cédula) — cámara fija
@@ -449,6 +952,11 @@ class AttendanceLog(models.Model):
         current_hour = now_local.hour + (now_local.minute / 60.0)
         today        = now_local.date()
         GRACE_H      = 0.5   # 30 minutos de gracia tras fin de clase
+
+        # Calendario institucional: en feriados / excepciones no laborables
+        # NO se generan inasistencias automáticas.
+        if self.env['attendance.calendar.day'].sudo().is_non_working(today):
+            return
 
         # Buscar clases que terminaron hace más de GRACE_H y menos de 24h
         schedules = self.env['attendance.schedule'].sudo().search([

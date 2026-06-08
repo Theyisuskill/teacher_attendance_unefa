@@ -53,6 +53,31 @@
         <field name="tag">action_schedule_manager</field>
     </record>
 
+    <record id="action_executed_hours" model="ir.actions.client">
+        <field name="name">Horas Ejecutadas</field>
+        <field name="tag">action_executed_hours</field>
+    </record>
+
+    <record id="action_justification_manager" model="ir.actions.client">
+        <field name="name">Justificación de Asistencias</field>
+        <field name="tag">action_justification_manager</field>
+    </record>
+
+    <record id="action_temp_block_manager" model="ir.actions.client">
+        <field name="name">Bloques de Actividad Temporal</field>
+        <field name="tag">action_temp_block_manager</field>
+    </record>
+
+    <record id="action_calendar_manager" model="ir.actions.client">
+        <field name="name">Calendario Institucional</field>
+        <field name="tag">action_calendar_manager</field>
+    </record>
+
+    <record id="action_report_generator" model="ir.actions.client">
+        <field name="name">Generador de Reportes</field>
+        <field name="tag">action_report_generator</field>
+    </record>
+
     <!-- Menús -->
     <menuitem id="menu_attendance_dashboard"
               name="Scan QR"

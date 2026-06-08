@@ -214,6 +214,14 @@
                                        placeholder="Ej: Sección A, 2do Año Secc. 02"
                                        t-model="state.formData.section"/>
                             </div>
+                            <div class="unefa-form-group">
+                                <label class="unefa-label">Tipo de Actividad *</label>
+                                <select class="unefa-input" t-model="state.formData.activity_type">
+                                    <option value="clase">Clase</option>
+                                    <option value="asesoria">Asesoría</option>
+                                    <option value="defensa">Defensa</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
 

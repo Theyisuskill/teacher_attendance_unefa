@@ -355,6 +355,12 @@ body.attendance-scanner-fullscreen {
     border: 1px solid rgba(241,216,139,0.2);
 }
 
+.qr-badge-temp {
+    background: rgba(222,151,157,0.14);
+    color: #b45a61;
+    border: 1px solid rgba(222,151,157,0.25);
+}
+
 /* Scanner area */
 .scanner-container {
     position: relative;
@@ -714,4 +720,67 @@ body.attendance-scanner-fullscreen {
         background: rgba(255,255,255,0.15);
         border-color: rgba(255,255,255,0.8);
     }
+}
+
+/* ═══════════════════════════════════════════
+   SELECTOR DE TIPO DE ACTIVIDAD (modal de firma)
+   ═══════════════════════════════════════════ */
+.activity-type-picker {
+    padding: 14px 16px 4px;
+    border-bottom: 1px solid #eef2fa;
+    margin-bottom: 10px;
+}
+.activity-type-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #43618f;
+    margin-bottom: 10px;
+
+    i { color: #6E8FC7; }
+}
+.activity-type-options {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+.activity-type-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    padding: 10px 6px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    background: #fff;
+    color: #5a6678;
+    font-size: 0.72rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+
+    i { font-size: 1.05rem; color: #94a3b8; transition: color 0.15s; }
+
+    &:hover { border-color: #6E8FC7; background: #f5f8ff; }
+
+    &.active {
+        border-color: #6E8FC7;
+        background: linear-gradient(135deg, #6E8FC7 0%, #5273A8 100%);
+        color: #fff;
+        box-shadow: 0 3px 10px rgba(82,115,168,0.3);
+        i { color: #F1D88B; }
+    }
+}
+.activity-type-hint {
+    display: block;
+    margin-top: 8px;
+    font-size: 0.68rem;
+    color: #94a3b8;
+    font-style: italic;
+}
+
+@media (max-width: 480px) {
+    .activity-type-options { grid-template-columns: repeat(2, 1fr); }
 }

@@ -215,3 +215,16 @@
     .av-kpi-row { gap: 8px; }
     .av-kpi { min-width: 100px; }
 }
+
+/* ── Botones de exportación (PDF / Excel) ── */
+.o_attendance_viewer {
+    .av-export { display: flex; gap: 8px; align-items: center; }
+    .av-btn-pdf, .av-btn-xls {
+        display: inline-flex; align-items: center; gap: 6px;
+        border: none; border-radius: 9px; padding: 9px 16px;
+        font-size: 0.8rem; font-weight: 700; cursor: pointer; background: #fff;
+        transition: all 0.15s;
+    }
+    .av-btn-pdf { color: #c0392b; &:hover { background: #fdeceb; } }
+    .av-btn-xls { color: #1e7e45; &:hover { background: #eafaf0; } }
+}
