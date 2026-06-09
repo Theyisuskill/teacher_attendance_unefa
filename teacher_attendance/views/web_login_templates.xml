@@ -39,11 +39,10 @@
 
                 <!-- Contenido central de marca -->
                 <div class="ulp-brand">
-                    <!-- Logo con ring blanco — tamaños forzados inline para garantía -->
-                    <div class="ulp-logo-ring" style="width:96px;height:96px;min-width:96px;min-height:96px;overflow:hidden;border-radius:50%;background:#ffffff;display:flex;align-items:center;justify-content:center;padding:12px;box-sizing:border-box;margin:0 auto 20px;box-shadow:0 8px 28px rgba(0,0,0,0.15);">
+                    <!-- Logo con ring blanco — tamaños controlados en unefa_login.scss -->
+                    <div class="ulp-logo-ring">
                         <img src="/teacher_attendance/static/src/img/unefa_escudo.svg"
-                             alt="Escudo UNEFA"
-                             style="width:72px;height:72px;min-width:72px;min-height:72px;max-width:72px;max-height:72px;object-fit:contain;display:block;flex-shrink:0;"/>
+                             alt="Escudo UNEFA"/>
                     </div>
 
                     <!-- Nombre completo de la universidad (Primero) -->
