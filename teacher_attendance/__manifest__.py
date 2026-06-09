@@ -20,8 +20,12 @@
         'views/menu_views.xml',
         'views/attendance_dashboard_views.xml',
         'views/res_users_views.xml',
+        'views/web_login_templates.xml',
     ],
     'assets': {
+        'web.assets_frontend': [
+            'teacher_attendance/static/src/css/unefa_login.scss',
+        ],
         'web.assets_backend': [
             # Navbar global
             'teacher_attendance/static/src/components/navbar/unefa_nav.js',

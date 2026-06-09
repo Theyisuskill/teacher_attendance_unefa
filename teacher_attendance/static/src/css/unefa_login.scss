@@ -1,0 +1,584 @@
+/* ══════════════════════════════════════════════════════
+   UNEFA LOGIN — Modern Split-Screen Design
+   Academic colors:
+   - Navy: #0f172a (Primary brand)
+   - Yellow: #F1D88B (Accent gold)
+   - Blue: #6E8FC7 (Accent blue)
+   - Red: #DE979D (Accent red)
+   ══════════════════════════════════════════════════════ */
+
+/* ── 1. GLOBAL RESETS & PAGE SETUP ── */
+body.bg-100 {
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: 100vh !important;
+    background: #f8fafc !important;
+    overflow-x: hidden !important;
+    font-family: 'Inter', sans-serif !important;
+}
+
+/* Clear Odoo container constraints */
+body.bg-100 #wrapwrap {
+    background: #f8fafc !important;
+    min-height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+body.bg-100 #wrapwrap > main {
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 100vh !important;
+}
+
+body.bg-100 .container.py-5 {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: calc(100vh - 70px) !important;
+}
+
+/* ── 2. LOGIN CARD (Full Screen) ── */
+.unefa-login-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: calc(100vh - 70px) !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.unefa-login-card .card-body {
+    display: grid !important;
+    grid-template-columns: 42% 58% !important;
+    min-height: calc(100vh - 70px) !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    flex: 1 !important;
+}
+
+/* ── 3. LEFT BRAND PANEL ── */
+.unefa-left-panel {
+    grid-column: 1 !important;
+    grid-row: 1 / span 10 !important;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 60px 48px !important;
+    position: relative !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    height: 100% !important;
+    min-height: calc(100vh - 70px) !important;
+    border-right: 1px solid #cbd5e1 !important;
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.02) !important;
+    z-index: 10 !important;
+}
+
+/* Glowing graphic orbs in background */
+.ulp-orb {
+    position: absolute !important;
+    border-radius: 50% !important;
+    pointer-events: none !important;
+    filter: blur(120px) !important;
+    z-index: 0 !important;
+    transition: all 0.5s ease !important;
+}
+
+.ulp-orb-1 {
+    width: 450px !important;
+    height: 450px !important;
+    background: rgba(110, 143, 199, 0.12) !important; /* Softer Blue */
+    top: -150px !important;
+    right: -100px !important;
+}
+
+.ulp-orb-2 {
+    width: 350px !important;
+    height: 350px !important;
+    background: rgba(241, 216, 139, 0.10) !important; /* Softer Gold */
+    bottom: 15% !important;
+    left: -100px !important;
+}
+
+.ulp-orb-3 {
+    width: 300px !important;
+    height: 300px !important;
+    background: rgba(222, 151, 157, 0.08) !important; /* Softer Red */
+    bottom: -100px !important;
+    right: 5% !important;
+}
+
+/* Brand content container */
+.ulp-brand {
+    position: relative !important;
+    z-index: 2 !important;
+    text-align: center !important;
+    width: 100% !important;
+    max-width: 400px !important;
+}
+
+/* Elegant white shield/logo ring */
+.ulp-logo-ring {
+    width: 130px !important;
+    height: 130px !important;
+    border-radius: 50% !important;
+    background: #ffffff !important;
+    border: 2px solid #e2e8f0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 auto 30px !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08), 
+                0 0 15px rgba(110, 143, 199, 0.05) !important;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+}
+
+.ulp-logo-ring:hover {
+    transform: scale(1.05) translateY(-5px) !important;
+    border-color: #6E8FC7 !important;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12), 
+                0 0 25px rgba(110, 143, 199, 0.15) !important;
+}
+
+.ulp-logo-ring img {
+    width: 86px !important;
+    height: 86px !important;
+    object-fit: contain !important;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.08)) !important;
+}
+
+/* Full name (Primero) */
+.ulp-fullname {
+    font-family: 'Inter', sans-serif !important;
+    font-size: 0.85rem !important;
+    color: #475569 !important;
+    margin: 0 0 16px !important;
+    line-height: 1.6 !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.5px !important;
+}
+
+/* UNEFA Title with Outfit Font (Siglas - Segundo) */
+.ulp-name {
+    font-family: 'Outfit', sans-serif !important;
+    font-size: 3.2rem !important;
+    font-weight: 900 !important;
+    letter-spacing: 8px !important;
+    margin: 0 0 16px 8px !important; /* compensated letter-spacing margin */
+    text-transform: uppercase !important;
+    line-height: 1 !important;
+    color: #0f172a !important;
+}
+
+/* Tricolor line */
+.ulp-tricolor-sm {
+    display: flex !important;
+    width: 120px !important;
+    height: 3px !important;
+    border-radius: 10px !important;
+    overflow: hidden !important;
+    margin: 0 auto 24px !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
+}
+
+.ulp-tricolor-sm span:nth-child(1) { flex: 1; background: #F1D88B; }
+.ulp-tricolor-sm span:nth-child(2) { flex: 1; background: #6E8FC7; }
+.ulp-tricolor-sm span:nth-child(3) { flex: 1; background: #DE979D; }
+
+/* System Name (Larger) */
+.ulp-system-name {
+    font-family: 'Outfit', sans-serif !important;
+    font-size: 2.0rem !important;
+    font-weight: 800 !important;
+    color: #0f172a !important; /* Institutional Navy */
+    margin: 15px 0 0 !important;
+    line-height: 1.3 !important;
+    letter-spacing: -0.5px !important;
+}
+
+/* Elegant bottom tricolor band */
+.ulp-tricolor-bottom {
+    position: absolute !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    display: flex !important;
+    height: 4px !important;
+}
+
+.ulp-tricolor-bottom span:nth-child(1) { flex: 1; background: #F1D88B; }
+.ulp-tricolor-bottom span:nth-child(2) { flex: 1; background: #6E8FC7; }
+.ulp-tricolor-bottom span:nth-child(3) { flex: 1; background: #DE979D; }
+
+
+/* ── 4. RIGHT PANEL (FORM AREA) ── */
+.unefa-login-card .card-body > *:not(.unefa-left-panel) {
+    grid-column: 2 !important;
+    background: #ffffff !important;
+}
+
+/* Form layout centering */
+.unefa-login-card .card-body > form.oe_login_form {
+    grid-column: 2 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    min-height: calc(100vh - 70px) !important;
+    padding: 60px 12% 40px !important;
+    box-sizing: border-box !important;
+    background: #ffffff !important;
+    max-width: 580px !important;
+    width: 100% !important;
+    justify-self: center;
+}
+
+/* Welcome block */
+.unefa-welcome {
+    margin-bottom: 40px !important;
+}
+
+.unefa-welcome-title {
+    font-family: 'Outfit', sans-serif !important;
+    font-size: 2.2rem !important;
+    font-weight: 800 !important;
+    color: #0f172a !important;
+    margin: 0 0 10px !important;
+    letter-spacing: -0.5px !important;
+}
+
+.unefa-welcome-sub {
+    font-size: 0.95rem !important;
+    color: #64748b !important;
+    margin: 0 !important;
+    line-height: 1.6 !important;
+}
+
+/* Labels style */
+body.bg-100 .oe_login_form label {
+    font-size: 0.8rem !important;
+    font-weight: 600 !important;
+    color: #475569 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.8px !important;
+    margin-bottom: 8px !important;
+    display: block !important;
+}
+
+/* Input elements */
+body.bg-100 .oe_login_form .form-control {
+    background: #f8fafc !important;
+    border: 1.5px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    padding: 13px 16px !important;
+    font-size: 0.95rem !important;
+    color: #0f172a !important;
+    transition: all 0.2s ease !important;
+    box-shadow: none !important;
+    height: auto !important;
+}
+
+body.bg-100 .oe_login_form .form-control:focus {
+    border-color: #6E8FC7 !important;
+    background: #ffffff !important;
+    box-shadow: 0 0 0 4px rgba(110, 143, 199, 0.15) !important;
+    outline: none !important;
+}
+
+body.bg-100 .oe_login_form .form-control::placeholder {
+    color: #94a3b8 !important;
+}
+
+/* Spacing and helper styles */
+body.bg-100 .oe_login_form .mb-3 {
+    margin-bottom: 24px !important;
+}
+
+/* Database Selector Input Group styling */
+body.bg-100 .oe_login_form .input-group {
+    border-radius: 12px !important;
+    overflow: hidden !important;
+}
+
+body.bg-100 .oe_login_form .input-group .form-control {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    border-right: none !important;
+}
+
+body.bg-100 .oe_login_form .input-group .btn {
+    border: 1.5px solid #e2e8f0 !important;
+    border-left: none !important;
+    background: #f1f5f9 !important;
+    color: #475569 !important;
+    border-top-right-radius: 12px !important;
+    border-bottom-right-radius: 12px !important;
+    padding: 13px 18px !important;
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+}
+
+body.bg-100 .oe_login_form .input-group .btn:hover {
+    background: #e2e8f0 !important;
+}
+
+/* Links */
+body.bg-100 .oe_login_form a {
+    font-size: 0.85rem !important;
+    color: #6E8FC7 !important;
+    text-decoration: none !important;
+    font-weight: 600 !important;
+    transition: color 0.15s ease !important;
+}
+
+body.bg-100 .oe_login_form a:hover {
+    color: #0f172a !important;
+    text-decoration: underline !important;
+}
+
+/* ── 5. BUTTONS (GOLD ACCENT) ── */
+body.bg-100 .oe_login_buttons .btn-primary {
+    background: #F1D88B !important;
+    color: #3b2a04 !important; /* Deep contrast brown */
+    border: none !important;
+    border-radius: 12px !important;
+    padding: 14px 24px !important;
+    font-size: 0.95rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1.5px !important;
+    box-shadow: 0 4px 12px rgba(241, 216, 139, 0.25) !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    width: 100% !important;
+    margin-top: 12px !important;
+    cursor: pointer !important;
+}
+
+body.bg-100 .oe_login_buttons .btn-primary:hover {
+    filter: brightness(1.04) !important;
+    box-shadow: 0 8px 20px rgba(241, 216, 139, 0.45) !important;
+    transform: translateY(-2px) !important;
+}
+
+body.bg-100 .oe_login_buttons .btn-primary:active {
+    transform: translateY(0) !important;
+    box-shadow: 0 4px 8px rgba(241, 216, 139, 0.2) !important;
+}
+
+/* Passkey buttons (light style) */
+body.bg-100 .oe_login_buttons .btn-light {
+    border: 1.5px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    color: #334155 !important;
+    background: #ffffff !important;
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    padding: 12px 20px !important;
+    transition: all 0.2s ease !important;
+}
+
+body.bg-100 .oe_login_buttons .btn-light:hover {
+    background: #f8fafc !important;
+    border-color: #cbd5e1 !important;
+    color: #0f172a !important;
+}
+
+body.bg-100 em {
+    color: #94a3b8 !important;
+    font-style: normal !important;
+    font-size: 0.85rem !important;
+    display: inline-block !important;
+    margin: 10px 0 !important;
+}
+
+/* Incorrect credentials Alert design */
+body.bg-100 .alert-danger {
+    border-radius: 12px !important;
+    border: 1.5px solid rgba(222, 151, 157, 0.4) !important;
+    background: rgba(222, 151, 157, 0.1) !important;
+    color: #7f1d1d !important;
+    font-size: 0.9rem !important;
+    padding: 12px 16px !important;
+    font-weight: 500 !important;
+    margin-bottom: 24px !important;
+}
+
+
+/* ── 6. RIGHT PANEL FOOTER ── */
+.unefa-right-footer {
+    grid-column: 2 !important;
+    background: #f8fafc !important;
+    border-top: 1px solid #f1f5f9 !important;
+    padding: 20px 12% !important;
+    text-align: center !important;
+}
+
+.unefa-right-footer span {
+    font-size: 0.75rem !important;
+    color: #64748b !important;
+    font-weight: 500 !important;
+}
+
+
+/* ── 7. RESPONSIVE MEDIA QUERIES ── */
+@media (max-width: 1024px) {
+    .unefa-login-card .card-body {
+        grid-template-columns: 45% 55% !important;
+    }
+    .unefa-login-card .card-body > form.oe_login_form {
+        padding: 40px 8% 30px !important;
+    }
+    .unefa-right-footer {
+        padding: 20px 8% !important;
+    }
+}
+
+@media (max-width: 900px) {
+    /* Single column layout for tablet/mobile */
+    .unefa-login-card .card-body {
+        grid-template-columns: 1fr !important;
+        min-height: calc(100vh - 50px) !important;
+    }
+
+    /* Left panel as header banner */
+    .unefa-left-panel {
+        grid-column: 1 !important;
+        grid-row: 1 !important;
+        height: auto !important;
+        min-height: auto !important;
+        padding: 48px 32px 40px !important;
+        border-right: none !important;
+        border-bottom: 1px solid #cbd5e1 !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02) !important;
+    }
+
+    .ulp-logo-ring {
+        width: 100px !important;
+        height: 100px !important;
+        margin-bottom: 20px !important;
+    }
+
+    .ulp-logo-ring img {
+        width: 64px !important;
+        height: 64px !important;
+    }
+
+    .ulp-name {
+        font-size: 2.5rem !important;
+        letter-spacing: 6px !important;
+    }
+
+    .ulp-system-name {
+        font-size: 1.4rem !important;
+        margin-top: 15px !important;
+    }
+
+    .ulp-fullname {
+        display: none !important; /* Hide long name on mobile banner */
+    }
+
+    /* Right panel covers remainder */
+    .unefa-login-card .card-body > *:not(.unefa-left-panel) {
+        grid-column: 1 !important;
+    }
+
+    .unefa-login-card .card-body > form.oe_login_form {
+        grid-column: 1 !important;
+        min-height: auto !important;
+        padding: 48px 24px 36px !important;
+        max-width: 500px !important;
+    }
+
+    .unefa-right-footer {
+        grid-column: 1 !important;
+        padding: 20px 24px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .unefa-left-panel {
+        padding: 36px 20px 30px !important;
+    }
+    
+    .ulp-name {
+        font-size: 2.1rem !important;
+        letter-spacing: 4px !important;
+    }
+
+    .unefa-login-card .card-body > form.oe_login_form {
+        padding: 36px 20px 24px !important;
+    }
+    
+    .unefa-welcome-title {
+        font-size: 1.8rem !important;
+    }
+}
+
+/* ── 8. GOVERNMENT CINTILLO / BANNER (CONATEL/MINISTRY IMAGE) ── */
+.unefa-cintillo {
+    width: 100% !important;
+    height: 70px !important;
+    background: #ffffff !important;
+    border-bottom: 1px solid #cbd5e1 !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 9999 !important;
+    position: relative !important;
+    padding: 0 24px !important;
+}
+
+.uc-banner-img {
+    height: 56px !important;
+    width: auto !important;
+    max-width: 100% !important;
+    object-fit: contain !important;
+}
+
+@media (max-width: 900px) {
+    .unefa-cintillo {
+        height: 50px !important;
+        padding: 0 16px !important;
+    }
+    
+    .uc-banner-img {
+        height: 40px !important;
+    }
+    
+    /* Adjust page heights to account for 50px tablet/mobile cintillo */
+    body.bg-100 .container.py-5,
+    .unefa-login-card {
+        min-height: calc(100vh - 50px) !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .unefa-cintillo {
+        height: 44px !important;
+        padding: 0 12px !important;
+    }
+    
+    .uc-banner-img {
+        height: 34px !important;
+    }
+    
+    /* Adjust page heights to account for 44px mobile cintillo */
+    body.bg-100 .container.py-5,
+    .unefa-login-card,
+    .unefa-login-card .card-body {
+        min-height: calc(100vh - 44px) !important;
+    }
+}
