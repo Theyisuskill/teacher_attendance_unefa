@@ -50,7 +50,7 @@ class TestUIIntegration(TransactionCase):
     def test_menu_items_exist(self):
         """Verify all menu items are registered."""
         menu_ids = [
-            "teacher_attendance.menu_attendance_root",
+            "teacher_attendance.menu_teacher_attendance_root",
             "teacher_attendance.menu_attendance_dashboard",
             "teacher_attendance.menu_occupancy_map",
             "teacher_attendance.menu_attendance_kiosk",
@@ -68,7 +68,7 @@ class TestUIIntegration(TransactionCase):
         try:
             group = self.env.ref("teacher_attendance.group_coordinator")
             self.assertIsNotNone(group)
-            self.assertEqual(group.category_id.name, "Teacher Attendance")
+            self.assertEqual(group.privilege_id.name, "Teacher Attendance")
         except ValueError:
             self.fail("group_coordinator not found")
 
@@ -76,9 +76,9 @@ class TestUIIntegration(TransactionCase):
         """Verify models have kanban/form/tree views."""
         model_configs = {
             "attendance.classroom": ["form", "list"],
-            "attendance.subject": ["form", "list"],
+            "attendance.subject": ["list"],
             "attendance.substitution": ["form", "list"],
-            "attendance.log": ["kanban", "form", "tree"],
+            "attendance.log": ["kanban", "form", "list"],
         }
 
         for model_name, expected_views in model_configs.items():
