@@ -157,6 +157,7 @@ export class UnefaNav extends Component {
     }
 
     navigateTo(item) {
+        this.close();
         // Las acciones registradas en ir.actions.client en la BD necesitan el XML ID completo
         // (con prefijo de módulo) para que el servidor las encuentre.
         // Las acciones que solo están en el actionRegistry del cliente (scanner, kiosk, etc.)
@@ -184,10 +185,12 @@ export class UnefaNav extends Component {
         this.action.doAction(actionId, { clearBreadcrumbs: true });
     }
 
-    navigateToProfile() {
+    async navigateToProfile() {
         this.state.open = false;
-        // Abre el perfil nativo de Odoo — incluye cambio de contraseña y gestión de dispositivos
-        this.action.doAction("base.action_res_users_my");
+        // Abre el modal de preferencias nativo (igual que el menú de usuario de Odoo)
+        const actionDesc = await this.orm.call("res.users", "action_get");
+        actionDesc.res_id = user.userId;
+        this.action.doAction(actionDesc);
     }
 
     logout() {
